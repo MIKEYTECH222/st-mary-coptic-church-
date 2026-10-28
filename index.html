@@ -1,417 +1,444 @@
 
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#080b16">
-<title>شبابنا | خدمة الشباب</title>
-<style>
-:root{--bg:#080b16;--text:#f8f9ff;--muted:#a6adc4;--glass:rgba(255,255,255,.075);--border:rgba(255,255,255,.15)}
-body.light{--bg:#edf1fb;--text:#171c30;--muted:#626b83;--glass:rgba(255,255,255,.7);--border:rgba(55,70,110,.18)}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:90px}
-body{margin:0;font-family:Arial,Tahoma,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:.2s}
-button,input,textarea,select{font:inherit}
-button,a{cursor:pointer}
-a{color:inherit;text-decoration:none}
-button,.btn{border:1px solid var(--border);border-radius:12px;padding:11px 15px;background:var(--glass);color:var(--text);display:inline-block}
-button:hover,.btn:hover{filter:brightness(1.1)}
-.primary{background:linear-gradient(135deg,#d5dcff,#a8dfff);color:#111731;border:0;font-weight:bold}
-.danger{border-color:#ff9caa;color:#ff9caa}
-.glass{background:var(--glass);border:1px solid var(--border);backdrop-filter:blur(20px);box-shadow:0 15px 45px #0001}
-.nav-wrap{position:sticky;top:8px;z-index:5;padding:0 3%;margin-top:8px}
-nav{max-width:1150px;margin:auto;padding:12px 18px;border-radius:18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.brand{font-weight:bold;font-size:19px}
-.nav-links,.actions{display:flex;gap:12px;align-items:center}
-.nav-links{color:var(--muted);font-size:14px}
-main,.dashboard{max-width:1150px;margin:auto;padding:0 22px}
-.hero{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 0}
-.eyebrow,.pill{border:1px solid var(--border);background:var(--glass);border-radius:30px;padding:8px 13px;color:var(--muted);font-size:13px}
-h1{font-size:clamp(38px,7vw,70px);line-height:1.2;margin:22px 0 12px}
-.gradient{background:linear-gradient(100deg,#c3caff,#a0e0ff,#e1d0ff);color:transparent;background-clip:text}
-.hero p,.muted{color:var(--muted);line-height:1.9}
-.hero p{max-width:650px}
-.hero-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-.section{padding:30px 0 45px}
-.section h2{font-size:clamp(25px,4vw,35px)}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
-.feature,.panel,.form-card,.data-item,.stat{padding:20px;border-radius:19px}
-.feature p,.data-item p{color:var(--muted);line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
-.account-grid,.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
-.form-card{border:1px solid var(--border);background:var(--glass)}
-label{display:block;color:var(--muted);font-size:14px;margin:12px 0 6px}
-input,textarea,select{width:100%;padding:11px;border:1px solid var(--border);border-radius:11px;background:var(--bg);color:var(--text)}
-textarea{min-height:85px;resize:vertical}
-.form-card button{margin-top:13px}
-.status{color:var(--muted);line-height:1.7;overflow-wrap:anywhere}
-.data-list{display:grid;gap:12px}
-.data-item h3{margin:0 0 8px}
-.hidden,.page-hidden{display:none!important}
-.dashboard{padding-top:25px;padding-bottom:50px}
-.dashboard-header,.dashboard-block{padding:23px;border-radius:22px;margin-bottom:17px;scroll-margin-top:95px}
-.dashboard-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.stat-label{color:var(--muted);font-size:13px}
-.stat-value{font-weight:bold;font-size:23px;margin-top:10px;overflow-wrap:anywhere}
-.dashboard-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
-.dashboard-nav a{padding:9px 12px;border:1px solid var(--border);border-radius:10px}
-.inline{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-footer{text-align:center;color:var(--muted);border-top:1px solid var(--border);padding:25px}
-@media(max-width:750px){.nav-links{display:none}.grid,.account-grid,.admin-grid,.dashboard-cards{grid-template-columns:1fr}main,.dashboard{padding-left:13px;padding-right:13px}.hero{min-height:52vh}.dashboard-header,.dashboard-block{padding:16px}}
-</style>
-</head>
-<body>
-<div class="nav-wrap">
-<nav class="glass">
-<a class="brand" href="#home">✦ شبابنا</a>
-<div class="nav-links"><a href="#home">الرئيسية</a><a href="#events">الفعاليات</a><a href="#lessons">الدروس</a><a href="#account">الحساب</a></div>
-<div class="actions"><button id="langBtn" type="button">EN</button><button id="themeBtn" type="button">☀</button></div>
-</nav>
-</div>
+export function initExams(supabase, getContext) {
+  const dashboard = document.getElementById("dashboard");
+  if (!dashboard || document.getElementById("examsPanel")) return;
 
-<main id="publicPage">
-<section class="hero" id="home">
-<span class="eyebrow">✦ مكان واحد يجمعنا</span>
-<h1>إيمان يجمعنا،<br><span class="gradient">ومحبة تكبر بينا.</span></h1>
-<p>مساحة خدمة الشباب للقاءاتنا ودروسنا وفعالياتنا، وكل خطوة بنكبر فيها مع بعض.</p>
-<div class="hero-actions"><a class="btn primary" href="#sections">اكتشف الموقع ↗</a><a class="btn" href="#account">دخول الحساب</a></div>
-</section>
-<section class="section" id="sections">
-<h2>كل حاجة في مكانها.</h2>
-<div class="grid">
-<a class="feature glass" href="#events"><h3>✧ الفعاليات واللقاءات</h3><p>تابع مواعيد الاجتماعات والأنشطة القادمة.</p></a>
-<a class="feature glass" href="#lessons"><h3>▤ الدروس والمراجع</h3><p>الدروس والملفات والمواد الدراسية.</p></a>
-<a class="feature glass" href="#account"><h3>♧ حسابك ونقاطك</h3><p>تابع حسابك ونقاطك بعد تسجيل الدخول.</p></a>
-</div>
-</section>
-<section class="section" id="events"><h2>الفعاليات القادمة</h2><div id="eventsList" class="data-list"><p class="muted">جاري التحميل...</p></div></section>
-<section class="section" id="lessons"><h2>الدروس والمواد</h2><div id="lessonsList" class="data-list"><p class="muted">جاري التحميل...</p></div></section>
-<section class="section" id="account">
-<div class="panel glass">
-<h2>مساحتك الشخصية</h2><p class="muted">الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.</p>
-<div id="authForms" class="account-grid">
-<form id="signupForm" class="form-card">
-<h3>إنشاء حساب</h3><label>الاسم الكامل</label><input id="signupName" required maxlength="100">
-<label>البريد الإلكتروني</label><input id="signupEmail" type="email" required>
-<label>كلمة المرور (8 أحرف على الأقل)</label><input id="signupPassword" type="password" minlength="8" required>
-<button class="primary">إنشاء الحساب</button><p id="signupMessage" class="status" role="status"></p>
-</form>
-<form id="loginForm" class="form-card">
-<h3>تسجيل الدخول</h3><label>البريد الإلكتروني</label><input id="loginEmail" type="email" required>
-<label>كلمة المرور</label><input id="loginPassword" type="password" required>
-<button class="primary">دخول</button><p id="loginMessage" class="status" role="status"></p>
-</form>
-</div>
-<p id="accountMessage" class="status" role="status"></p>
-</div>
-</section>
-</main>
+  const nav = dashboard.querySelector(".dashboard-nav");
+  if (nav) {
+    const link = document.createElement("a");
+    link.href = "#examsPanel";
+    link.textContent = "الامتحانات";
+    nav.insertBefore(link, nav.querySelector("button"));
+  }
 
-<section id="dashboard" class="dashboard page-hidden">
-<div class="dashboard-header glass">
-<span class="eyebrow">✦ مساحتك الشخصية</span><h1>أهلاً بيك في خدمة الشباب</h1>
-<p class="muted">البروفايل والنقاط والمواعيد والدروس وإدارة الخدمة حسب صلاحية حسابك.</p>
-<div class="dashboard-nav">
-<a href="#dashboardProfile">البروفايل والنقاط</a><a href="#dashboardEvents">المواعيد</a><a href="#dashboardLessons">الدروس</a>
-<a href="#adminPanel" id="adminNavLink" class="hidden">لوحة الأدمن</a><a href="#servantPanel" id="servantNavLink" class="hidden">لوحة الخادم</a>
-<button id="dashboardLogoutBtn" type="button">تسجيل الخروج</button>
-</div>
-</div>
-<div id="dashboardProfile" class="dashboard-block glass">
-<h2>البروفايل والنقاط</h2>
-<div class="dashboard-cards">
-<div class="stat glass"><div class="stat-label">الاسم</div><div id="dashName" class="stat-value">—</div></div>
-<div class="stat glass"><div class="stat-label">النقاط</div><div id="dashPoints" class="stat-value">0</div></div>
-<div class="stat glass"><div class="stat-label">حالة الحساب</div><div id="dashStatus" class="stat-value">—</div></div>
-</div>
-<p id="dashRole" class="muted"></p><p id="pendingNotice" class="status"></p>
-</div>
-<div id="dashboardEvents" class="dashboard-block glass"><h2>مواعيد وفعاليات الخدمة</h2><div id="dashboardEventsList" class="data-list"></div></div>
-<div id="dashboardLessons" class="dashboard-block glass"><h2>الدروس والمواد</h2><div id="dashboardLessonsList" class="data-list"></div></div>
+  const panel = document.createElement("section");
+  panel.id = "examsPanel";
+  panel.className = "dashboard-block glass";
+  panel.innerHTML = `
+    <h2>الامتحانات</h2>
+    <p class="muted">الامتحانات المتاحة ونتائج محاولاتك.</p>
+    <div id="examStatus" class="status" role="status"></div>
+    <div id="examList" class="data-list"></div>
 
-<div id="adminPanel" class="dashboard-block glass hidden">
-<h2>لوحة تحكم الأدمن</h2><p class="muted">إدارة الحسابات والمجموعات والخدام والدروس والفعاليات والنقاط.</p>
-<div class="admin-grid">
-<form id="createGroupForm" class="form-card">
-<h3>إنشاء مجموعة</h3><label>اسم المجموعة</label><input id="newGroupName" required maxlength="100" placeholder="مثال: إعدادي بنين">
-<button class="primary">إنشاء المجموعة</button><p id="groupMessage" class="status"></p>
-</form>
-<form id="assignGroupForm" class="form-card">
-<h3>تعيين خادم لمجموعة</h3><label>الخادم</label><select id="assignServant" required><option value="">تحميل الخدام...</option></select>
-<label>المجموعة</label><select id="assignGroup" required><option value="">تحميل المجموعات...</option></select>
-<button class="primary">حفظ التعيين</button><p id="assignMessage" class="status"></p>
-</form>
-<form id="lessonForm" class="form-card">
-<h3>إضافة درس جديد</h3><label>عنوان الدرس</label><input id="lessonTitle" required maxlength="180">
-<label>وصف الدرس</label><textarea id="lessonDescription" maxlength="3000"></textarea>
-<label>رابط فيديو أو ملف (اختياري)</label><input id="lessonUrl" type="url" placeholder="https://...">
-<label>المجموعة المستهدفة</label><select id="lessonGroup"><option value="">كل المجموعات</option></select>
-<button class="primary">نشر الدرس</button><p id="lessonMessage" class="status"></p>
-</form>
-<form id="eventForm" class="form-card">
-<h3>إضافة فعالية أو اجتماع</h3><label>عنوان الفعالية</label><input id="eventTitle" required maxlength="180">
-<label>الوصف</label><textarea id="eventDescription" maxlength="3000"></textarea>
-<label>المكان</label><input id="eventLocation" maxlength="250">
-<label>التاريخ والوقت</label><input id="eventDate" type="datetime-local" required>
-<label>المجموعة المستهدفة</label><select id="eventGroup"><option value="">كل المجموعات</option></select>
-<button class="primary">إضافة الفعالية</button><p id="eventMessage" class="status"></p>
-</form>
-<form id="pointsForm" class="form-card">
-<h3>إضافة أو خصم نقاط</h3><label>العضو</label><select id="pointsMember" required></select>
-<label>عدد النقاط (من -100 إلى 100، بدون صفر)</label><input id="pointsAmount" type="number" min="-100" max="100" required>
-<label>السبب</label><input id="pointsReason" maxlength="200" required>
-<button class="primary">حفظ النقاط</button><p id="pointsMessage" class="status"></p>
-</form>
-</div>
-<h3>حسابات في انتظار الموافقة</h3><div id="pendingUsersList" class="data-list"></div>
-<h3>الأعضاء والحسابات</h3><div id="peopleList" class="data-list"></div>
-<h3>التعيينات الحالية</h3><div id="assignmentsList" class="data-list"></div>
-<h3>الدروس المنشورة</h3><div id="adminLessonsList" class="data-list"></div>
-<h3>الفعاليات المنشورة</h3><div id="adminEventsList" class="data-list"></div>
-</div>
+    <div id="examAdmin" class="hidden">
+      <hr>
+      <h3>إنشاء امتحان</h3>
+      <form id="examCreateForm" class="form-card">
+        <label>عنوان الامتحان</label>
+        <input id="examTitle" required maxlength="180">
+        <label>الوصف</label>
+        <textarea id="examDescription" maxlength="3000"></textarea>
+        <label>المجموعة (اتركها فارغة لكل المجموعات)</label>
+        <select id="examGroup">
+          <option value="">كل المجموعات</option>
+        </select>
+        <button class="primary">إنشاء الامتحان</button>
+      </form>
 
-<div id="servantPanel" class="dashboard-block glass hidden">
-<h2>لوحة الخادم</h2>
-<p class="muted">تقدر تضيف نقاط للأعضاء وتنشر دروسًا داخل المجموعات المسندة إليك فقط.</p>
-<form id="servantPointsForm" class="form-card">
-<h3>إضافة أو خصم نقاط</h3><label>العضو</label><select id="servantPointsMember" required></select>
-<label>عدد النقاط (-100 إلى 100، بدون صفر)</label><input id="servantPointsAmount" type="number" min="-100" max="100" required>
-<label>السبب</label><input id="servantPointsReason" maxlength="200" required>
-<button class="primary">حفظ النقاط</button><p id="servantPointsMessage" class="status"></p>
-</form>
-<form id="servantLessonForm" class="form-card">
-<h3>نشر درس جديد</h3>
-<label for="servantLessonTitle">عنوان الدرس</label><input id="servantLessonTitle" required maxlength="180">
-<label for="servantLessonDescription">وصف الدرس</label><textarea id="servantLessonDescription" maxlength="3000"></textarea>
-<label for="servantLessonUrl">رابط فيديو أو ملف (اختياري)</label><input id="servantLessonUrl" type="url" placeholder="https://...">
-<label for="servantLessonGroup">المجموعة المسندة إليك</label><select id="servantLessonGroup" required><option value="">جاري تحميل مجموعاتك...</option></select>
-<button class="primary">نشر الدرس</button><p id="servantLessonMessage" class="status"></p>
-</form>
-</div>
-</section>
+      <h3>إضافة سؤال</h3>
+      <form id="examQuestionForm" class="form-card">
+        <label>الامتحان</label>
+        <select id="examQuestionQuiz" required></select>
+        <label>نص السؤال</label>
+        <textarea id="examQuestionText" required maxlength="2000"></textarea>
+        <label>الاختيار الأول</label><input id="examOption0" required maxlength="500">
+        <label>الاختيار الثاني</label><input id="examOption1" required maxlength="500">
+        <label>الاختيار الثالث</label><input id="examOption2" required maxlength="500">
+        <label>الاختيار الرابع</label><input id="examOption3" required maxlength="500">
+        <label>الإجابة الصحيحة</label>
+        <select id="examCorrectOption">
+          <option value="0">الاختيار الأول</option>
+          <option value="1">الاختيار الثاني</option>
+          <option value="2">الاختيار الثالث</option>
+          <option value="3">الاختيار الرابع</option>
+        </select>
+        <button class="primary">حفظ السؤال</button>
+      </form>
 
-<footer>خدمة الشباب • إيمان ومحبة ونمو</footer>
+      <h3>نشر أو إلغاء نشر امتحان</h3>
+      <form id="examPublishForm" class="form-card">
+        <label>الامتحان</label>
+        <select id="examPublishQuiz" required></select>
+        <button class="primary" type="submit">نشر / إلغاء النشر</button>
+      </form>
+    </div>
+  `;
+  dashboard.appendChild(panel);
 
-<script type="module">
-import { supabase } from "./supabase.js";
-const $=id=>document.getElementById(id);
-let currentUser=null,currentProfile=null,lang="ar";
-function msg(id,text){const el=$(id);if(el)el.textContent=text||""}
-function addItem(targetId,title,description="",extra=""){
-const target=$(targetId);if(!target)return null;
-const article=document.createElement("article");article.className="data-item glass";
-const h=document.createElement("h3");h.textContent=title||"بدون عنوان";article.appendChild(h);
-if(description){const p=document.createElement("p");p.textContent=description;article.appendChild(p)}
-if(extra){const p=document.createElement("p");p.textContent=extra;article.appendChild(p)}
-target.appendChild(article);return article;
+  const $ = id => document.getElementById(id);
+  const status = text => { $("examStatus").textContent = text || ""; };
+  let quizzes = [];
+  let groups = [];
+
+  function isAdmin() {
+    const { currentProfile } = getContext() || {};
+    return currentProfile?.role === "admin" &&
+           currentProfile?.approval_status === "approved";
+  }
+
+  function addText(parent, tag, value) {
+    const el = document.createElement(tag);
+    el.textContent = value ?? "";
+    parent.appendChild(el);
+    return el;
+  }
+
+  function fillQuizSelect(id) {
+    const select = $(id);
+    select.replaceChildren();
+    select.add(new Option("اختار امتحانًا", ""));
+    quizzes.forEach(q => select.add(new Option(q.title, q.id)));
+  }
+
+  async function loadGroups() {
+    const { data, error } = await supabase
+      .from("ministry_groups")
+      .select("id,name")
+      .order("name");
+
+    if (error) {
+      status("تعذر تحميل المجموعات: " + error.message);
+      return;
+    }
+
+    groups = data || [];
+    const select = $("examGroup");
+    select.replaceChildren(new Option("كل المجموعات", ""));
+    groups.forEach(g => select.add(new Option(g.name, g.id)));
+  }
+
+  async function loadQuizzes() {
+    const target = $("examList");
+    target.replaceChildren();
+    status("جاري تحميل الامتحانات...");
+
+    const { data, error } = await supabase
+      .from("quizzes")
+      .select("id,title,description,group_id,published,created_at")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      status("تعذر تحميل الامتحانات: " + error.message);
+      return;
+    }
+
+    quizzes = data || [];
+    fillQuizSelect("examQuestionQuiz");
+    fillQuizSelect("examPublishQuiz");
+
+    if (isAdmin()) {
+      $("examAdmin").classList.remove("hidden");
+    } else {
+      $("examAdmin").classList.add("hidden");
+    }
+
+    if (!quizzes.length) {
+      addText(target, "p", "لا توجد امتحانات متاحة حاليًا.");
+      status("");
+      return;
+    }
+
+    for (const quiz of quizzes) {
+      const card = document.createElement("article");
+      card.className = "data-item glass";
+      addText(card, "h3", quiz.title);
+      addText(card, "p", quiz.description || "");
+      addText(card, "p", quiz.published ? "منشور" : "غير منشور");
+
+      if (isAdmin()) {
+        const count = await supabase
+          .from("quiz_questions")
+          .select("id", { count: "exact", head: true })
+          .eq("quiz_id", quiz.id);
+        addText(card, "p", "عدد الأسئلة: " + (count.count ?? "غير متاح"));
+      }
+
+      if (quiz.published && !isAdmin()) {
+        const start = document.createElement("button");
+        start.type = "button";
+        start.className = "primary";
+        start.textContent = "بدء الامتحان";
+        start.onclick = () => startQuiz(quiz);
+        card.appendChild(start);
+
+        const result = document.createElement("button");
+        result.type = "button";
+        result.textContent = "عرض نتيجتي";
+        result.onclick = () => showResult(quiz);
+        card.appendChild(result);
+      }
+
+      target.appendChild(card);
+    }
+    status("");
+  }
+
+  async function startQuiz(quiz) {
+    const { currentProfile } = getContext() || {};
+    if (!currentProfile || currentProfile.approval_status !== "approved") {
+      status("لازم يكون حسابك معتمدًا لحل الامتحان.");
+      return;
+    }
+
+    const { data: questions, error } = await supabase
+      .from("quiz_questions")
+      .select("id,question_text,options,position")
+      .eq("quiz_id", quiz.id)
+      .order("position");
+
+    if (error) {
+      status("تعذر تحميل الأسئلة: " + error.message);
+      return;
+    }
+
+    if (!questions?.length) {
+      status("الامتحان لا يحتوي على أسئلة متاحة.");
+      return;
+    }
+
+    const target = $("examList");
+    target.replaceChildren();
+    addText(target, "h3", quiz.title);
+
+    const form = document.createElement("form");
+    form.className = "form-card";
+
+    for (const question of questions) {
+      const field = document.createElement("fieldset");
+      field.style.border = "1px solid var(--border)";
+      field.style.borderRadius = "12px";
+      field.style.marginBottom = "16px";
+      addText(field, "legend", question.question_text);
+
+      let options = question.options;
+      if (typeof options === "string") {
+        try { options = JSON.parse(options); } catch { options = []; }
+      }
+      if (!Array.isArray(options) || !options.length) {
+        status("صيغة اختيارات أحد الأسئلة غير صحيحة.");
+        return;
+      }
+
+      options.forEach((option, index) => {
+        const label = document.createElement("label");
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = question.id;
+        radio.value = String(index);
+        radio.style.width = "auto";
+        radio.required = true;
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode(" " + String(option)));
+        field.appendChild(label);
+      });
+      form.appendChild(field);
+    }
+
+    const submit = document.createElement("button");
+    submit.type = "submit";
+    submit.className = "primary";
+    submit.textContent = "تسليم الامتحان";
+    form.appendChild(submit);
+
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.textContent = "رجوع";
+    cancel.onclick = loadQuizzes;
+    form.appendChild(cancel);
+
+    form.onsubmit = async event => {
+      event.preventDefault();
+      if (!confirm("متأكد إنك عايز تسلّم الامتحان؟ مش هتقدر تسلّمه مرة ثانية.")) return;
+
+      submit.disabled = true;
+      status("جاري التصحيح وحفظ النتيجة...");
+
+      const answers = {};
+      questions.forEach(q => {
+        const chosen = form.querySelector(`input[name="${q.id}"]:checked`);
+        if (chosen) answers[q.id] = Number(chosen.value);
+      });
+
+      const { data, error } = await supabase.rpc("submit_quiz", {
+        p_quiz_id: quiz.id,
+        p_answers: answers
+      });
+
+      submit.disabled = false;
+      if (error) {
+        status("تعذر تسليم الامتحان: " + error.message);
+        return;
+      }
+
+      const attempt = Array.isArray(data) ? data[0] : data;
+      target.replaceChildren();
+      addText(target, "h3", "تم تسليم الامتحان");
+      addText(target, "p", `درجتك: ${attempt?.final_score ?? "—"} من ${attempt?.total_questions ?? "—"}`);
+      status("تم حفظ المحاولة بنجاح.");
+    };
+
+    target.appendChild(form);
+    status("جاوب على كل الأسئلة قبل التسليم.");
+    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  async function showResult(quiz) {
+    const { currentUser } = getContext() || {};
+    if (!currentUser) {
+      status("سجّل الدخول أولًا.");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("quiz_attempts")
+      .select("score,max_score,submitted_at")
+      .eq("quiz_id", quiz.id)
+      .eq("member_id", currentUser.id)
+      .maybeSingle();
+
+    if (error) {
+      status("تعذر تحميل النتيجة: " + error.message);
+      return;
+    }
+
+    if (!data) {
+      status("لم يتم العثور على محاولة مسلّمة لهذا الامتحان.");
+      return;
+    }
+
+    status(`نتيجتك: ${data.score} من ${data.max_score} — ${new Date(data.submitted_at).toLocaleString("ar-EG")}`);
+  }
+
+  $("examCreateForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!isAdmin()) return status("إنشاء الامتحانات متاح للأدمن المعتمد فقط.");
+
+    status("جاري إنشاء الامتحان...");
+    const row = {
+      title: $("examTitle").value.trim(),
+      description: $("examDescription").value.trim(),
+      group_id: $("examGroup").value || null,
+      published: false
+    };
+
+    const { error } = await supabase.from("quizzes").insert(row);
+    if (error) {
+      status("فشل إنشاء الامتحان: " + error.message);
+      return;
+    }
+
+    $("examCreateForm").reset();
+    status("تم إنشاء الامتحان. أضف الأسئلة ثم انشره.");
+    await loadQuizzes();
+  });
+
+  $("examQuestionForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!isAdmin()) return status("إضافة الأسئلة متاحة للأدمن المعتمد فقط.");
+
+    const quizId = $("examQuestionQuiz").value;
+    const questionText = $("examQuestionText").value.trim();
+    const options = [0,1,2,3].map(i => $("examOption" + i).value.trim());
+
+    if (!quizId || !questionText || options.some(x => !x)) {
+      status("اختار الامتحان واكتب السؤال والاختيارات الأربعة.");
+      return;
+    }
+
+    status("جاري حفظ السؤال...");
+    const { data: existing, error: listError } = await supabase
+      .from("quiz_questions")
+      .select("position")
+      .eq("quiz_id", quizId)
+      .order("position", { ascending: false })
+      .limit(1);
+
+    if (listError) {
+      status("تعذر تحديد ترتيب السؤال: " + listError.message);
+      return;
+    }
+
+    const position = existing?.length ? existing[0].position + 1 : 1;
+    const { data: question, error } = await supabase
+      .from("quiz_questions")
+      .insert({
+        quiz_id: quizId,
+        question_text: questionText,
+        options,
+        position
+      })
+      .select("id")
+      .single();
+
+    if (error) {
+      status("فشل حفظ السؤال: " + error.message);
+      return;
+    }
+
+    const { error: keyError } = await supabase
+      .from("quiz_answer_keys")
+      .insert({
+        question_id: question.id,
+        correct_option: Number($("examCorrectOption").value)
+      });
+
+    if (keyError) {
+      status("تم حفظ السؤال لكن تعذر حفظ الإجابة الصحيحة. لا تنشر الامتحان قبل معالجة المشكلة: " + keyError.message);
+      return;
+    }
+
+    $("examQuestionForm").reset();
+    status("تم حفظ السؤال والإجابة الصحيحة.");
+    await loadQuizzes();
+  });
+
+  $("examPublishForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!isAdmin()) return status("النشر متاح للأدمن المعتمد فقط.");
+
+    const quizId = $("examPublishQuiz").value;
+    const quiz = quizzes.find(q => q.id === quizId);
+    if (!quiz) return status("اختار امتحانًا أولًا.");
+
+    if (!quiz.published) {
+      const { count, error: countError } = await supabase
+        .from("quiz_questions")
+        .select("id", { count: "exact", head: true })
+        .eq("quiz_id", quizId);
+
+      if (countError) return status("تعذر فحص الأسئلة: " + countError.message);
+      if (!count) return status("أضف سؤالًا واحدًا على الأقل قبل النشر.");
+    }
+
+    const { error } = await supabase
+      .from("quizzes")
+      .update({ published: !quiz.published })
+      .eq("id", quizId);
+
+    if (error) {
+      status("تعذر تحديث حالة النشر: " + error.message);
+      return;
+    }
+
+    status(quiz.published ? "تم إلغاء نشر الامتحان." : "تم نشر الامتحان.");
+    await loadQuizzes();
+  });
+
+  async function refresh() {
+    const { currentProfile } = getContext() || {};
+    if (!currentProfile || currentProfile.approval_status !== "approved") {
+      $("examAdmin").classList.add("hidden");
+      status("الامتحانات متاحة للحسابات المعتمدة فقط.");
+      return;
+    }
+    await loadQuizzes();
+  }
+
+  const observer = new MutationObserver(() => {
+    if (!dashboard.classList.contains("page-hidden")) refresh();
+  });
+  observer.observe(dashboard, { attributes: true, attributeFilter: ["class"] });
+
+  loadGroups();
+  refresh();
 }
-function fillSelect(id,items,labelFn){
-const s=$(id);if(!s)return;s.replaceChildren(new Option("اختار...", ""));
-(items||[]).forEach(x=>s.add(new Option(labelFn(x),x.id)));
-}
-function showDashboard(show){
-$("publicPage").classList.toggle("page-hidden",show);
-$("dashboard").classList.toggle("page-hidden",!show);
-if(show){history.replaceState(null,"","#dashboard");window.scrollTo({top:0,behavior:"smooth"})}
-else{history.replaceState(null,"","#account")}
-}
-async function loadEvents(targetId){
-const target=$(targetId);if(!target)return;target.replaceChildren();
-const {data,error}=await supabase.from("events").select("id,title,description,location,starts_at,group_id").order("starts_at",{ascending:true});
-if(error){addItem(targetId,"تعذر تحميل الفعاليات",error.message);return}
-if(!data?.length){addItem(targetId,"لا توجد فعاليات حاليًا","ستظهر الفعاليات هنا بعد إضافتها.");return}
-data.forEach(e=>addItem(targetId,e.title,e.description||"",[e.location,e.starts_at?new Date(e.starts_at).toLocaleString("ar-EG"):""].filter(Boolean).join(" • ")));
-}
-async function loadLessons(targetId){
-const target=$(targetId);if(!target)return;target.replaceChildren();
-const {data,error}=await supabase.from("lessons").select("id,title,description,content_url,group_id").order("id",{ascending:false});
-if(error){addItem(targetId,"تعذر تحميل الدروس",error.message);return}
-if(!data?.length){addItem(targetId,"لا توجد دروس حاليًا","ستظهر الدروس هنا بعد إضافتها.");return}
-data.forEach(l=>{
-const card=addItem(targetId,l.title,l.description||"");
-if(l.content_url){const a=document.createElement("a");a.className="btn primary";a.href=l.content_url;a.target="_blank";a.rel="noopener noreferrer";a.textContent="فتح الدرس ↗";card.appendChild(a)}
-});
-}
-async function refreshContent(){
-await Promise.all([loadEvents("eventsList"),loadLessons("lessonsList"),loadEvents("dashboardEventsList"),loadLessons("dashboardLessonsList")]);
-if(currentProfile?.role==="admin"&&currentProfile.approval_status==="approved"){
-await Promise.all([loadLessons("adminLessonsList"),loadEvents("adminEventsList")]);
-}
-}
-async function loadAdminData(){
-const [peopleRes,groupsRes]=await Promise.all([
-supabase.from("profiles").select("id,full_name,role,approval_status,points,group_id").order("full_name"),
-supabase.from("ministry_groups").select("id,name").order("name")
-]);
-if(peopleRes.error){msg("accountMessage","تعذر تحميل بيانات الإدارة: "+peopleRes.error.message);return}
-if(groupsRes.error){msg("groupMessage","تعذر تحميل المجموعات: "+groupsRes.error.message);return}
-const people=peopleRes.data||[],groups=groupsRes.data||[];
-const servants=people.filter(p=>p.role==="servant"&&p.approval_status==="approved");
-fillSelect("assignServant",servants,p=>p.full_name||p.id);
-fillSelect("assignGroup",groups,g=>g.name);
-fillSelect("lessonGroup",[{id:"",name:"كل المجموعات"},...groups],g=>g.name);
-fillSelect("eventGroup",[{id:"",name:"كل المجموعات"},...groups],g=>g.name);
-fillSelect("pointsMember",people.filter(p=>p.approval_status==="approved"&&p.role!=="admin"),p=>(p.full_name||p.id)+" — "+p.role);
-const pending=$("pendingUsersList");pending.replaceChildren();
-const waiting=people.filter(p=>p.approval_status==="pending");
-if(!waiting.length)addItem("pendingUsersList","لا توجد حسابات معلّقة");
-waiting.forEach(p=>{
-const card=addItem("pendingUsersList",p.full_name||p.id,p.id);
-for(const [label,status] of [["موافقة","approved"],["رفض","rejected"]]){
-const b=document.createElement("button");b.className=status==="approved"?"primary":"danger";b.textContent=label;b.style.marginInlineStart="8px";b.onclick=()=>setApproval(p.id,status);card.appendChild(b);
-}
-});
-const pl=$("peopleList");pl.replaceChildren();
-people.forEach(p=>{
-const g=groups.find(x=>x.id===p.group_id);
-addItem("peopleList",p.full_name||p.id,`الدور: ${p.role||"—"} | الحالة: ${p.approval_status||"—"} | النقاط: ${p.points??0}`,`المجموعة: ${g?.name||"بدون مجموعة"} | ID: ${p.id}`);
-});
-await loadAssignments();
-await Promise.all([loadLessons("adminLessonsList"),loadEvents("adminEventsList")]);
-}
-async function setApproval(id,status){
-const {error}=await supabase.from("profiles").update({approval_status:status}).eq("id",id);
-if(error){alert("فشل تحديث الحساب. راجع سياسات UPDATE لجدول profiles.\n"+error.message);return}
-await loadAdminData();
-}
-async function loadAssignments(){
-const target=$("assignmentsList");if(!target)return;target.replaceChildren();
-const {data,error}=await supabase.from("servant_group_assignments").select("servant_id,group_id,created_at");
-if(error){addItem("assignmentsList","تعذر تحميل التعيينات",error.message);return}
-if(!data?.length){addItem("assignmentsList","لا توجد تعيينات بعد");return}
-const [{data:people},{data:groups}]=await Promise.all([
-supabase.from("profiles").select("id,full_name"),
-supabase.from("ministry_groups").select("id,name")
-]);
-data.forEach(a=>{
-const p=(people||[]).find(x=>x.id===a.servant_id),g=(groups||[]).find(x=>x.id===a.group_id);
-addItem("assignmentsList",p?.full_name||a.servant_id,g?.name||a.group_id);
-});
-}
-async function loadServantLessonGroups(){
-const select=$("servantLessonGroup");if(!select)return;
-select.replaceChildren(new Option("اختر المجموعة",""));
-const {data:assignments,error:aerr}=await supabase.from("servant_group_assignments").select("group_id").eq("servant_id",currentUser.id);
-if(aerr){msg("servantLessonMessage","تعذر تحميل مجموعاتك: "+aerr.message);return}
-const ids=[...new Set((assignments||[]).map(x=>x.group_id))];
-if(!ids.length){msg("servantLessonMessage","الأدمن لم يعيّنك على أي مجموعة بعد.");return}
-const {data:groups,error}=await supabase.from("ministry_groups").select("id,name").in("id",ids).order("name");
-if(error){msg("servantLessonMessage","تعذر تحميل مجموعاتك: "+error.message);return}
-(groups||[]).forEach(g=>select.add(new Option(g.name,g.id)));
-if(!groups?.length)msg("servantLessonMessage","لم يتم العثور على مجموعات مسندة لحسابك.");
-}
-async function loadServantMembers(){
-const {data:assignments,error:aerr}=await supabase.from("servant_group_assignments").select("group_id").eq("servant_id",currentUser.id);
-if(aerr){msg("servantPointsMessage","تعذر تحميل المجموعات: "+aerr.message);return}
-const ids=[...new Set((assignments||[]).map(x=>x.group_id))];
-if(!ids.length){fillSelect("servantPointsMember",[],p=>p.full_name);msg("servantPointsMessage","حسابك غير معيّن لأي مجموعة.");return}
-const {data,error}=await supabase.from("profiles").select("id,full_name,role,approval_status,group_id").in("group_id",ids).eq("approval_status","approved").neq("role","admin").order("full_name");
-if(error){msg("servantPointsMessage","تعذر تحميل الأعضاء: "+error.message);return}
-fillSelect("servantPointsMember",data||[],p=>p.full_name||p.id);
-}
-async function refreshSession(){
-const {data:{session}}=await supabase.auth.getSession();
-if(!session){currentUser=null;currentProfile=null;showDashboard(false);$("authForms").classList.remove("hidden");return}
-currentUser=session.user;
-const {data:p,error}=await supabase.from("profiles").select("id,full_name,role,approval_status,points,group_id").eq("id",session.user.id).maybeSingle();
-if(error||!p){showDashboard(false);msg("accountMessage","تعذر تحميل البروفايل: "+(error?.message||"لم يتم العثور على profile"));return}
-currentProfile=p;
-$("dashName").textContent=p.full_name||session.user.email||"—";
-$("dashPoints").textContent=String(p.points??0);
-$("dashRole").textContent="الدور: "+(p.role||"—");
-$("dashStatus").textContent=({approved:"تمت الموافقة",pending:"في انتظار الموافقة",rejected:"تم رفض الحساب"})[p.approval_status]||p.approval_status||"—";
-$("pendingNotice").textContent=p.approval_status==="pending"?"حسابك في انتظار موافقة المسؤول.":p.approval_status==="rejected"?"الحساب مرفوض حاليًا.":"";
-showDashboard(true);$("authForms").classList.add("hidden");
-const admin=p.role==="admin"&&p.approval_status==="approved";
-const servant=p.role==="servant"&&p.approval_status==="approved";
-$("adminPanel").classList.toggle("hidden",!admin);
-$("adminNavLink").classList.toggle("hidden",!admin);
-$("servantPanel").classList.toggle("hidden",!servant);
-$("servantNavLink").classList.toggle("hidden",!servant);
-await Promise.all([loadEvents("dashboardEventsList"),loadLessons("dashboardLessonsList")]);
-if(admin)await loadAdminData();
-if(servant)await Promise.all([loadServantMembers(),loadServantLessonGroups()]);
-}
-$("signupForm").addEventListener("submit",async e=>{
-e.preventDefault();msg("signupMessage","جاري إنشاء الحساب...");
-const full_name=$("signupName").value.trim(),email=$("signupEmail").value.trim(),password=$("signupPassword").value;
-const {data,error}=await supabase.auth.signUp({email,password,options:{data:{full_name},emailRedirectTo:location.origin+location.pathname}});
-if(error){msg("signupMessage",error.message);return}
-msg("signupMessage",data.session?"تم إنشاء الحساب، وهو في انتظار موافقة الأدمن.":"تم إرسال رسالة تأكيد للبريد. أكّد البريد ثم سجّل الدخول وانتظر الموافقة.");
-});
-$("loginForm").addEventListener("submit",async e=>{
-e.preventDefault();msg("loginMessage","جاري تسجيل الدخول...");
-const {error}=await supabase.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value});
-if(error){msg("loginMessage",error.message);return}
-msg("loginMessage","تم تسجيل الدخول.");await refreshSession();
-});
-$("createGroupForm").addEventListener("submit",async e=>{
-e.preventDefault();if(currentProfile?.role!=="admin"||currentProfile?.approval_status!=="approved")return;
-msg("groupMessage","جاري إنشاء المجموعة...");
-const {error}=await supabase.from("ministry_groups").insert({name:$("newGroupName").value.trim()});
-if(error){msg("groupMessage","فشل إنشاء المجموعة: "+error.message);return}
-$("createGroupForm").reset();msg("groupMessage","تم إنشاء المجموعة.");await loadAdminData();
-});
-$("assignGroupForm").addEventListener("submit",async e=>{
-e.preventDefault();if(currentProfile?.role!=="admin"||currentProfile?.approval_status!=="approved")return;
-const servant_id=$("assignServant").value,group_id=$("assignGroup").value;
-if(!servant_id||!group_id){msg("assignMessage","اختار الخادم والمجموعة.");return}
-const {error}=await supabase.from("servant_group_assignments").upsert({servant_id,group_id,assigned_by:currentUser.id},{onConflict:"servant_id,group_id"});
-if(error){msg("assignMessage","فشل التعيين: "+error.message);return}
-msg("assignMessage","تم تعيين الخادم للمجموعة.");await loadAssignments();
-});
-$("lessonForm").addEventListener("submit",async e=>{
-e.preventDefault();if(currentProfile?.role!=="admin"||currentProfile?.approval_status!=="approved")return;
-msg("lessonMessage","جاري نشر الدرس...");
-const row={title:$("lessonTitle").value.trim(),description:$("lessonDescription").value.trim(),content_url:$("lessonUrl").value.trim()||null,group_id:$("lessonGroup").value||null,created_by:currentUser.id};
-const {error}=await supabase.from("lessons").insert(row);
-if(error){msg("lessonMessage","فشل نشر الدرس: "+error.message);return}
-$("lessonForm").reset();msg("lessonMessage","تم نشر الدرس بنجاح.");await refreshContent();
-});
-$("servantLessonForm").addEventListener("submit",async e=>{
-e.preventDefault();
-if(currentProfile?.role!=="servant"||currentProfile?.approval_status!=="approved"){msg("servantLessonMessage","النشر متاح للخادم المعتمد فقط.");return}
-const title=$("servantLessonTitle").value.trim(),description=$("servantLessonDescription").value.trim(),content_url=$("servantLessonUrl").value.trim()||null,group_id=$("servantLessonGroup").value;
-if(!title||!group_id){msg("servantLessonMessage","اكتب عنوان الدرس واختار مجموعة.");return}
-msg("servantLessonMessage","جاري نشر الدرس...");
-const {error}=await supabase.from("lessons").insert({title,description,content_url,group_id,created_by:currentUser.id});
-if(error){msg("servantLessonMessage","فشل نشر الدرس: "+error.message+" — تأكد من تشغيل SQL الخاص بصلاحيات الخادم في Supabase.");return}
-$("servantLessonForm").reset();msg("servantLessonMessage","تم نشر الدرس بنجاح.");await refreshContent();await loadServantLessonGroups();
-});
-$("eventForm").addEventListener("submit",async e=>{
-e.preventDefault();if(currentProfile?.role!=="admin"||currentProfile?.approval_status!=="approved")return;
-const date=$("eventDate").value;if(!date){msg("eventMessage","اختار التاريخ والوقت.");return}
-msg("eventMessage","جاري إضافة الفعالية...");
-const row={title:$("eventTitle").value.trim(),description:$("eventDescription").value.trim(),location:$("eventLocation").value.trim(),starts_at:new Date(date).toISOString(),group_id:$("eventGroup").value||null,created_by:currentUser.id};
-const {error}=await supabase.from("events").insert(row);
-if(error){msg("eventMessage","فشل إضافة الفعالية: "+error.message);return}
-$("eventForm").reset();msg("eventMessage","تمت إضافة الفعالية.");await refreshContent();
-});
-async function awardPoints(member,amount,reason,id){
-const n=Number(amount);
-if(!member||!Number.isInteger(n)||n===0||n < -100||n>100||!reason.trim()){msg(id,"راجع العضو وعدد النقاط والسبب.");return}
-msg(id,"جاري حفظ النقاط...");
-const {error}=await supabase.rpc("award_points",{p_member_id:member,p_amount:n,p_reason:reason.trim()});
-if(error){msg(id,"فشل حفظ النقاط: "+error.message);return}
-msg(id,"تم تسجيل النقاط بنجاح.");await refreshSession();
-}
-$("pointsForm").addEventListener("submit",e=>{e.preventDefault();awardPoints($("pointsMember").value,$("pointsAmount").value,$("pointsReason").value,"pointsMessage")});
-$("servantPointsForm").addEventListener("submit",e=>{e.preventDefault();awardPoints($("servantPointsMember").value,$("servantPointsAmount").value,$("servantPointsReason").value,"servantPointsMessage")});
-$("dashboardLogoutBtn").addEventListener("click",async()=>{
-const {error}=await supabase.auth.signOut();
-if(error)msg("accountMessage",error.message);
-else{showDashboard(false);$("authForms").classList.remove("hidden")}
-});
-$("themeBtn").addEventListener("click",()=>document.body.classList.toggle("light"));
-$("langBtn").addEventListener("click",()=>{
-lang=lang==="ar"?"en":"ar";
-document.documentElement.lang=lang;
-document.documentElement.dir=lang==="ar"?"rtl":"ltr";
-$("langBtn").textContent=lang==="ar"?"EN":"عربي";
-msg("accountMessage",lang==="en"?"The dashboard is currently available in Arabic.":"تم الرجوع للواجهة العربية.");
-});
-supabase.auth.onAuthStateChange(()=>setTimeout(refreshSession,0));
-await Promise.all([loadEvents("eventsList"),loadLessons("lessonsList"),refreshSession()]);
-</script>
-</body>
-</html>
