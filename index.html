@@ -1,0 +1,524 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b16">
+  <title>شبابنا | خدمة الشباب</title>
+  <meta name="description" content="مساحة تجمعنا في خدمة الشباب، اللقاءات والدروس والفعاليات.">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080b16;
+      --text: #f8f9ff;
+      --muted: #a6adc4;
+      --glass: rgba(255,255,255,.075);
+      --border: rgba(255,255,255,.15);
+      --accent: #b9c7ff;
+      --button-text: #10152c;
+    }
+
+    body.light {
+      color-scheme: light;
+      --bg: #edf1fb;
+      --text: #171c30;
+      --muted: #626b83;
+      --glass: rgba(255,255,255,.58);
+      --border: rgba(55,70,110,.15);
+      --accent: #455bd5;
+      --button-text: #fff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Tahoma, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background .4s, color .4s;
+    }
+
+    button, a { font: inherit; }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button { color: inherit; cursor: pointer; }
+
+    .ambient {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .orb {
+      position: absolute;
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      filter: blur(95px);
+      opacity: .27;
+      animation: float 12s ease-in-out infinite alternate;
+    }
+
+    .orb.one {
+      background: #6658ff;
+      top: -170px;
+      right: -90px;
+    }
+
+    .orb.two {
+      background: #168ac7;
+      bottom: -190px;
+      left: -100px;
+      animation-delay: -5s;
+    }
+
+    @keyframes float {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(50px, 35px) scale(1.18); }
+    }
+
+    .glass {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08),
+        0 16px 50px rgba(0,0,0,.08);
+    }
+
+    .nav-wrap {
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+      padding: 0 5%;
+      margin-top: 12px;
+    }
+
+    nav {
+      max-width: 1160px;
+      margin: auto;
+      border-radius: 22px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+    }
+
+    .brand-icon {
+      display: grid;
+      place-items: center;
+      width: 39px;
+      height: 39px;
+      border-radius: 13px;
+      background: linear-gradient(135deg,#aabaff,#b8e8ff);
+      color: #171a40;
+      font-size: 21px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 23px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn, .primary, .secondary {
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 11px 15px;
+      background: var(--glass);
+      transition: transform .25s, background .25s;
+    }
+
+    .icon-btn:hover, .primary:hover, .secondary:hover {
+      transform: translateY(-2px);
+    }
+
+    .primary {
+      background: linear-gradient(135deg,#d5dcff,#a8dfff);
+      color: #111731;
+      border: none;
+      font-weight: 750;
+    }
+
+    .secondary { color: var(--text); }
+
+    main {
+      max-width: 1160px;
+      margin: auto;
+      padding: 0 24px;
+    }
+
+    .hero {
+      min-height: 76vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 0 80px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      background: var(--glass);
+      border-radius: 100px;
+      padding: 9px 15px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      background: #83e3b3;
+      border-radius: 50%;
+      box-shadow: 0 0 12px #83e3b3;
+    }
+
+    h1 {
+      font-size: clamp(42px, 7vw, 82px);
+      line-height: 1.18;
+      letter-spacing: -2px;
+      margin: 26px 0 18px;
+      font-weight: 850;
+    }
+
+    .gradient {
+      background: linear-gradient(100deg,#c3caff,#a0e0ff,#e1d0ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 610px;
+      line-height: 2;
+      color: var(--muted);
+      font-size: 17px;
+      margin: 0 0 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .hero-actions a { padding: 14px 22px; }
+
+    .section { padding: 55px 0 85px; }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .section-head h2 {
+      font-size: clamp(27px,4vw,40px);
+      margin: 0 0 8px;
+    }
+
+    .section-head p, .muted {
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 18px;
+    }
+
+    .feature {
+      padding: 25px;
+      border-radius: 25px;
+      min-height: 220px;
+      transition: transform .35s, border-color .35s;
+    }
+
+    .feature:hover {
+      transform: translateY(-7px);
+      border-color: rgba(185,199,255,.55);
+    }
+
+    .feature-icon {
+      width: 49px;
+      height: 49px;
+      display: grid;
+      place-items: center;
+      border-radius: 17px;
+      background: rgba(180,195,255,.13);
+      font-size: 23px;
+      margin-bottom: 24px;
+    }
+
+    .feature h3 { margin: 0 0 10px; font-size: 20px; }
+    .feature p { color: var(--muted); line-height: 1.9; margin: 0; }
+
+    .welcome {
+      padding: 40px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+    }
+
+    .welcome h2 { font-size: clamp(25px,4vw,38px); margin: 0 0 12px; }
+    .welcome p { color: var(--muted); line-height: 1.9; max-width: 620px; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 30px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 760px) {
+      .nav-links { display: none; }
+      .nav-wrap { padding: 0 12px; }
+      nav { padding: 10px; }
+      .brand { font-size: 14px; }
+      .icon-btn { padding: 10px; }
+      .grid { grid-template-columns: 1fr; }
+      .feature { min-height: auto; }
+      .hero { min-height: 68vh; padding: 90px 0 55px; }
+      .hero p { font-size: 15px; }
+      .welcome { flex-direction: column; align-items: flex-start; padding: 27px; }
+      .section { padding: 35px 0 60px; }
+      .section-head { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ambient" aria-hidden="true">
+    <div class="orb one"></div>
+    <div class="orb two"></div>
+  </div>
+
+  <div class="nav-wrap">
+    <nav class="glass">
+      <a class="brand" href="#home">
+        <span class="brand-icon">✦</span>
+        <span data-ar="شبابنا" data-en="Our Youth">شبابنا</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#home" data-ar="الرئيسية" data-en="Home">الرئيسية</a>
+        <a href="#sections" data-ar="الأقسام" data-en="Explore">الأقسام</a>
+        <a href="#about" data-ar="عن الخدمة" data-en="About">عن الخدمة</a>
+      </div>
+
+      <div class="actions">
+        <button class="icon-btn" id="langBtn" aria-label="Change language">EN</button>
+        <button class="icon-btn" id="themeBtn" aria-label="Change theme">☀</button>
+      </div>
+    </nav>
+  </div>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="eyebrow">
+        <span class="dot"></span>
+        <span data-ar="مكان واحد يجمعنا" data-en="One place to grow together">مكان واحد يجمعنا</span>
+      </div>
+
+      <h1>
+        <span data-ar="إيمان يجمعنا،" data-en="Faith brings us,">إيمان يجمعنا،</span>
+        <br>
+        <span class="gradient" data-ar="ومحبة تكبر بينا." data-en="love grows within us.">ومحبة تكبر بينا.</span>
+      </h1>
+
+      <p
+        data-ar="مساحة خدمة الشباب للقاءاتنا، دروسنا، فعالياتنا، وكل خطوة بنكبر فيها مع بعض."
+        data-en="A home for our youth gatherings, lessons, events, and every step we take together."
+      >مساحة خدمة الشباب للقاءاتنا، دروسنا، فعالياتنا، وكل خطوة بنكبر فيها مع بعض.</p>
+
+      <div class="hero-actions">
+        <a class="primary" href="#sections" data-ar="اكتشف الموقع ↗" data-en="Explore ↗">اكتشف الموقع ↗</a>
+        <a class="secondary glass" href="#about" data-ar="اعرف أكتر" data-en="Learn more">اعرف أكتر</a>
+      </div>
+    </section>
+
+    <section class="section" id="sections">
+      <div class="section-head reveal">
+        <div>
+          <h2 data-ar="كل حاجة في مكانها." data-en="Everything in one place.">كل حاجة في مكانها.</h2>
+          <p data-ar="مساحتك لمتابعة كل جديد في الخدمة." data-en="Your space to stay connected with the ministry.">مساحتك لمتابعة كل جديد في الخدمة.</p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <a href="#events" class="feature glass reveal">
+          <div class="feature-icon">✧</div>
+          <h3 data-ar="الفعاليات واللقاءات" data-en="Events & Gatherings">الفعاليات واللقاءات</h3>
+          <p data-ar="تابع مواعيد الاجتماعات والأنشطة القادمة." data-en="Keep up with upcoming meetings and activities.">تابع مواعيد الاجتماعات والأنشطة القادمة.</p>
+        </a>
+
+        <a href="#lessons" class="feature glass reveal">
+          <div class="feature-icon">▤</div>
+          <h3 data-ar="الدروس والمراجع" data-en="Lessons & Resources">الدروس والمراجع</h3>
+          <p data-ar="مكان منظم للدروس والملفات والمواد الدراسية." data-en="A home for lessons, files, and study materials.">مكان منظم للدروس والملفات والمواد الدراسية.</p>
+        </a>
+
+        <a href="#account" class="feature glass reveal">
+          <div class="feature-icon">♧</div>
+          <h3 data-ar="حسابك ونقاطك" data-en="Your Profile & Points">حسابك ونقاطك</h3>
+          <p data-ar="مساحة شخصية لمتابعة حسابك ونقاطك بعد تسجيل الدخول." data-en="A personal space for your account and points after sign-in.">مساحة شخصية لمتابعة حسابك ونقاطك بعد تسجيل الدخول.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="welcome glass reveal">
+        <div>
+          <h2 data-ar="لسه البداية." data-en="This is just the beginning.">لسه البداية.</h2>
+          <p data-ar="بنجهز مساحة تجمع أعضاء الخدمة والخدام، وتسهّل الوصول للمعلومات والأنشطة في تجربة بسيطة وجميلة."
+             data-en="We're building a shared space for members and servants, making information and activities easier to access.">بنجهز مساحة تجمع أعضاء الخدمة والخدام، وتسهّل الوصول للمعلومات والأنشطة في تجربة بسيطة وجميلة.</p>
+        </div>
+        <a class="primary" href="#home" data-ar="ارجع للبداية ↑" data-en="Back to top ↑">ارجع للبداية ↑</a>
+      </div>
+    </section>
+
+    <section class="section" id="events">
+      <div class="section-head reveal">
+        <div>
+          <h2 data-ar="الفعاليات القادمة" data-en="Upcoming events">الفعاليات القادمة</h2>
+          <p data-ar="هنعرض هنا مواعيد الفعاليات بعد ربط قاعدة البيانات." data-en="Events will appear here after connecting the database.">هنعرض هنا مواعيد الفعاليات بعد ربط قاعدة البيانات.</p>
+        </div>
+      </div>
+      <div class="feature glass reveal">
+        <h3 data-ar="قريبًا هنا" data-en="Coming soon">قريبًا هنا</h3>
+        <p data-ar="المواعيد الحقيقية هتظهر لما نجهز لوحة إدارة الفعاليات." data-en="Real event details will appear once the event dashboard is ready.">المواعيد الحقيقية هتظهر لما نجهز لوحة إدارة الفعاليات.</p>
+      </div>
+    </section>
+
+    <section class="section" id="lessons">
+      <div class="section-head reveal">
+        <div>
+          <h2 data-ar="الدروس والمواد" data-en="Lessons & Materials">الدروس والمواد</h2>
+          <p data-ar="مكتبة الخدمة هتكون متاحة هنا بعد تجهيزها." data-en="The ministry library will live here once configured.">مكتبة الخدمة هتكون متاحة هنا بعد تجهيزها.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="account">
+      <div class="welcome glass reveal">
+        <div>
+          <h2 data-ar="مساحتك الشخصية" data-en="Your personal space">مساحتك الشخصية</h2>
+          <p data-ar="تسجيل الحسابات والموافقة عليها هيتضافوا في المرحلة الجاية مع Supabase."
+             data-en="Account registration and approval will be added in the next stage with Supabase.">تسجيل الحسابات والموافقة عليها هيتضافوا في المرحلة الجاية مع Supabase.</p>
+        </div>
+        <span class="eyebrow" data-ar="التسجيل قريبًا" data-en="Registration coming soon">التسجيل قريبًا</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span data-ar="خدمة الشباب • إيمان ومحبة ونمو" data-en="Youth Ministry • Faith, Love & Growth">خدمة الشباب • إيمان ومحبة ونمو</span>
+  </footer>
+
+  <script>
+    const body = document.body;
+    const langBtn = document.getElementById("langBtn");
+    const themeBtn = document.getElementById("themeBtn");
+
+    let lang = "ar";
+
+    langBtn.addEventListener("click", () => {
+      lang = lang === "ar" ? "en" : "ar";
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+
+      document.querySelectorAll("[data-ar][data-en]").forEach(el => {
+        el.textContent = el.dataset[lang];
+      });
+
+      langBtn.textContent = lang === "ar" ? "EN" : "عربي";
+    });
+
+    themeBtn.addEventListener("click", () => {
+      body.classList.toggle("light");
+      themeBtn.textContent = body.classList.contains("light") ? "☾" : "☀";
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal").forEach(el => {
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
