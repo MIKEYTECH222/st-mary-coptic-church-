@@ -329,16 +329,78 @@
       transform: translateY(0);
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: .01ms !important;
-        transition-duration: .01ms !important;
-        scroll-behavior: auto !important;
-      }
-      .reveal { opacity: 1; transform: none; }
+    .account-panel { padding: 28px; border-radius: 26px; }
+
+    .account-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 18px;
     }
 
+    .form-card {
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: rgba(127,127,127,.06);
+    }
+
+    .form-card h3 { margin-top: 0; }
+
+    .form-card label {
+      display: block;
+      margin: 12px 0 6px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .form-card input {
+      width: 100%;
+      padding: 12px 13px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .form-card button { margin-top: 14px; }
+
+    .status-message {
+      margin-top: 14px;
+      line-height: 1.8;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+
+    .data-list { display: grid; gap: 14px; }
+
+    .data-item {
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--glass);
+    }
+
+    .data-item h3 { margin: 0 0 8px; }
+
+    .data-item p {
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 6px 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .profile-summary {
+      padding: 18px;
+      border-radius: 18px;
+      margin-bottom: 18px;
+    }
+
+    .hidden { display: none !important; }
+
     @media (max-width: 760px) {
+      .account-grid { grid-template-columns: 1fr; }
+      .account-panel { padding: 18px; }
       .nav-links { display: none; }
       .nav-wrap { padding: 0 12px; }
       nav { padding: 10px; }
@@ -351,6 +413,15 @@
       .welcome { flex-direction: column; align-items: flex-start; padding: 27px; }
       .section { padding: 35px 0 60px; }
       .section-head { align-items: flex-start; flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal { opacity: 1; transform: none; }
     }
   </style>
 </head>
@@ -452,9 +523,8 @@
           <p data-ar="هنعرض هنا مواعيد الفعاليات بعد ربط قاعدة البيانات." data-en="Events will appear here after connecting the database.">هنعرض هنا مواعيد الفعاليات بعد ربط قاعدة البيانات.</p>
         </div>
       </div>
-      <div class="feature glass reveal">
-        <h3 data-ar="قريبًا هنا" data-en="Coming soon">قريبًا هنا</h3>
-        <p data-ar="المواعيد الحقيقية هتظهر لما نجهز لوحة إدارة الفعاليات." data-en="Real event details will appear once the event dashboard is ready.">المواعيد الحقيقية هتظهر لما نجهز لوحة إدارة الفعاليات.</p>
+      <div id="eventsList" class="data-list">
+        <div class="feature glass"><p class="muted" data-ar="جاري تحميل الفعاليات..." data-en="Loading events...">جاري تحميل الفعاليات...</p></div>
       </div>
     </section>
 
@@ -465,16 +535,51 @@
           <p data-ar="مكتبة الخدمة هتكون متاحة هنا بعد تجهيزها." data-en="The ministry library will live here once configured.">مكتبة الخدمة هتكون متاحة هنا بعد تجهيزها.</p>
         </div>
       </div>
+      <div id="lessonsList" class="data-list">
+        <div class="feature glass"><p class="muted" data-ar="جاري تحميل الدروس..." data-en="Loading lessons...">جاري تحميل الدروس...</p></div>
+      </div>
     </section>
 
     <section class="section" id="account">
-      <div class="welcome glass reveal">
-        <div>
-          <h2 data-ar="مساحتك الشخصية" data-en="Your personal space">مساحتك الشخصية</h2>
-          <p data-ar="تسجيل الحسابات والموافقة عليها هيتضافوا في المرحلة الجاية مع Supabase."
-             data-en="Account registration and approval will be added in the next stage with Supabase.">تسجيل الحسابات والموافقة عليها هيتضافوا في المرحلة الجاية مع Supabase.</p>
+      <div class="account-panel glass reveal">
+        <h2 data-ar="مساحتك الشخصية" data-en="Your personal space">مساحتك الشخصية</h2>
+        <p class="muted" data-ar="أنشئ حسابًا أو سجّل الدخول. الحسابات الجديدة تحتاج موافقة مسؤول الخدمة." data-en="Create an account or sign in. New accounts require ministry admin approval.">أنشئ حسابًا أو سجّل الدخول. الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.</p>
+
+        <div id="profileSummary" class="profile-summary glass hidden"></div>
+
+        <div id="authForms" class="account-grid">
+          <form id="signupForm" class="form-card">
+            <h3 data-ar="إنشاء حساب" data-en="Create account">إنشاء حساب</h3>
+
+            <label for="signupName" data-ar="الاسم الكامل" data-en="Full name">الاسم الكامل</label>
+            <input id="signupName" name="full_name" autocomplete="name" required maxlength="100">
+
+            <label for="signupEmail" data-ar="البريد الإلكتروني" data-en="Email address">البريد الإلكتروني</label>
+            <input id="signupEmail" name="email" type="email" autocomplete="email" required>
+
+            <label for="signupPassword" data-ar="كلمة المرور (8 أحرف على الأقل)" data-en="Password (at least 8 characters)">كلمة المرور (8 أحرف على الأقل)</label>
+            <input id="signupPassword" name="password" type="password" minlength="8" autocomplete="new-password" required>
+
+            <button class="primary" type="submit" data-ar="إنشاء الحساب" data-en="Create account">إنشاء الحساب</button>
+            <p id="signupMessage" class="status-message" role="status"></p>
+          </form>
+
+          <form id="loginForm" class="form-card">
+            <h3 data-ar="تسجيل الدخول" data-en="Sign in">تسجيل الدخول</h3>
+
+            <label for="loginEmail" data-ar="البريد الإلكتروني" data-en="Email address">البريد الإلكتروني</label>
+            <input id="loginEmail" name="email" type="email" autocomplete="email" required>
+
+            <label for="loginPassword" data-ar="كلمة المرور" data-en="Password">كلمة المرور</label>
+            <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+
+            <button class="primary" type="submit" data-ar="دخول" data-en="Sign in">دخول</button>
+            <p id="loginMessage" class="status-message" role="status"></p>
+          </form>
         </div>
-        <span class="eyebrow" data-ar="التسجيل قريبًا" data-en="Registration coming soon">التسجيل قريبًا</span>
+
+        <button id="logoutBtn" class="secondary hidden" type="button" data-ar="تسجيل الخروج" data-en="Sign out">تسجيل الخروج</button>
+        <p id="accountMessage" class="status-message" role="status"></p>
       </div>
     </section>
   </main>
@@ -483,11 +588,12 @@
     <span data-ar="خدمة الشباب • إيمان ومحبة ونمو" data-en="Youth Ministry • Faith, Love & Growth">خدمة الشباب • إيمان ومحبة ونمو</span>
   </footer>
 
-  <script>
+  <script type="module">
+    import { supabase } from './supabase.js';
+
     const body = document.body;
     const langBtn = document.getElementById("langBtn");
     const themeBtn = document.getElementById("themeBtn");
-
     let lang = "ar";
 
     langBtn.addEventListener("click", () => {
@@ -519,6 +625,239 @@
     document.querySelectorAll(".reveal").forEach(el => {
       observer.observe(el);
     });
+
+    const signupForm = document.getElementById('signupForm');
+    const loginForm = document.getElementById('loginForm');
+    const signupMessage = document.getElementById('signupMessage');
+    const loginMessage = document.getElementById('loginMessage');
+    const accountMessage = document.getElementById('accountMessage');
+    const authForms = document.getElementById('authForms');
+    const profileSummary = document.getElementById('profileSummary');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    function msg(el, text) {
+      el.textContent = text;
+    }
+
+    function translated(ar, en) {
+      return lang === 'ar' ? ar : en;
+    }
+
+    signupForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      msg(signupMessage, translated('جاري إنشاء الحساب...', 'Creating account...'));
+
+      const fullName = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: fullName },
+          emailRedirectTo: window.location.origin + window.location.pathname
+        }
+      });
+
+      if (error) {
+        msg(signupMessage, error.message);
+        return;
+      }
+
+      msg(signupMessage, data.session
+        ? translated(
+            'تم إنشاء الحساب. حسابك في انتظار موافقة مسؤول الخدمة.',
+            'Account created. Your account is waiting for ministry admin approval.'
+          )
+        : translated(
+            'تم إرسال رسالة تحقق إلى بريدك الإلكتروني. افتحها لتأكيد الحساب، ثم سجّل الدخول. حسابك سيظل في انتظار موافقة المسؤول.',
+            'A confirmation email was sent. Verify your email, then sign in. Your account will still need admin approval.'
+          ));
+    });
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      msg(loginMessage, translated('جاري تسجيل الدخول...', 'Signing in...'));
+
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        msg(loginMessage, error.message);
+        return;
+      }
+
+      msg(loginMessage, translated('تم تسجيل الدخول.', 'Signed in.'));
+      await refreshSession();
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        msg(accountMessage, error.message);
+      } else {
+        msg(accountMessage, translated('تم تسجيل الخروج.', 'Signed out.'));
+        await refreshSession();
+      }
+    });
+
+    async function refreshSession() {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        authForms.classList.remove('hidden');
+        profileSummary.classList.add('hidden');
+        logoutBtn.classList.add('hidden');
+        return;
+      }
+
+      authForms.classList.add('hidden');
+      profileSummary.classList.remove('hidden');
+      logoutBtn.classList.remove('hidden');
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('full_name, role, approval_status, points')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+      if (error || !profile) {
+        profileSummary.textContent = translated(
+          'تم تسجيل الدخول، لكن تعذر تحميل الملف الشخصي. تأكد من إعداد قاعدة البيانات.',
+          'Signed in, but the profile could not be loaded. Check the database setup.'
+        );
+        return;
+      }
+
+      const status = profile.approval_status === 'approved'
+        ? translated('تمت الموافقة', 'Approved')
+        : profile.approval_status === 'rejected'
+          ? translated('تم رفض الحساب', 'Rejected')
+          : translated('في انتظار موافقة المسؤول', 'Pending admin approval');
+
+      profileSummary.textContent =
+        `${translated('الاسم', 'Name')}: ${profile.full_name || ''} · ` +
+        `${translated('الدور', 'Role')}: ${profile.role} · ` +
+        `${translated('الحالة', 'Status')}: ${status} · ` +
+        `${translated('النقاط', 'Points')}: ${profile.points}`;
+
+      msg(accountMessage, '');
+    }
+
+    function addDataItem(container, title, description, extra) {
+      const card = document.createElement('article');
+      card.className = 'data-item reveal visible';
+
+      const heading = document.createElement('h3');
+      heading.textContent = title || translated('بدون عنوان', 'Untitled');
+      card.appendChild(heading);
+
+      if (description) {
+        const paragraph = document.createElement('p');
+        paragraph.textContent = description;
+        card.appendChild(paragraph);
+      }
+
+      if (extra) {
+        const paragraph = document.createElement('p');
+        paragraph.textContent = extra;
+        card.appendChild(paragraph);
+      }
+
+      container.appendChild(card);
+    }
+
+    async function loadPublicContent() {
+      const eventsList = document.getElementById('eventsList');
+      const lessonsList = document.getElementById('lessonsList');
+
+      eventsList.replaceChildren();
+      lessonsList.replaceChildren();
+
+      const { data: events, error: eventsError } = await supabase
+        .from('events')
+        .select('title, description, location, starts_at')
+        .order('starts_at', { ascending: true });
+
+      if (eventsError) {
+        addDataItem(
+          eventsList,
+          translated('تعذر تحميل الفعاليات', 'Could not load events'),
+          eventsError.message
+        );
+      } else if (!events || events.length === 0) {
+        addDataItem(
+          eventsList,
+          translated('لا توجد فعاليات معلنة حاليًا', 'No events published yet'),
+          translated(
+            'ستظهر الفعاليات هنا بعد إضافتها إلى قاعدة البيانات.',
+            'Events will appear here after they are added to the database.'
+          )
+        );
+      } else {
+        events.forEach(item => {
+          const date = item.starts_at
+            ? new Date(item.starts_at).toLocaleString(lang === 'ar' ? 'ar-EG' : 'en-US')
+            : '';
+
+          addDataItem(
+            eventsList,
+            item.title,
+            item.description,
+            [item.location, date].filter(Boolean).join(' · ')
+          );
+        });
+      }
+
+      const { data: lessons, error: lessonsError } = await supabase
+        .from('lessons')
+        .select('title, description, content_url')
+        .order('id', { ascending: false });
+
+      if (lessonsError) {
+        addDataItem(
+          lessonsList,
+          translated('تعذر تحميل الدروس', 'Could not load lessons'),
+          lessonsError.message
+        );
+      } else if (!lessons || lessons.length === 0) {
+        addDataItem(
+          lessonsList,
+          translated('لا توجد دروس منشورة حاليًا', 'No lessons published yet'),
+          translated(
+            'ستظهر المواد هنا بعد إضافتها إلى قاعدة البيانات.',
+            'Lessons will appear here after they are added to the database.'
+          )
+        );
+      } else {
+        lessons.forEach(item => {
+          addDataItem(
+            lessonsList,
+            item.title,
+            item.description,
+            item.content_url
+          );
+        });
+      }
+    }
+
+    supabase.auth.onAuthStateChange(() => {
+      setTimeout(() => refreshSession(), 0);
+    });
+
+    await Promise.all([
+      refreshSession(),
+      loadPublicContent()
+    ]);
   </script>
 </body>
 </html>
