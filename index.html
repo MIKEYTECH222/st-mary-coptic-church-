@@ -2,862 +2,507 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080b16">
-  <title>شبابنا | خدمة الشباب</title>
-  <meta name="description" content="مساحة تجمعنا في خدمة الشباب، اللقاءات والدروس والفعاليات.">
-
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #080b16;
-      --text: #f8f9ff;
-      --muted: #a6adc4;
-      --glass: rgba(255,255,255,.075);
-      --border: rgba(255,255,255,.15);
-      --accent: #b9c7ff;
-      --button-text: #10152c;
-    }
-
-    body.light {
-      color-scheme: light;
-      --bg: #edf1fb;
-      --text: #171c30;
-      --muted: #626b83;
-      --glass: rgba(255,255,255,.58);
-      --border: rgba(55,70,110,.15);
-      --accent: #455bd5;
-      --button-text: #fff;
-    }
-
-    * { box-sizing: border-box; }
-
-    html {
-      scroll-behavior: smooth;
-      scroll-padding-top: 100px;
-    }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont,
-        "Segoe UI", Tahoma, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      transition: background .4s, color .4s;
-    }
-
-    button, a { font: inherit; }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button { color: inherit; cursor: pointer; }
-
-    .ambient {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .orb {
-      position: absolute;
-      width: 380px;
-      height: 380px;
-      border-radius: 50%;
-      filter: blur(95px);
-      opacity: .27;
-      animation: float 12s ease-in-out infinite alternate;
-    }
-
-    .orb.one {
-      background: #6658ff;
-      top: -170px;
-      right: -90px;
-    }
-
-    .orb.two {
-      background: #168ac7;
-      bottom: -190px;
-      left: -100px;
-      animation-delay: -5s;
-    }
-
-    @keyframes float {
-      from { transform: translate(0, 0) scale(1); }
-      to { transform: translate(50px, 35px) scale(1.18); }
-    }
-
-    .glass {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(24px) saturate(150%);
-      -webkit-backdrop-filter: blur(24px) saturate(150%);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08),
-        0 16px 50px rgba(0,0,0,.08);
-    }
-
-    .nav-wrap {
-      position: sticky;
-      top: 12px;
-      z-index: 10;
-      padding: 0 5%;
-      margin-top: 12px;
-    }
-
-    nav {
-      max-width: 1160px;
-      margin: auto;
-      border-radius: 22px;
-      padding: 12px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      letter-spacing: -.5px;
-    }
-
-    .brand-icon {
-      display: grid;
-      place-items: center;
-      width: 39px;
-      height: 39px;
-      border-radius: 13px;
-      background: linear-gradient(135deg,#aabaff,#b8e8ff);
-      color: #171a40;
-      font-size: 21px;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 23px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .nav-links a:hover { color: var(--text); }
-
-    .actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .icon-btn, .primary, .secondary {
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      padding: 11px 15px;
-      background: var(--glass);
-      transition: transform .25s, background .25s;
-    }
-
-    .icon-btn:hover, .primary:hover, .secondary:hover {
-      transform: translateY(-2px);
-    }
-
-    .primary {
-      background: linear-gradient(135deg,#d5dcff,#a8dfff);
-      color: #111731;
-      border: none;
-      font-weight: 750;
-    }
-
-    .secondary { color: var(--text); }
-
-    main {
-      max-width: 1160px;
-      margin: auto;
-      padding: 0 24px;
-    }
-
-    .hero {
-      min-height: 76vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 100px 0 80px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid var(--border);
-      background: var(--glass);
-      border-radius: 100px;
-      padding: 9px 15px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .dot {
-      width: 7px;
-      height: 7px;
-      background: #83e3b3;
-      border-radius: 50%;
-      box-shadow: 0 0 12px #83e3b3;
-    }
-
-    h1 {
-      font-size: clamp(42px, 7vw, 82px);
-      line-height: 1.18;
-      letter-spacing: -2px;
-      margin: 26px 0 18px;
-      font-weight: 850;
-    }
-
-    .gradient {
-      background: linear-gradient(100deg,#c3caff,#a0e0ff,#e1d0ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .hero p {
-      max-width: 610px;
-      line-height: 2;
-      color: var(--muted);
-      font-size: 17px;
-      margin: 0 0 28px;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .hero-actions a { padding: 14px 22px; }
-
-    .section { padding: 55px 0 85px; }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 20px;
-      margin-bottom: 25px;
-    }
-
-    .section-head h2 {
-      font-size: clamp(27px,4vw,40px);
-      margin: 0 0 8px;
-    }
-
-    .section-head p, .muted {
-      color: var(--muted);
-      line-height: 1.8;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3,minmax(0,1fr));
-      gap: 18px;
-    }
-
-    .feature {
-      padding: 25px;
-      border-radius: 25px;
-      min-height: 220px;
-      transition: transform .35s, border-color .35s;
-    }
-
-    .feature:hover {
-      transform: translateY(-7px);
-      border-color: rgba(185,199,255,.55);
-    }
-
-    .feature-icon {
-      width: 49px;
-      height: 49px;
-      display: grid;
-      place-items: center;
-      border-radius: 17px;
-      background: rgba(180,195,255,.13);
-      font-size: 23px;
-      margin-bottom: 24px;
-    }
-
-    .feature h3 { margin: 0 0 10px; font-size: 20px; }
-    .feature p { color: var(--muted); line-height: 1.9; margin: 0; }
-
-    .welcome {
-      padding: 40px;
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 25px;
-    }
-
-    .welcome h2 { font-size: clamp(25px,4vw,38px); margin: 0 0 12px; }
-    .welcome p { color: var(--muted); line-height: 1.9; max-width: 620px; }
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 30px 20px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity .7s ease, transform .7s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .account-panel { padding: 28px; border-radius: 26px; }
-
-    .account-grid {
-      display: grid;
-      grid-template-columns: repeat(2,minmax(0,1fr));
-      gap: 18px;
-    }
-
-    .form-card {
-      padding: 22px;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      background: rgba(127,127,127,.06);
-    }
-
-    .form-card h3 { margin-top: 0; }
-
-    .form-card label {
-      display: block;
-      margin: 12px 0 6px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .form-card input {
-      width: 100%;
-      padding: 12px 13px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    .form-card button { margin-top: 14px; }
-
-    .status-message {
-      margin-top: 14px;
-      line-height: 1.8;
-      color: var(--muted);
-      overflow-wrap: anywhere;
-    }
-
-    .data-list { display: grid; gap: 14px; }
-
-    .data-item {
-      padding: 20px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: var(--glass);
-    }
-
-    .data-item h3 { margin: 0 0 8px; }
-
-    .data-item p {
-      color: var(--muted);
-      line-height: 1.8;
-      margin: 6px 0;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .profile-summary {
-      padding: 18px;
-      border-radius: 18px;
-      margin-bottom: 18px;
-    }
-
-    .hidden { display: none !important; }
-
-    @media (max-width: 760px) {
-      .account-grid { grid-template-columns: 1fr; }
-      .account-panel { padding: 18px; }
-      .nav-links { display: none; }
-      .nav-wrap { padding: 0 12px; }
-      nav { padding: 10px; }
-      .brand { font-size: 14px; }
-      .icon-btn { padding: 10px; }
-      .grid { grid-template-columns: 1fr; }
-      .feature { min-height: auto; }
-      .hero { min-height: 68vh; padding: 90px 0 55px; }
-      .hero p { font-size: 15px; }
-      .welcome { flex-direction: column; align-items: flex-start; padding: 27px; }
-      .section { padding: 35px 0 60px; }
-      .section-head { align-items: flex-start; flex-direction: column; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: .01ms !important;
-        transition-duration: .01ms !important;
-        scroll-behavior: auto !important;
-      }
-      .reveal { opacity: 1; transform: none; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شبابنا | خدمة الشباب</title>
+<style>
+:root {
+  --bg:#080b16; --text:#f8f9ff; --muted:#a6adc4;
+  --glass:rgba(255,255,255,.075); --border:rgba(255,255,255,.15);
+}
+body.light {
+  --bg:#edf1fb; --text:#171c30; --muted:#626b83;
+  --glass:rgba(255,255,255,.65); --border:rgba(55,70,110,.15);
+}
+* {box-sizing:border-box}
+html {scroll-behavior:smooth}
+body {
+  margin:0; font-family:Arial,Tahoma,sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;
+  transition:background .3s,color .3s;
+}
+button,input {font:inherit}
+button,a {cursor:pointer}
+a {color:inherit;text-decoration:none}
+.ambient {position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.orb {position:absolute;width:350px;height:350px;border-radius:50%;filter:blur(100px);opacity:.3}
+.orb.one {background:#6658ff;top:-150px;right:-80px}
+.orb.two {background:#168ac7;bottom:-180px;left:-80px}
+.glass {
+  background:var(--glass);border:1px solid var(--border);
+  backdrop-filter:blur(24px) saturate(150%);
+  -webkit-backdrop-filter:blur(24px) saturate(150%);
+  box-shadow:0 16px 50px rgba(0,0,0,.08);
+}
+.nav-wrap {position:sticky;top:10px;z-index:10;padding:0 4%;margin-top:10px}
+nav {
+  max-width:1150px;margin:auto;padding:12px 18px;border-radius:20px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px
+}
+.brand {display:flex;align-items:center;gap:10px;font-weight:bold}
+.brand-icon {
+  display:grid;place-items:center;width:40px;height:40px;border-radius:13px;
+  background:linear-gradient(135deg,#aabaff,#b8e8ff);color:#171a40;font-size:22px
+}
+.nav-links,.actions {display:flex;align-items:center;gap:12px}
+.nav-links {color:var(--muted);font-size:14px}
+.nav-links a:hover {color:var(--text)}
+button,.button {
+  border:1px solid var(--border);border-radius:13px;padding:11px 15px;
+  background:var(--glass);color:var(--text);display:inline-block
+}
+.primary {
+  background:linear-gradient(135deg,#d5dcff,#a8dfff);
+  color:#111731;border:0;font-weight:bold
+}
+button:hover,.button:hover {transform:translateY(-1px)}
+main {max-width:1150px;margin:auto;padding:0 22px}
+.hero {
+  min-height:70vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:80px 0
+}
+.eyebrow {
+  display:inline-block;padding:9px 15px;border:1px solid var(--border);
+  background:var(--glass);border-radius:30px;color:var(--muted);font-size:13px
+}
+h1 {font-size:clamp(40px,7vw,75px);line-height:1.2;margin:25px 0 15px}
+.gradient {
+  background:linear-gradient(100deg,#c3caff,#a0e0ff,#e1d0ff);
+  color:transparent;background-clip:text;-webkit-background-clip:text
+}
+.hero p {max-width:600px;line-height:2;color:var(--muted)}
+.hero-actions {display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:15px}
+.section {padding:45px 0 65px}
+.section-head {margin-bottom:22px}
+.section-head h2 {font-size:clamp(27px,4vw,38px);margin-bottom:8px}
+.muted {color:var(--muted);line-height:1.8}
+.grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.feature {padding:24px;border-radius:22px;min-height:180px}
+.feature-icon {
+  display:grid;place-items:center;width:48px;height:48px;border-radius:15px;
+  background:rgba(180,195,255,.13);font-size:23px;margin-bottom:20px
+}
+.feature h3 {margin:0 0 10px}
+.feature p {color:var(--muted);line-height:1.8}
+.welcome {padding:30px;border-radius:25px}
+.account-panel {padding:25px;border-radius:25px}
+.account-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.form-card {padding:20px;border:1px solid var(--border);border-radius:20px}
+.form-card label {display:block;margin:13px 0 7px;color:var(--muted);font-size:14px}
+.form-card input {
+  width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);
+  background:var(--bg);color:var(--text)
+}
+.form-card button {margin-top:15px}
+.status-message {line-height:1.8;color:var(--muted);overflow-wrap:anywhere}
+.hidden,.page-hidden {display:none!important}
+.data-list {display:grid;gap:13px}
+.data-item {padding:19px;border:1px solid var(--border);border-radius:17px;background:var(--glass)}
+.data-item h3 {margin:0 0 8px}
+.data-item p {color:var(--muted);line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+.dashboard {padding:35px 0 65px}
+.dashboard-header {padding:26px;border-radius:25px;margin-bottom:18px}
+.dashboard-header h1 {font-size:clamp(30px,5vw,48px);margin:18px 0}
+.dashboard-nav {display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.dashboard-nav a {padding:10px 13px;border-radius:12px;border:1px solid var(--border);background:var(--glass)}
+.dashboard-block {padding:23px;border-radius:23px;margin:18px 0}
+.dashboard-cards {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.stat-card {padding:20px;border-radius:18px}
+.stat-label {color:var(--muted);font-size:14px}
+.stat-value {font-size:25px;font-weight:bold;margin-top:12px;overflow-wrap:anywhere}
+.quiz-question {padding:18px;border:1px solid var(--border);border-radius:17px;margin:12px 0}
+.quiz-question label {display:block;padding:9px;cursor:pointer}
+footer {border-top:1px solid var(--border);padding:28px;text-align:center;color:var(--muted);font-size:13px}
+@media(max-width:760px) {
+  .nav-links {display:none}
+  .nav-wrap {padding:0 10px}
+  nav {padding:10px}
+  main {padding:0 15px}
+  .grid,.account-grid,.dashboard-cards {grid-template-columns:1fr}
+  .hero {min-height:65vh}
+  .dashboard-block,.dashboard-header,.account-panel {padding:17px}
+}
+</style>
 </head>
-
 <body>
-  <div class="ambient" aria-hidden="true">
-    <div class="orb one"></div>
-    <div class="orb two"></div>
+<div class="ambient"><div class="orb one"></div><div class="orb two"></div></div>
+
+<div class="nav-wrap">
+<nav class="glass">
+  <a href="#home" class="brand"><span class="brand-icon">✦</span><span>شبابنا</span></a>
+  <div class="nav-links">
+    <a href="#home">الرئيسية</a>
+    <a href="#sections">الأقسام</a>
+    <a href="#about">عن الخدمة</a>
+  </div>
+  <div class="actions">
+    <button id="langBtn">EN</button>
+    <button id="themeBtn">☀</button>
+  </div>
+</nav>
+</div>
+
+<main id="publicPage">
+  <section class="hero" id="home">
+    <div class="eyebrow">✦ مكان واحد يجمعنا</div>
+    <h1>إيمان يجمعنا،<br><span class="gradient">ومحبة تكبر بينا.</span></h1>
+    <p>مساحة خدمة الشباب للقاءاتنا ودروسنا وفعالياتنا، وكل خطوة بنكبر فيها مع بعض.</p>
+    <div class="hero-actions">
+      <a class="button primary" href="#sections">اكتشف الموقع ↗</a>
+      <a class="button" href="#about">اعرف أكتر</a>
+    </div>
+  </section>
+
+  <section class="section" id="sections">
+    <div class="section-head"><h2>كل حاجة في مكانها.</h2><p class="muted">مساحتك لمتابعة كل جديد في الخدمة.</p></div>
+    <div class="grid">
+      <a class="feature glass" href="#events"><div class="feature-icon">✧</div><h3>الفعاليات واللقاءات</h3><p>تابع مواعيد الاجتماعات والأنشطة القادمة.</p></a>
+      <a class="feature glass" href="#lessons"><div class="feature-icon">▤</div><h3>الدروس والمراجع</h3><p>مكان منظم للدروس والملفات والمواد الدراسية.</p></a>
+      <a class="feature glass" href="#account"><div class="feature-icon">♧</div><h3>حسابك ونقاطك</h3><p>تابع حسابك ونقاطك بعد تسجيل الدخول.</p></a>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="welcome glass"><h2>لسه البداية.</h2><p class="muted">مساحة تجمع أعضاء الخدمة والخدام، وتسهّل الوصول للمعلومات والأنشطة.</p></div>
+  </section>
+
+  <section class="section" id="events">
+    <div class="section-head"><h2>الفعاليات القادمة</h2></div>
+    <div id="eventsList" class="data-list"><p class="muted">جاري تحميل الفعاليات...</p></div>
+  </section>
+
+  <section class="section" id="lessons">
+    <div class="section-head"><h2>الدروس والمواد</h2></div>
+    <div id="lessonsList" class="data-list"><p class="muted">جاري تحميل الدروس...</p></div>
+  </section>
+
+  <section class="section" id="account">
+    <div class="account-panel glass">
+      <h2>مساحتك الشخصية</h2>
+      <p class="muted">أنشئ حسابًا أو سجّل الدخول. الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.</p>
+      <div id="authForms" class="account-grid">
+        <form id="signupForm" class="form-card">
+          <h3>إنشاء حساب</h3>
+          <label for="signupName">الاسم الكامل</label>
+          <input id="signupName" required maxlength="100" autocomplete="name">
+          <label for="signupEmail">البريد الإلكتروني</label>
+          <input id="signupEmail" type="email" required autocomplete="email">
+          <label for="signupPassword">كلمة المرور (8 أحرف على الأقل)</label>
+          <input id="signupPassword" type="password" minlength="8" required autocomplete="new-password">
+          <button class="primary" type="submit">إنشاء الحساب</button>
+          <p id="signupMessage" class="status-message" role="status"></p>
+        </form>
+
+        <form id="loginForm" class="form-card">
+          <h3>تسجيل الدخول</h3>
+          <label for="loginEmail">البريد الإلكتروني</label>
+          <input id="loginEmail" type="email" required autocomplete="email">
+          <label for="loginPassword">كلمة المرور</label>
+          <input id="loginPassword" type="password" required autocomplete="current-password">
+          <button class="primary" type="submit">دخول</button>
+          <p id="loginMessage" class="status-message" role="status"></p>
+        </form>
+      </div>
+      <p id="accountMessage" class="status-message" role="status"></p>
+    </div>
+  </section>
+</main>
+
+<section id="dashboard" class="dashboard page-hidden">
+  <div class="dashboard-header glass">
+    <div class="eyebrow">✦ مساحتك الشخصية</div>
+    <h1>أهلاً بيك في خدمة الشباب</h1>
+    <p class="muted">هنا هتلاقي بروفايلك ونقاطك ومواعيد الخدمة والدروس والاختبارات.</p>
+    <div class="dashboard-nav">
+      <a href="#dashboardProfile">البروفايل والاسكور</a>
+      <a href="#dashboardEvents">المواعيد</a>
+      <a href="#dashboardLessons">الدروس</a>
+      <a href="#dashboardQuizzes">أسئلة الدروس</a>
+    </div>
   </div>
 
-  <div class="nav-wrap">
-    <nav class="glass">
-      <a class="brand" href="#home">
-        <span class="brand-icon">✦</span>
-        <span data-ar="شبابنا" data-en="Our Youth">شبابنا</span>
-      </a>
-
-      <div class="nav-links">
-        <a href="#home" data-ar="الرئيسية" data-en="Home">الرئيسية</a>
-        <a href="#sections" data-ar="الأقسام" data-en="Explore">الأقسام</a>
-        <a href="#about" data-ar="عن الخدمة" data-en="About">عن الخدمة</a>
-      </div>
-
-      <div class="actions">
-        <button class="icon-btn" id="langBtn" aria-label="Change language">EN</button>
-        <button class="icon-btn" id="themeBtn" aria-label="Change theme">☀</button>
-      </div>
-    </nav>
+  <div id="dashboardProfile" class="dashboard-block glass">
+    <h2>البروفايل والاسكور</h2>
+    <div class="dashboard-cards">
+      <div class="stat-card glass"><div class="stat-label">الاسم</div><div id="dashName" class="stat-value">—</div></div>
+      <div class="stat-card glass"><div class="stat-label">النقاط (Score)</div><div id="dashPoints" class="stat-value">0</div></div>
+      <div class="stat-card glass"><div class="stat-label">حالة الحساب</div><div id="dashStatus" class="stat-value">—</div></div>
+    </div>
+    <p id="dashRole" class="muted"></p>
   </div>
 
-  <main>
-    <section class="hero" id="home">
-      <div class="eyebrow">
-        <span class="dot"></span>
-        <span data-ar="مكان واحد يجمعنا" data-en="One place to grow together">مكان واحد يجمعنا</span>
-      </div>
+  <div id="dashboardEvents" class="dashboard-block glass">
+    <h2>مواعيد وفعاليات الخدمة</h2>
+    <div id="dashboardEventsList" class="data-list"><p class="muted">جاري التحميل...</p></div>
+  </div>
 
-      <h1>
-        <span data-ar="إيمان يجمعنا،" data-en="Faith brings us,">إيمان يجمعنا،</span>
-        <br>
-        <span class="gradient" data-ar="ومحبة تكبر بينا." data-en="love grows within us.">ومحبة تكبر بينا.</span>
-      </h1>
+  <div id="dashboardLessons" class="dashboard-block glass">
+    <h2>الدروس والمواد</h2>
+    <div id="dashboardLessonsList" class="data-list"><p class="muted">جاري التحميل...</p></div>
+  </div>
 
-      <p
-        data-ar="مساحة خدمة الشباب للقاءاتنا، دروسنا، فعالياتنا، وكل خطوة بنكبر فيها مع بعض."
-        data-en="A home for our youth gatherings, lessons, events, and every step we take together."
-      >مساحة خدمة الشباب للقاءاتنا، دروسنا، فعالياتنا، وكل خطوة بنكبر فيها مع بعض.</p>
+  <div id="dashboardQuizzes" class="dashboard-block glass">
+    <h2>أسئلة على الدروس</h2>
+    <p class="muted">الاختبارات هتظهر هنا بعد إضافة الأسئلة والإجابات في قاعدة البيانات.</p>
+    <div id="dashboardQuizzesList" class="data-list">
+      <article class="data-item">
+        <h3>الاختبارات قريبًا</h3>
+        <p>لسه محتاجين نجهز جدول للأسئلة والإجابات والتصحيح وحفظ درجات الاختبارات.</p>
+      </article>
+    </div>
+  </div>
+  <button id="dashboardLogoutBtn" class="primary">تسجيل الخروج</button>
+</section>
 
-      <div class="hero-actions">
-        <a class="primary" href="#sections" data-ar="اكتشف الموقع ↗" data-en="Explore ↗">اكتشف الموقع ↗</a>
-        <a class="secondary glass" href="#about" data-ar="اعرف أكتر" data-en="Learn more">اعرف أكتر</a>
-      </div>
-    </section>
+<footer>خدمة الشباب • إيمان ومحبة ونمو</footer>
 
-    <section class="section" id="sections">
-      <div class="section-head reveal">
-        <div>
-          <h2 data-ar="كل حاجة في مكانها." data-en="Everything in one place.">كل حاجة في مكانها.</h2>
-          <p data-ar="مساحتك لمتابعة كل جديد في الخدمة." data-en="Your space to stay connected with the ministry.">مساحتك لمتابعة كل جديد في الخدمة.</p>
-        </div>
-      </div>
+<script type="module">
+import { supabase } from './supabase.js';
 
-      <div class="grid">
-        <a href="#events" class="feature glass reveal">
-          <div class="feature-icon">✧</div>
-          <h3 data-ar="الفعاليات واللقاءات" data-en="Events & Gatherings">الفعاليات واللقاءات</h3>
-          <p data-ar="تابع مواعيد الاجتماعات والأنشطة القادمة." data-en="Keep up with upcoming meetings and activities.">تابع مواعيد الاجتماعات والأنشطة القادمة.</p>
-        </a>
+const $ = id => document.getElementById(id);
+const publicPage = $('publicPage');
+const dashboard = $('dashboard');
+let lang = 'ar';
 
-        <a href="#lessons" class="feature glass reveal">
-          <div class="feature-icon">▤</div>
-          <h3 data-ar="الدروس والمراجع" data-en="Lessons & Resources">الدروس والمراجع</h3>
-          <p data-ar="مكان منظم للدروس والملفات والمواد الدراسية." data-en="A home for lessons, files, and study materials.">مكان منظم للدروس والملفات والمواد الدراسية.</p>
-        </a>
+$('langBtn').addEventListener('click', () => {
+  lang = lang === 'ar' ? 'en' : 'ar';
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  $('langBtn').textContent = lang === 'ar' ? 'EN' : 'عربي';
+  alert(lang === 'en'
+    ? 'The English layout switch is enabled, but dashboard content is currently in Arabic.'
+    : 'تم الرجوع للواجهة العربية.');
+});
 
-        <a href="#account" class="feature glass reveal">
-          <div class="feature-icon">♧</div>
-          <h3 data-ar="حسابك ونقاطك" data-en="Your Profile & Points">حسابك ونقاطك</h3>
-          <p data-ar="مساحة شخصية لمتابعة حسابك ونقاطك بعد تسجيل الدخول." data-en="A personal space for your account and points after sign-in.">مساحة شخصية لمتابعة حسابك ونقاطك بعد تسجيل الدخول.</p>
-        </a>
-      </div>
-    </section>
+$('themeBtn').addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  $('themeBtn').textContent = document.body.classList.contains('light') ? '☾' : '☀';
+});
 
-    <section class="section" id="about">
-      <div class="welcome glass reveal">
-        <div>
-          <h2 data-ar="لسه البداية." data-en="This is just the beginning.">لسه البداية.</h2>
-          <p data-ar="بنجهز مساحة تجمع أعضاء الخدمة والخدام، وتسهّل الوصول للمعلومات والأنشطة في تجربة بسيطة وجميلة."
-             data-en="We're building a shared space for members and servants, making information and activities easier to access.">بنجهز مساحة تجمع أعضاء الخدمة والخدام، وتسهّل الوصول للمعلومات والأنشطة في تجربة بسيطة وجميلة.</p>
-        </div>
-        <a class="primary" href="#home" data-ar="ارجع للبداية ↑" data-en="Back to top ↑">ارجع للبداية ↑</a>
-      </div>
-    </section>
+function showMessage(id, text) {
+  $(id).textContent = text;
+}
 
-    <section class="section" id="events">
-      <div class="section-head reveal">
-        <div>
-          <h2 data-ar="الفعاليات القادمة" data-en="Upcoming events">الفعاليات القادمة</h2>
-          <p data-ar="هنعرض هنا مواعيد الفعاليات بعد ربط قاعدة البيانات." data-en="Events will appear here after connecting the database.">هنعرض هنا مواعيد الفعاليات بعد ربط قاعدة البيانات.</p>
-        </div>
-      </div>
-      <div id="eventsList" class="data-list">
-        <div class="feature glass"><p class="muted" data-ar="جاري تحميل الفعاليات..." data-en="Loading events...">جاري تحميل الفعاليات...</p></div>
-      </div>
-    </section>
+function showDashboard(enabled) {
+  publicPage.classList.toggle('page-hidden', enabled);
+  dashboard.classList.toggle('page-hidden', !enabled);
 
-    <section class="section" id="lessons">
-      <div class="section-head reveal">
-        <div>
-          <h2 data-ar="الدروس والمواد" data-en="Lessons & Materials">الدروس والمواد</h2>
-          <p data-ar="مكتبة الخدمة هتكون متاحة هنا بعد تجهيزها." data-en="The ministry library will live here once configured.">مكتبة الخدمة هتكون متاحة هنا بعد تجهيزها.</p>
-        </div>
-      </div>
-      <div id="lessonsList" class="data-list">
-        <div class="feature glass"><p class="muted" data-ar="جاري تحميل الدروس..." data-en="Loading lessons...">جاري تحميل الدروس...</p></div>
-      </div>
-    </section>
+  if (enabled) {
+    history.replaceState(null, '', location.pathname + location.search + '#dashboard');
+    window.scrollTo({top:0,behavior:'smooth'});
+  } else {
+    history.replaceState(null, '', location.pathname + location.search + '#account');
+  }
+}
 
-    <section class="section" id="account">
-      <div class="account-panel glass reveal">
-        <h2 data-ar="مساحتك الشخصية" data-en="Your personal space">مساحتك الشخصية</h2>
-        <p class="muted" data-ar="أنشئ حسابًا أو سجّل الدخول. الحسابات الجديدة تحتاج موافقة مسؤول الخدمة." data-en="Create an account or sign in. New accounts require ministry admin approval.">أنشئ حسابًا أو سجّل الدخول. الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.</p>
+function addItem(container, title, description, extra = '') {
+  const card = document.createElement('article');
+  card.className = 'data-item';
 
-        <div id="profileSummary" class="profile-summary glass hidden"></div>
+  const heading = document.createElement('h3');
+  heading.textContent = title || 'بدون عنوان';
+  card.appendChild(heading);
 
-        <div id="authForms" class="account-grid">
-          <form id="signupForm" class="form-card">
-            <h3 data-ar="إنشاء حساب" data-en="Create account">إنشاء حساب</h3>
+  if (description) {
+    const p = document.createElement('p');
+    p.textContent = description;
+    card.appendChild(p);
+  }
 
-            <label for="signupName" data-ar="الاسم الكامل" data-en="Full name">الاسم الكامل</label>
-            <input id="signupName" name="full_name" autocomplete="name" required maxlength="100">
+  if (extra) {
+    const p = document.createElement('p');
+    p.textContent = extra;
+    card.appendChild(p);
+  }
 
-            <label for="signupEmail" data-ar="البريد الإلكتروني" data-en="Email address">البريد الإلكتروني</label>
-            <input id="signupEmail" name="email" type="email" autocomplete="email" required>
+  container.appendChild(card);
+}
 
-            <label for="signupPassword" data-ar="كلمة المرور (8 أحرف على الأقل)" data-en="Password (at least 8 characters)">كلمة المرور (8 أحرف على الأقل)</label>
-            <input id="signupPassword" name="password" type="password" minlength="8" autocomplete="new-password" required>
+async function loadEvents(targetId) {
+  const target = $(targetId);
+  target.replaceChildren();
 
-            <button class="primary" type="submit" data-ar="إنشاء الحساب" data-en="Create account">إنشاء الحساب</button>
-            <p id="signupMessage" class="status-message" role="status"></p>
-          </form>
+  const {data, error} = await supabase
+    .from('events')
+    .select('title,description,location,starts_at')
+    .order('starts_at', {ascending:true});
 
-          <form id="loginForm" class="form-card">
-            <h3 data-ar="تسجيل الدخول" data-en="Sign in">تسجيل الدخول</h3>
+  if (error) {
+    addItem(target, 'تعذر تحميل المواعيد', error.message);
+    return;
+  }
 
-            <label for="loginEmail" data-ar="البريد الإلكتروني" data-en="Email address">البريد الإلكتروني</label>
-            <input id="loginEmail" name="email" type="email" autocomplete="email" required>
+  if (!data || data.length === 0) {
+    addItem(target, 'لا توجد فعاليات حاليًا', 'ستظهر المواعيد هنا بعد إضافتها إلى قاعدة البيانات.');
+    return;
+  }
 
-            <label for="loginPassword" data-ar="كلمة المرور" data-en="Password">كلمة المرور</label>
-            <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+  data.forEach(event => {
+    const date = event.starts_at
+      ? new Date(event.starts_at).toLocaleString('ar-EG')
+      : '';
+    addItem(target, event.title, event.description,
+      [event.location,date].filter(Boolean).join(' • '));
+  });
+}
 
-            <button class="primary" type="submit" data-ar="دخول" data-en="Sign in">دخول</button>
-            <p id="loginMessage" class="status-message" role="status"></p>
-          </form>
-        </div>
+async function loadLessons(targetId) {
+  const target = $(targetId);
+  target.replaceChildren();
 
-        <button id="logoutBtn" class="secondary hidden" type="button" data-ar="تسجيل الخروج" data-en="Sign out">تسجيل الخروج</button>
-        <p id="accountMessage" class="status-message" role="status"></p>
-      </div>
-    </section>
-  </main>
+  const {data, error} = await supabase
+    .from('lessons')
+    .select('title,description,content_url')
+    .order('id', {ascending:false});
 
-  <footer>
-    <span data-ar="خدمة الشباب • إيمان ومحبة ونمو" data-en="Youth Ministry • Faith, Love & Growth">خدمة الشباب • إيمان ومحبة ونمو</span>
-  </footer>
+  if (error) {
+    addItem(target, 'تعذر تحميل الدروس', error.message);
+    return;
+  }
 
-  <script type="module">
-    import { supabase } from './supabase.js';
+  if (!data || data.length === 0) {
+    addItem(target, 'لا توجد دروس حاليًا', 'ستظهر الدروس هنا بعد إضافتها إلى قاعدة البيانات.');
+    return;
+  }
 
-    const body = document.body;
-    const langBtn = document.getElementById("langBtn");
-    const themeBtn = document.getElementById("themeBtn");
-    let lang = "ar";
+  data.forEach(lesson => {
+    const card = document.createElement('article');
+    card.className = 'data-item';
 
-    langBtn.addEventListener("click", () => {
-      lang = lang === "ar" ? "en" : "ar";
-      document.documentElement.lang = lang;
-      document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    const heading = document.createElement('h3');
+    heading.textContent = lesson.title || 'درس';
+    card.appendChild(heading);
 
-      document.querySelectorAll("[data-ar][data-en]").forEach(el => {
-        el.textContent = el.dataset[lang];
-      });
+    const description = document.createElement('p');
+    description.textContent = lesson.description || '';
+    card.appendChild(description);
 
-      langBtn.textContent = lang === "ar" ? "EN" : "عربي";
-    });
-
-    themeBtn.addEventListener("click", () => {
-      body.classList.toggle("light");
-      themeBtn.textContent = body.classList.contains("light") ? "☾" : "☀";
-    });
-
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-
-    document.querySelectorAll(".reveal").forEach(el => {
-      observer.observe(el);
-    });
-
-    const signupForm = document.getElementById('signupForm');
-    const loginForm = document.getElementById('loginForm');
-    const signupMessage = document.getElementById('signupMessage');
-    const loginMessage = document.getElementById('loginMessage');
-    const accountMessage = document.getElementById('accountMessage');
-    const authForms = document.getElementById('authForms');
-    const profileSummary = document.getElementById('profileSummary');
-    const logoutBtn = document.getElementById('logoutBtn');
-
-    function msg(el, text) {
-      el.textContent = text;
+    if (lesson.content_url) {
+      const link = document.createElement('a');
+      link.className = 'button primary';
+      link.href = lesson.content_url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = 'فتح الدرس ↗';
+      card.appendChild(link);
     }
 
-    function translated(ar, en) {
-      return lang === 'ar' ? ar : en;
+    target.appendChild(card);
+  });
+}
+
+async function refreshSession() {
+  const {data:{session}, error:sessionError} = await supabase.auth.getSession();
+
+  if (sessionError || !session) {
+    showDashboard(false);
+    $('authForms').classList.remove('hidden');
+    return;
+  }
+
+  const {data:profile, error} = await supabase
+    .from('profiles')
+    .select('full_name,role,approval_status,points')
+    .eq('id',session.user.id)
+    .maybeSingle();
+
+  if (error || !profile) {
+    showDashboard(false);
+    showMessage('accountMessage',
+      'تم تسجيل الدخول لكن تعذر قراءة البروفايل. راجع إعدادات RLS في Supabase: ' +
+      (error?.message || 'Profile not found'));
+    return;
+  }
+
+  $('dashName').textContent = profile.full_name || session.user.email || '—';
+  $('dashPoints').textContent = String(profile.points ?? 0);
+  $('dashRole').textContent = 'الدور: ' + profile.role;
+
+  const statusLabels = {
+    approved: 'تمت الموافقة',
+    pending: 'في انتظار موافقة المسؤول',
+    rejected: 'تم رفض الحساب'
+  };
+  $('dashStatus').textContent =
+    statusLabels[profile.approval_status] || profile.approval_status || 'غير معروف';
+
+  showDashboard(true);
+
+  await Promise.all([
+    loadEvents('dashboardEventsList'),
+    loadLessons('dashboardLessonsList')
+  ]);
+}
+
+$('signupForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  showMessage('signupMessage','جاري إنشاء الحساب...');
+
+  const fullName = $('signupName').value.trim();
+  const email = $('signupEmail').value.trim();
+  const password = $('signupPassword').value;
+
+  const {data,error} = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data:{full_name:fullName},
+      emailRedirectTo:location.origin + location.pathname
     }
+  });
 
-    signupForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
+  if (error) {
+    showMessage('signupMessage',error.message);
+    return;
+  }
 
-      msg(signupMessage, translated('جاري إنشاء الحساب...', 'Creating account...'));
+  showMessage('signupMessage',
+    data.session
+      ? 'تم إنشاء الحساب. حسابك في انتظار موافقة مسؤول الخدمة.'
+      : 'تم إرسال رسالة تحقق لبريدك الإلكتروني. أكّد البريد ثم سجّل الدخول. حسابك يحتاج أيضًا موافقة المسؤول.');
+});
 
-      const fullName = document.getElementById('signupName').value.trim();
-      const email = document.getElementById('signupEmail').value.trim();
-      const password = document.getElementById('signupPassword').value;
+$('loginForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  showMessage('loginMessage','جاري تسجيل الدخول...');
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { full_name: fullName },
-          emailRedirectTo: window.location.origin + window.location.pathname
-        }
-      });
+  const email = $('loginEmail').value.trim();
+  const password = $('loginPassword').value;
 
-      if (error) {
-        msg(signupMessage, error.message);
-        return;
-      }
+  const {error} = await supabase.auth.signInWithPassword({email,password});
 
-      msg(signupMessage, data.session
-        ? translated(
-            'تم إنشاء الحساب. حسابك في انتظار موافقة مسؤول الخدمة.',
-            'Account created. Your account is waiting for ministry admin approval.'
-          )
-        : translated(
-            'تم إرسال رسالة تحقق إلى بريدك الإلكتروني. افتحها لتأكيد الحساب، ثم سجّل الدخول. حسابك سيظل في انتظار موافقة المسؤول.',
-            'A confirmation email was sent. Verify your email, then sign in. Your account will still need admin approval.'
-          ));
-    });
+  if (error) {
+    showMessage('loginMessage',error.message);
+    return;
+  }
 
-    loginForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
+  showMessage('loginMessage','تم تسجيل الدخول بنجاح.');
+  await refreshSession();
+});
 
-      msg(loginMessage, translated('جاري تسجيل الدخول...', 'Signing in...'));
+async function logout() {
+  const {error} = await supabase.auth.signOut();
+  if (error) {
+    showMessage('accountMessage',error.message);
+    return;
+  }
 
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
+  showDashboard(false);
+  $('authForms').classList.remove('hidden');
+  location.hash = 'account';
+}
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+$('dashboardLogoutBtn').addEventListener('click',logout);
 
-      if (error) {
-        msg(loginMessage, error.message);
-        return;
-      }
+supabase.auth.onAuthStateChange((event,session) => {
+  setTimeout(() => refreshSession(),0);
+});
 
-      msg(loginMessage, translated('تم تسجيل الدخول.', 'Signed in.'));
-      await refreshSession();
-    });
-
-    logoutBtn.addEventListener('click', async () => {
-      const { error } = await supabase.auth.signOut();
-
-      if (error) {
-        msg(accountMessage, error.message);
-      } else {
-        msg(accountMessage, translated('تم تسجيل الخروج.', 'Signed out.'));
-        await refreshSession();
-      }
-    });
-
-    async function refreshSession() {
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (!session) {
-        authForms.classList.remove('hidden');
-        profileSummary.classList.add('hidden');
-        logoutBtn.classList.add('hidden');
-        return;
-      }
-
-      authForms.classList.add('hidden');
-      profileSummary.classList.remove('hidden');
-      logoutBtn.classList.remove('hidden');
-
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('full_name, role, approval_status, points')
-        .eq('id', session.user.id)
-        .maybeSingle();
-
-      if (error || !profile) {
-        profileSummary.textContent = translated(
-          'تم تسجيل الدخول، لكن تعذر تحميل الملف الشخصي. تأكد من إعداد قاعدة البيانات.',
-          'Signed in, but the profile could not be loaded. Check the database setup.'
-        );
-        return;
-      }
-
-      const status = profile.approval_status === 'approved'
-        ? translated('تمت الموافقة', 'Approved')
-        : profile.approval_status === 'rejected'
-          ? translated('تم رفض الحساب', 'Rejected')
-          : translated('في انتظار موافقة المسؤول', 'Pending admin approval');
-
-      profileSummary.textContent =
-        `${translated('الاسم', 'Name')}: ${profile.full_name || ''} · ` +
-        `${translated('الدور', 'Role')}: ${profile.role} · ` +
-        `${translated('الحالة', 'Status')}: ${status} · ` +
-        `${translated('النقاط', 'Points')}: ${profile.points}`;
-
-      msg(accountMessage, '');
-    }
-
-    function addDataItem(container, title, description, extra) {
-      const card = document.createElement('article');
-      card.className = 'data-item reveal visible';
-
-      const heading = document.createElement('h3');
-      heading.textContent = title || translated('بدون عنوان', 'Untitled');
-      card.appendChild(heading);
-
-      if (description) {
-        const paragraph = document.createElement('p');
-        paragraph.textContent = description;
-        card.appendChild(paragraph);
-      }
-
-      if (extra) {
-        const paragraph = document.createElement('p');
-        paragraph.textContent = extra;
-        card.appendChild(paragraph);
-      }
-
-      container.appendChild(card);
-    }
-
-    async function loadPublicContent() {
-      const eventsList = document.getElementById('eventsList');
-      const lessonsList = document.getElementById('lessonsList');
-
-      eventsList.replaceChildren();
-      lessonsList.replaceChildren();
-
-      const { data: events, error: eventsError } = await supabase
-        .from('events')
-        .select('title, description, location, starts_at')
-        .order('starts_at', { ascending: true });
-
-      if (eventsError) {
-        addDataItem(
-          eventsList,
-          translated('تعذر تحميل الفعاليات', 'Could not load events'),
-          eventsError.message
-        );
-      } else if (!events || events.length === 0) {
-        addDataItem(
-          eventsList,
-          translated('لا توجد فعاليات معلنة حاليًا', 'No events published yet'),
-          translated(
-            'ستظهر الفعاليات هنا بعد إضافتها إلى قاعدة البيانات.',
-            'Events will appear here after they are added to the database.'
-          )
-        );
-      } else {
-        events.forEach(item => {
-          const date = item.starts_at
-            ? new Date(item.starts_at).toLocaleString(lang === 'ar' ? 'ar-EG' : 'en-US')
-            : '';
-
-          addDataItem(
-            eventsList,
-            item.title,
-            item.description,
-            [item.location, date].filter(Boolean).join(' · ')
-          );
-        });
-      }
-
-      const { data: lessons, error: lessonsError } = await supabase
-        .from('lessons')
-        .select('title, description, content_url')
-        .order('id', { ascending: false });
-
-      if (lessonsError) {
-        addDataItem(
-          lessonsList,
-          translated('تعذر تحميل الدروس', 'Could not load lessons'),
-          lessonsError.message
-        );
-      } else if (!lessons || lessons.length === 0) {
-        addDataItem(
-          lessonsList,
-          translated('لا توجد دروس منشورة حاليًا', 'No lessons published yet'),
-          translated(
-            'ستظهر المواد هنا بعد إضافتها إلى قاعدة البيانات.',
-            'Lessons will appear here after they are added to the database.'
-          )
-        );
-      } else {
-        lessons.forEach(item => {
-          addDataItem(
-            lessonsList,
-            item.title,
-            item.description,
-            item.content_url
-          );
-        });
-      }
-    }
-
-    supabase.auth.onAuthStateChange(() => {
-      setTimeout(() => refreshSession(), 0);
-    });
-
-    await Promise.all([
-      refreshSession(),
-      loadPublicContent()
-    ]);
-  </script>
+await Promise.all([
+  loadEvents('eventsList'),
+  loadLessons('lessonsList'),
+  refreshSession()
+]);
+</script>
 </body>
 </html>
