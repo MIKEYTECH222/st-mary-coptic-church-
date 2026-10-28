@@ -1,914 +1,940 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>شبابنا | خدمة الشباب</title>
-
-  <style>
-    :root {
-      --bg:#080b16;
-      --text:#f8f9ff;
-      --muted:#a6adc4;
-      --glass:rgba(255,255,255,.075);
-      --border:rgba(255,255,255,.15);
-      --primary:#c8dcff;
-      --danger:#ffaaaa;
-    }
-
-    body.light {
-      --bg:#edf1fb;
-      --text:#171c30;
-      --muted:#626b83;
-      --glass:rgba(255,255,255,.75);
-      --border:rgba(55,70,110,.18);
-    }
-
-    * { box-sizing:border-box; }
-
-    html { scroll-behavior:smooth; }
-
-    body {
-      margin:0;
-      font-family:Arial,Tahoma,sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      min-height:100vh;
-      transition:background .25s,color .25s;
-    }
-
-    button,input,select,textarea { font:inherit; }
-
-    button,a { cursor:pointer; }
-
-    a { color:inherit;text-decoration:none; }
-
-    button,.button {
-      border:1px solid var(--border);
-      border-radius:12px;
-      padding:11px 15px;
-      background:var(--glass);
-      color:var(--text);
-      display:inline-block;
-    }
-
-    button:hover,.button:hover { opacity:.85; }
-
-    .primary {
-      background:linear-gradient(135deg,#d5dcff,#a8dfff);
-      color:#111731;
-      border:0;
-      font-weight:bold;
-    }
-
-    .danger { color:var(--danger); }
-
-    .glass {
-      background:var(--glass);
-      border:1px solid var(--border);
-      backdrop-filter:blur(20px);
-      box-shadow:0 16px 50px rgba(0,0,0,.08);
-    }
-
-    .wrap { max-width:1150px;margin:auto;padding:18px; }
-
-    nav {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      padding:15px;
-      border-radius:18px;
-      margin-bottom:22px;
-    }
-
-    .brand { font-size:21px;font-weight:bold; }
-
-    .nav-actions { display:flex;gap:8px;flex-wrap:wrap; }
-
-    .hero {
-      text-align:center;
-      padding:65px 20px;
-      border-radius:25px;
-      margin-bottom:25px;
-    }
-
-    h1 { font-size:clamp(32px,6vw,58px); }
-
-    h2 { margin-top:0; }
-
-    .muted { color:var(--muted);line-height:1.8; }
-
-    .panel {
-      padding:23px;
-      border-radius:22px;
-      margin:20px 0;
-    }
-
-    .grid {
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:16px;
-    }
-
-    .form-card {
-      border:1px solid var(--border);
-      border-radius:17px;
-      padding:18px;
-      min-width:0;
-    }
-
-    label {
-      display:block;
-      margin:12px 0 7px;
-      color:var(--muted);
-      font-size:14px;
-    }
-
-    input,select,textarea {
-      display:block;
-      width:100%;
-      padding:12px;
-      border:1px solid var(--border);
-      border-radius:11px;
-      background:var(--bg);
-      color:var(--text);
-    }
-
-    textarea { resize:vertical;min-height:85px; }
-
-    form button { margin-top:14px; }
-
-    .status {
-      white-space:pre-wrap;
-      overflow-wrap:anywhere;
-      line-height:1.7;
-      color:var(--muted);
-    }
-
-    .hidden { display:none!important; }
-
-    .list { display:grid;gap:12px; }
-
-    .item {
-      padding:17px;
-      border:1px solid var(--border);
-      border-radius:15px;
-      background:var(--glass);
-      overflow-wrap:anywhere;
-    }
-
-    .item h3 { margin-top:0; }
-
-    .item p {
-      color:var(--muted);
-      line-height:1.8;
-      white-space:pre-wrap;
-    }
-
-    .stats {
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:12px;
-    }
-
-    .stat {
-      padding:18px;
-      border-radius:16px;
-    }
-
-    .stat strong {
-      display:block;
-      font-size:25px;
-      margin-top:10px;
-      overflow-wrap:anywhere;
-    }
-
-    .section-links {
-      display:flex;
-      gap:9px;
-      flex-wrap:wrap;
-      margin:15px 0;
-    }
-
-    .section-links a {
-      border:1px solid var(--border);
-      padding:9px 12px;
-      border-radius:10px;
-    }
-
-    footer {
-      text-align:center;
-      padding:25px;
-      color:var(--muted);
-    }
-
-    @media(max-width:700px) {
-      .grid,.stats { grid-template-columns:1fr; }
-      .panel { padding:16px; }
-      .wrap { padding:10px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b16">
+<title>شبابنا | خدمة الشباب</title>
+<style>
+:root{--bg:#080b16;--text:#f8f9ff;--muted:#a6adc4;--glass:rgba(255,255,255,.075);--border:rgba(255,255,255,.15)}
+body.light{--bg:#edf1fb;--text:#171c30;--muted:#626b83;--glass:rgba(255,255,255,.7);--border:rgba(55,70,110,.18)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;font-family:Arial,Tahoma,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:.2s}
+button,input,textarea,select{font:inherit}
+button,a{cursor:pointer}
+a{color:inherit;text-decoration:none}
+button,.btn{border:1px solid var(--border);border-radius:12px;padding:11px 15px;background:var(--glass);color:var(--text);display:inline-block}
+button:hover,.btn:hover{filter:brightness(1.1)}
+.primary{background:linear-gradient(135deg,#d5dcff,#a8dfff);color:#111731;border:0;font-weight:bold}
+.danger{border-color:#ff9caa;color:#ff9caa}
+.glass{background:var(--glass);border:1px solid var(--border);backdrop-filter:blur(20px);box-shadow:0 15px 45px #0001}
+.nav-wrap{position:sticky;top:8px;z-index:5;padding:0 3%;margin-top:8px}
+nav{max-width:1150px;margin:auto;padding:12px 18px;border-radius:18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-weight:bold;font-size:19px}
+.nav-links,.actions{display:flex;gap:12px;align-items:center}
+.nav-links{color:var(--muted);font-size:14px}
+main,.dashboard{max-width:1150px;margin:auto;padding:0 22px}
+.hero{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 0}
+.eyebrow,.pill{border:1px solid var(--border);background:var(--glass);border-radius:30px;padding:8px 13px;color:var(--muted);font-size:13px}
+h1{font-size:clamp(38px,7vw,70px);line-height:1.2;margin:22px 0 12px}
+.gradient{background:linear-gradient(100deg,#c3caff,#a0e0ff,#e1d0ff);color:transparent;background-clip:text}
+.hero p,.muted{color:var(--muted);line-height:1.9}
+.hero p{max-width:650px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.section{padding:30px 0 45px}
+.section h2{font-size:clamp(25px,4vw,35px)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.feature,.panel,.form-card,.data-item,.stat{padding:20px;border-radius:19px}
+.feature p,.data-item p{color:var(--muted);line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+.account-grid,.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.form-card{border:1px solid var(--border);background:var(--glass)}
+label{display:block;color:var(--muted);font-size:14px;margin:12px 0 6px}
+input,textarea,select{width:100%;padding:11px;border:1px solid var(--border);border-radius:11px;background:var(--bg);color:var(--text)}
+textarea{min-height:85px;resize:vertical}
+.form-card button{margin-top:13px}
+.status{color:var(--muted);line-height:1.7;overflow-wrap:anywhere}
+.data-list{display:grid;gap:12px}
+.data-item h3{margin:0 0 8px}
+.hidden,.page-hidden{display:none!important}
+.dashboard{padding-top:25px;padding-bottom:50px}
+.dashboard-header,.dashboard-block{padding:23px;border-radius:22px;margin-bottom:17px;scroll-margin-top:95px}
+.dashboard-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.stat-label{color:var(--muted);font-size:13px}
+.stat-value{font-weight:bold;font-size:23px;margin-top:10px;overflow-wrap:anywhere}
+.dashboard-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.dashboard-nav a{padding:9px 12px;border:1px solid var(--border);border-radius:10px}
+.inline{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+footer{text-align:center;color:var(--muted);border-top:1px solid var(--border);padding:25px}
+@media(max-width:750px){
+.nav-links{display:none}
+.grid,.account-grid,.admin-grid,.dashboard-cards{grid-template-columns:1fr}
+main,.dashboard{padding-left:13px;padding-right:13px}
+.hero{min-height:52vh}
+.dashboard-header,.dashboard-block{padding:16px}
+}
+</style>
 </head>
-
 <body>
-<div class="wrap">
 
-  <nav class="glass">
-    <a class="brand" href="#home">✦ شبابنا</a>
-    <div class="nav-actions">
-      <button id="langBtn" type="button">EN</button>
-      <button id="themeBtn" type="button">☀</button>
-      <button id="logoutBtn" type="button" class="hidden">تسجيل الخروج</button>
-    </div>
-  </nav>
-
-  <main id="publicPage">
-    <section class="hero glass" id="home">
-      <p>✦ مكان واحد يجمعنا</p>
-      <h1>إيمان يجمعنا،<br>ومحبة تكبر بينا.</h1>
-      <p class="muted">
-        مساحة خدمة الشباب لمتابعة الفعاليات والدروس والنقاط.
-      </p>
-      <a class="button primary" href="#account">حسابك الشخصي</a>
-    </section>
-
-    <section class="panel glass" id="events">
-      <h2>الفعاليات واللقاءات</h2>
-      <div id="eventsList" class="list">
-        <p class="muted">جاري تحميل الفعاليات...</p>
-      </div>
-    </section>
-
-    <section class="panel glass" id="lessons">
-      <h2>الدروس والمواد</h2>
-      <div id="lessonsList" class="list">
-        <p class="muted">جاري تحميل الدروس...</p>
-      </div>
-    </section>
-
-    <section class="panel glass" id="account">
-      <h2>حسابك الشخصي</h2>
-      <p class="muted">
-        الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.
-      </p>
-
-      <div id="authForms" class="grid">
-        <form id="signupForm" class="form-card">
-          <h3>إنشاء حساب</h3>
-          <label for="signupName">الاسم الكامل</label>
-          <input id="signupName" required maxlength="100" autocomplete="name">
-
-          <label for="signupEmail">البريد الإلكتروني</label>
-          <input id="signupEmail" type="email" required autocomplete="email">
-
-          <label for="signupPassword">كلمة المرور (8 أحرف على الأقل)</label>
-          <input id="signupPassword" type="password" minlength="8"
-                 required autocomplete="new-password">
-
-          <button class="primary" type="submit">إنشاء الحساب</button>
-          <p id="signupMessage" class="status" role="status"></p>
-        </form>
-
-        <form id="loginForm" class="form-card">
-          <h3>تسجيل الدخول</h3>
-          <label for="loginEmail">البريد الإلكتروني</label>
-          <input id="loginEmail" type="email" required autocomplete="email">
-
-          <label for="loginPassword">كلمة المرور</label>
-          <input id="loginPassword" type="password" required
-                 autocomplete="current-password">
-
-          <button class="primary" type="submit">دخول</button>
-          <p id="loginMessage" class="status" role="status"></p>
-        </form>
-      </div>
-
-      <p id="accountMessage" class="status" role="status"></p>
-    </section>
-  </main>
-
-  <main id="dashboard" class="hidden">
-    <section class="panel glass">
-      <h1 style="font-size:36px">أهلاً بيك في خدمة الشباب</h1>
-      <p class="muted">مساحتك الشخصية حسب صلاحيات حسابك.</p>
-
-      <div class="section-links">
-        <a href="#profilePanel">البروفايل</a>
-        <a href="#myEvents">الفعاليات</a>
-        <a href="#myLessons">الدروس</a>
-        <a href="#servantPanel">إدارة النقاط</a>
-        <a href="#adminPanel">إدارة المجموعات</a>
-      </div>
-    </section>
-
-    <section id="profilePanel" class="panel glass">
-      <h2>البروفايل والنقاط</h2>
-      <div class="stats">
-        <div class="stat glass">
-          الاسم
-          <strong id="dashName">—</strong>
-        </div>
-        <div class="stat glass">
-          رصيد النقاط
-          <strong id="dashPoints">0</strong>
-        </div>
-        <div class="stat glass">
-          حالة الحساب
-          <strong id="dashStatus">—</strong>
-        </div>
-      </div>
-      <p id="dashRole" class="muted"></p>
-    </section>
-
-    <section id="myEvents" class="panel glass">
-      <h2>الفعاليات</h2>
-      <div id="dashboardEventsList" class="list"></div>
-    </section>
-
-    <section id="myLessons" class="panel glass">
-      <h2>الدروس</h2>
-      <div id="dashboardLessonsList" class="list"></div>
-    </section>
-
-    <section id="servantPanel" class="panel glass hidden">
-      <h2>إدارة نقاط الأعضاء</h2>
-      <p class="muted">
-        اختار عضوًا من المجموعات المسندة إليك، ثم اكتب النقاط وسبب الإضافة أو الخصم.
-      </p>
-
-      <form id="pointsForm" class="form-card">
-        <label for="pointsMember">العضو</label>
-        <select id="pointsMember" required>
-          <option value="">جاري تحميل الأعضاء...</option>
-        </select>
-
-        <label for="pointsAmount">عدد النقاط (السالب للخصم)</label>
-        <input id="pointsAmount" type="number" min="-100" max="100"
-               step="1" required>
-
-        <label for="pointsReason">السبب</label>
-        <input id="pointsReason" maxlength="200" required
-               placeholder="مثال: حضور التسبحة">
-
-        <button class="primary" type="submit">تنفيذ العملية</button>
-        <p id="pointsMessage" class="status" role="status"></p>
-      </form>
-    </section>
-
-    <section id="adminPanel" class="panel glass hidden">
-      <h2>إدارة الخدام والمجموعات</h2>
-      <p class="muted">
-        الأدمن يستطيع تعيين الخادم على أكثر من مجموعة. لازم تكون المجموعة موجودة بالفعل.
-      </p>
-
-      <form id="assignForm" class="form-card">
-        <label for="servantSelect">حساب الخادم</label>
-        <select id="servantSelect" required>
-          <option value="">جاري تحميل الخدام...</option>
-        </select>
-
-        <label for="groupSelect">المجموعة</label>
-        <select id="groupSelect" required>
-          <option value="">جاري تحميل المجموعات...</option>
-        </select>
-
-        <button class="primary" type="submit">تعيين الخادم للمجموعة</button>
-        <p id="assignMessage" class="status" role="status"></p>
-      </form>
-
-      <h3>التعيينات الحالية</h3>
-      <div id="assignmentsList" class="list"></div>
-    </section>
-
-    <section class="panel glass">
-      <h2>ملاحظة</h2>
-      <p class="muted">
-        الاختبارات وتصحيح الإجابات لم يتم تفعليهما في هذه النسخة.
-      </p>
-    </section>
-  </main>
+<div class="nav-wrap">
+<nav class="glass">
+<a class="brand" href="#home">✦ شبابنا</a>
+<div class="nav-links">
+<a href="#home">الرئيسية</a>
+<a href="#events">الفعاليات</a>
+<a href="#lessons">الدروس</a>
+<a href="#account">الحساب</a>
 </div>
+<div class="actions">
+<button id="langBtn" type="button">EN</button>
+<button id="themeBtn" type="button">☀</button>
+</div>
+</nav>
+</div>
+
+<main id="publicPage">
+<section class="hero" id="home">
+<span class="eyebrow">✦ مكان واحد يجمعنا</span>
+<h1>إيمان يجمعنا،<br><span class="gradient">ومحبة تكبر بينا.</span></h1>
+<p>مساحة خدمة الشباب للقاءاتنا ودروسنا وفعالياتنا، وكل خطوة بنكبر فيها مع بعض.</p>
+<div class="hero-actions">
+<a class="btn primary" href="#sections">اكتشف الموقع ↗</a>
+<a class="btn" href="#account">دخول الحساب</a>
+</div>
+</section>
+
+<section class="section" id="sections">
+<h2>كل حاجة في مكانها.</h2>
+<div class="grid">
+<a class="feature glass" href="#events"><h3>✧ الفعاليات واللقاءات</h3><p>تابع مواعيد الاجتماعات والأنشطة القادمة.</p></a>
+<a class="feature glass" href="#lessons"><h3>▤ الدروس والمراجع</h3><p>الدروس والملفات والمواد الدراسية.</p></a>
+<a class="feature glass" href="#account"><h3>♧ حسابك ونقاطك</h3><p>تابع حسابك ونقاطك بعد تسجيل الدخول.</p></a>
+</div>
+</section>
+
+<section class="section" id="events">
+<h2>الفعاليات القادمة</h2>
+<div id="eventsList" class="data-list"><p class="muted">جاري التحميل...</p></div>
+</section>
+
+<section class="section" id="lessons">
+<h2>الدروس والمواد</h2>
+<div id="lessonsList" class="data-list"><p class="muted">جاري التحميل...</p></div>
+</section>
+
+<section class="section" id="account">
+<div class="panel glass">
+<h2>مساحتك الشخصية</h2>
+<p class="muted">الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.</p>
+
+<div id="authForms" class="account-grid">
+<form id="signupForm" class="form-card">
+<h3>إنشاء حساب</h3>
+<label>الاسم الكامل</label>
+<input id="signupName" required maxlength="100">
+<label>البريد الإلكتروني</label>
+<input id="signupEmail" type="email" required>
+<label>كلمة المرور (8 أحرف على الأقل)</label>
+<input id="signupPassword" type="password" minlength="8" required>
+<button class="primary">إنشاء الحساب</button>
+<p id="signupMessage" class="status" role="status"></p>
+</form>
+
+<form id="loginForm" class="form-card">
+<h3>تسجيل الدخول</h3>
+<label>البريد الإلكتروني</label>
+<input id="loginEmail" type="email" required>
+<label>كلمة المرور</label>
+<input id="loginPassword" type="password" required>
+<button class="primary">دخول</button>
+<p id="loginMessage" class="status" role="status"></p>
+</form>
+</div>
+<p id="accountMessage" class="status" role="status"></p>
+</div>
+</section>
+</main>
+
+<section id="dashboard" class="dashboard page-hidden">
+<div class="dashboard-header glass">
+<span class="eyebrow">✦ مساحتك الشخصية</span>
+<h1>أهلاً بيك في خدمة الشباب</h1>
+<p class="muted">البروفايل والنقاط والمواعيد والدروس وإدارة الخدمة حسب صلاحية حسابك.</p>
+<div class="dashboard-nav">
+<a href="#dashboardProfile">البروفايل والنقاط</a>
+<a href="#dashboardEvents">المواعيد</a>
+<a href="#dashboardLessons">الدروس</a>
+<a href="#adminPanel" id="adminNavLink" class="hidden">لوحة الأدمن</a>
+<a href="#servantPanel" id="servantNavLink" class="hidden">لوحة الخادم</a>
+</div>
+</div>
+
+<div id="dashboardProfile" class="dashboard-block glass">
+<h2>البروفايل والنقاط</h2>
+<div class="dashboard-cards">
+<div class="stat glass"><div class="stat-label">الاسم</div><div id="dashName" class="stat-value">—</div></div>
+<div class="stat glass"><div class="stat-label">النقاط</div><div id="dashPoints" class="stat-value">0</div></div>
+<div class="stat glass"><div class="stat-label">حالة الحساب</div><div id="dashStatus" class="stat-value">—</div></div>
+</div>
+<p id="dashRole" class="muted"></p>
+<p id="pendingNotice" class="status"></p>
+</div>
+
+<div id="dashboardEvents" class="dashboard-block glass">
+<h2>مواعيد وفعاليات الخدمة</h2>
+<div id="dashboardEventsList" class="data-list"></div>
+</div>
+
+<div id="dashboardLessons" class="dashboard-block glass">
+<h2>الدروس والمواد</h2>
+<div id="dashboardLessonsList" class="data-list"></div>
+</div>
+
+<div id="adminPanel" class="dashboard-block glass hidden">
+<h2>لوحة تحكم الأدمن</h2>
+<p class="muted">إدارة الحسابات والمجموعات والخدام والدروس والفعاليات والنقاط.</p>
+
+<div class="admin-grid">
+<form id="createGroupForm" class="form-card">
+<h3>إنشاء مجموعة</h3>
+<label>اسم المجموعة</label>
+<input id="newGroupName" required maxlength="100" placeholder="مثال: إعدادي بنين">
+<button class="primary">إنشاء المجموعة</button>
+<p id="groupMessage" class="status"></p>
+</form>
+
+<form id="assignGroupForm" class="form-card">
+<h3>تعيين خادم لمجموعة</h3>
+<label>الخادم</label>
+<select id="assignServant" required><option value="">تحميل الخدام...</option></select>
+<label>المجموعة</label>
+<select id="assignGroup" required><option value="">تحميل المجموعات...</option></select>
+<button class="primary">حفظ التعيين</button>
+<p id="assignMessage" class="status"></p>
+</form>
+
+<form id="lessonForm" class="form-card">
+<h3>إضافة درس جديد</h3>
+<label>عنوان الدرس</label>
+<input id="lessonTitle" required maxlength="180">
+<label>وصف الدرس</label>
+<textarea id="lessonDescription" maxlength="3000"></textarea>
+<label>رابط فيديو أو ملف (اختياري)</label>
+<input id="lessonUrl" type="url" placeholder="https://...">
+<label>المجموعة المستهدفة</label>
+<select id="lessonGroup"><option value="">كل المجموعات</option></select>
+<button class="primary">نشر الدرس</button>
+<p id="lessonMessage" class="status"></p>
+</form>
+
+<form id="eventForm" class="form-card">
+<h3>إضافة فعالية أو اجتماع</h3>
+<label>عنوان الفعالية</label>
+<input id="eventTitle" required maxlength="180">
+<label>الوصف</label>
+<textarea id="eventDescription" maxlength="3000"></textarea>
+<label>المكان</label>
+<input id="eventLocation" maxlength="250">
+<label>التاريخ والوقت</label>
+<input id="eventDate" type="datetime-local" required>
+<label>المجموعة المستهدفة</label>
+<select id="eventGroup"><option value="">كل المجموعات</option></select>
+<button class="primary">إضافة الفعالية</button>
+<p id="eventMessage" class="status"></p>
+</form>
+
+<form id="pointsForm" class="form-card">
+<h3>إضافة أو خصم نقاط</h3>
+<label>العضو</label>
+<select id="pointsMember" required><option value="">تحميل الأعضاء...</option></select>
+<label>عدد النقاط (-100 إلى 100، بدون صفر)</label>
+<input id="pointsAmount" type="number" min="-100" max="100" required>
+<label>سبب التعديل</label>
+<input id="pointsReason" required maxlength="200" placeholder="حضور اجتماع، تسبيحة...">
+<button class="primary">حفظ النقاط</button>
+<p id="pointsMessage" class="status"></p>
+</form>
+</div>
+
+<div class="dashboard-block">
+<h3>الحسابات التي تنتظر الموافقة</h3>
+<div id="pendingUsersList" class="data-list"></div>
+</div>
+
+<div class="dashboard-block">
+<h3>الأعضاء والخدام</h3>
+<div id="peopleList" class="data-list"></div>
+</div>
+
+<div class="dashboard-block">
+<h3>تعيينات الخدام</h3>
+<div id="assignmentsList" class="data-list"></div>
+</div>
+
+<div class="dashboard-block">
+<h3>الدروس المنشورة</h3>
+<div id="adminLessonsList" class="data-list"></div>
+</div>
+
+<div class="dashboard-block">
+<h3>الفعاليات المنشورة</h3>
+<div id="adminEventsList" class="data-list"></div>
+</div>
+</div>
+
+<div id="servantPanel" class="dashboard-block glass hidden">
+<h2>لوحة الخادم</h2>
+<p class="muted">إضافة النقاط متاحة للأعضاء داخل المجموعات المسندة إليك.</p>
+<form id="servantPointsForm" class="form-card">
+<label>العضو</label>
+<select id="servantPointsMember" required></select>
+<label>عدد النقاط (-100 إلى 100، بدون صفر)</label>
+<input id="servantPointsAmount" type="number" min="-100" max="100" required>
+<label>السبب</label>
+<input id="servantPointsReason" maxlength="200" required>
+<button class="primary">حفظ النقاط</button>
+<p id="servantPointsMessage" class="status"></p>
+</form>
+</div>
+
+<button id="dashboardLogoutBtn" class="primary" type="button">تسجيل الخروج</button>
+</section>
 
 <footer>خدمة الشباب • إيمان ومحبة ونمو</footer>
 
 <script type="module">
-import { supabase } from "./supabase.js";
+import { supabase } from './supabase.js';
 
 const $ = id => document.getElementById(id);
-
 let currentUser = null;
 let currentProfile = null;
-let lang = "ar";
+let cachedGroups = [];
+let cachedPeople = [];
 
-function message(id, text) {
-  $(id).textContent = text || "";
+const msg = (id, text) => {
+  if ($(id)) $(id).textContent = text || '';
+};
+
+$('langBtn').addEventListener('click', () => {
+  alert('الواجهة الحالية بالعربية. الترجمة الإنجليزية الكاملة تحتاج إضافة النصوص المترجمة.');
+});
+
+$('themeBtn').addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  $('themeBtn').textContent = document.body.classList.contains('light') ? '☾' : '☀';
+});
+
+function showDashboard(on) {
+  $('publicPage').classList.toggle('page-hidden', on);
+  $('dashboard').classList.toggle('page-hidden', !on);
+  history.replaceState(null, '', location.pathname + location.search + (on ? '#dashboard' : '#account'));
+  if (on) window.scrollTo({top:0, behavior:'smooth'});
 }
 
-function escapeText(value) {
-  return String(value ?? "");
-}
-
-function showDashboard(show) {
-  $("publicPage").classList.toggle("hidden", show);
-  $("dashboard").classList.toggle("hidden", !show);
-  $("logoutBtn").classList.toggle("hidden", !show);
-  $("authForms").classList.toggle("hidden", show);
-
-  if (show) {
-    location.hash = "dashboard";
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  } else {
-    location.hash = "account";
-  }
-}
-
-function addItem(targetId, title, description, extra = "") {
+function addItem(targetId, title, description='', extra='') {
   const target = $(targetId);
-  const article = document.createElement("article");
-  article.className = "item";
+  if (!target) return;
 
-  const heading = document.createElement("h3");
-  heading.textContent = escapeText(title || "بدون عنوان");
-  article.appendChild(heading);
+  const card = document.createElement('article');
+  card.className = 'data-item';
+
+  const h = document.createElement('h3');
+  h.textContent = title || 'بدون عنوان';
+  card.appendChild(h);
 
   if (description) {
-    const p = document.createElement("p");
-    p.textContent = escapeText(description);
-    article.appendChild(p);
+    const p = document.createElement('p');
+    p.textContent = description;
+    card.appendChild(p);
   }
 
   if (extra) {
-    const p = document.createElement("p");
-    p.textContent = escapeText(extra);
-    article.appendChild(p);
+    const p = document.createElement('p');
+    p.className = 'muted';
+    p.textContent = extra;
+    card.appendChild(p);
   }
 
-  target.appendChild(article);
+  target.appendChild(card);
+  return card;
 }
 
-function formatDate(value) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleString("ar-EG");
+function fillSelect(id, items, labelFn, all=false) {
+  const select = $(id);
+  if (!select) return;
+
+  select.replaceChildren();
+  select.add(new Option(all ? 'كل المجموعات' : 'اختر...', ''));
+
+  items.forEach(item => select.add(new Option(labelFn(item), item.id)));
 }
 
 async function loadEvents(targetId) {
   const target = $(targetId);
+  if (!target) return;
   target.replaceChildren();
 
-  const { data, error } = await supabase
-    .from("events")
-    .select("title,description,location,starts_at")
-    .order("starts_at", { ascending: true });
+  const {data, error} = await supabase
+    .from('events')
+    .select('id,title,description,location,starts_at,group_id')
+    .order('starts_at', {ascending:true});
 
   if (error) {
-    addItem(targetId, "تعذر تحميل الفعاليات", error.message);
+    addItem(targetId, 'تعذر تحميل الفعاليات', error.message);
     return;
   }
 
   if (!data?.length) {
-    addItem(targetId, "لا توجد فعاليات حاليًا",
-      "ستظهر الفعاليات هنا بعد إضافتها.");
+    addItem(targetId, 'لا توجد فعاليات حاليًا', 'ستظهر الفعاليات بعد إضافتها.');
     return;
   }
 
   data.forEach(event => {
-    addItem(
+    const card = addItem(
       targetId,
       event.title,
       event.description,
-      [event.location, formatDate(event.starts_at)].filter(Boolean).join(" • ")
+      [event.location, event.starts_at ? new Date(event.starts_at).toLocaleString('ar-EG') : ''].filter(Boolean).join(' • ')
     );
+
+    if (currentProfile?.role === 'admin' && targetId === 'adminEventsList') {
+      const button = document.createElement('button');
+      button.className = 'danger';
+      button.textContent = 'حذف الفعالية';
+      button.onclick = async () => {
+        if (!confirm('حذف الفعالية؟')) return;
+        const result = await supabase.from('events').delete().eq('id', event.id);
+        if (result.error) alert(result.error.message);
+        else await refreshContent();
+      };
+      card.appendChild(button);
+    }
   });
 }
 
 async function loadLessons(targetId) {
   const target = $(targetId);
+  if (!target) return;
   target.replaceChildren();
 
-  const { data, error } = await supabase
-    .from("lessons")
-    .select("title,description,content_url")
-    .order("id", { ascending: false });
+  const {data, error} = await supabase
+    .from('lessons')
+    .select('id,title,description,content_url,group_id')
+    .order('id', {ascending:false});
 
   if (error) {
-    addItem(targetId, "تعذر تحميل الدروس", error.message);
+    addItem(targetId, 'تعذر تحميل الدروس', error.message);
     return;
   }
 
   if (!data?.length) {
-    addItem(targetId, "لا توجد دروس حاليًا",
-      "ستظهر الدروس هنا بعد إضافتها.");
+    addItem(targetId, 'لا توجد دروس حاليًا', 'ستظهر الدروس بعد نشرها من لوحة الأدمن.');
     return;
   }
 
   data.forEach(lesson => {
-    const article = document.createElement("article");
-    article.className = "item";
-
-    const heading = document.createElement("h3");
-    heading.textContent = lesson.title || "درس";
-    article.appendChild(heading);
-
-    const p = document.createElement("p");
-    p.textContent = lesson.description || "";
-    article.appendChild(p);
+    const card = addItem(targetId, lesson.title, lesson.description || '');
 
     if (lesson.content_url) {
-      const link = document.createElement("a");
-      link.className = "button primary";
+      const link = document.createElement('a');
+      link.className = 'btn primary';
       link.href = lesson.content_url;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = "فتح الدرس ↗";
-      article.appendChild(link);
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = 'فتح الدرس ↗';
+      card.appendChild(link);
     }
 
-    target.appendChild(article);
+    if (currentProfile?.role === 'admin' && targetId === 'adminLessonsList') {
+      const button = document.createElement('button');
+      button.className = 'danger';
+      button.textContent = 'حذف الدرس';
+      button.style.marginInlineStart = '8px';
+
+      button.onclick = async () => {
+        if (!confirm('حذف الدرس؟')) return;
+        const result = await supabase.from('lessons').delete().eq('id', lesson.id);
+        if (result.error) alert(result.error.message);
+        else await refreshContent();
+      };
+
+      card.appendChild(button);
+    }
   });
 }
 
-async function loadAssignedMembers() {
-  const select = $("pointsMember");
-  select.replaceChildren(new Option("اختار العضو", ""));
-
-  let groupIds = [];
-
-  if (currentProfile.role === "admin") {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id,full_name,group_id")
-      .eq("approval_status", "approved")
-      .order("full_name");
-
-    if (error) {
-      message("pointsMessage", "تعذر تحميل الأعضاء: " + error.message);
-      return;
-    }
-
-    (data || []).forEach(member => {
-      select.add(new Option(
-        member.full_name || member.id,
-        member.id
-      ));
-    });
-    return;
-  }
-
-  const { data: assignments, error: assignmentError } = await supabase
-    .from("servant_group_assignments")
-    .select("group_id");
-
-  if (assignmentError) {
-    message("pointsMessage", "تعذر تحميل مجموعاتك: " + assignmentError.message);
-    return;
-  }
-
-  groupIds = [...new Set((assignments || []).map(x => x.group_id))];
-
-  if (!groupIds.length) {
-    message("pointsMessage", "لم يتم تعيينك على أي مجموعة بعد.");
-    return;
-  }
-
-  const { data: members, error: membersError } = await supabase
-    .from("profiles")
-    .select("id,full_name,group_id")
-    .eq("approval_status", "approved")
-    .in("group_id", groupIds)
-    .order("full_name");
-
-  if (membersError) {
-    message("pointsMessage",
-      "تعذر تحميل أعضاء مجموعاتك. راجع سياسات RLS لجدول profiles: " +
-      membersError.message);
-    return;
-  }
-
-  (members || []).forEach(member => {
-    select.add(new Option(
-      member.full_name || member.id,
-      member.id
-    ));
-  });
-
-  if (!members?.length) {
-    message("pointsMessage", "لا يوجد أعضاء ظاهرون في مجموعاتك.");
-  }
-}
-
-async function loadAdminData() {
-  const servantsSelect = $("servantSelect");
-  const groupsSelect = $("groupSelect");
-
-  servantsSelect.replaceChildren(new Option("اختار الخادم", ""));
-  groupsSelect.replaceChildren(new Option("اختار المجموعة", ""));
-
-  const [servantsResult, groupsResult] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("id,full_name")
-      .eq("role", "servant")
-      .eq("approval_status", "approved")
-      .order("full_name"),
-
-    supabase
-      .from("ministry_groups")
-      .select("id,name")
-      .order("name")
+async function refreshContent() {
+  await Promise.all([
+    loadEvents('eventsList'),
+    loadEvents('dashboardEventsList'),
+    loadEvents('adminEventsList'),
+    loadLessons('lessonsList'),
+    loadLessons('dashboardLessonsList'),
+    loadLessons('adminLessonsList')
   ]);
+}
 
-  if (servantsResult.error) {
-    message("assignMessage",
-      "تعذر تحميل الخدام: " + servantsResult.error.message);
-  } else {
-    (servantsResult.data || []).forEach(servant => {
-      servantsSelect.add(new Option(
-        servant.full_name || servant.id,
-        servant.id
-      ));
-    });
+async function loadGroups() {
+  const {data, error} = await supabase
+    .from('ministry_groups')
+    .select('id,name')
+    .order('name');
+
+  if (error) {
+    msg('groupMessage', 'تعذر تحميل المجموعات: ' + error.message);
+    return;
   }
 
-  if (groupsResult.error) {
-    message("assignMessage",
-      "تعذر تحميل المجموعات: " + groupsResult.error.message);
-  } else {
-    (groupsResult.data || []).forEach(group => {
-      groupsSelect.add(new Option(group.name, group.id));
-    });
-  }
+  cachedGroups = data || [];
 
-  await loadAssignments();
+  fillSelect('assignGroup', cachedGroups, group => group.name);
+  fillSelect('lessonGroup', cachedGroups, group => group.name, true);
+  fillSelect('eventGroup', cachedGroups, group => group.name, true);
 }
 
 async function loadAssignments() {
-  const target = $("assignmentsList");
+  const target = $('assignmentsList');
   target.replaceChildren();
 
-  const { data, error } = await supabase
-    .from("servant_group_assignments")
-    .select("servant_id,group_id,profiles:servant_id(full_name),ministry_groups:group_id(name)")
-    .order("created_at", { ascending: false });
+  const {data, error} = await supabase
+    .from('servant_group_assignments')
+    .select('servant_id,group_id');
 
   if (error) {
-    addItem("assignmentsList", "تعذر تحميل التعيينات", error.message);
+    addItem('assignmentsList', 'تعذر تحميل التعيينات', error.message);
     return;
   }
 
   if (!data?.length) {
-    addItem("assignmentsList", "لا توجد تعيينات بعد", "");
+    addItem('assignmentsList', 'لا توجد تعيينات بعد');
     return;
   }
 
-  data.forEach(item => {
-    addItem(
-      "assignmentsList",
-      item.profiles?.full_name || item.servant_id,
-      item.ministry_groups?.name || item.group_id
+  data.forEach(assignment => {
+    const person = cachedPeople.find(p => p.id === assignment.servant_id);
+    const group = cachedGroups.find(g => g.id === assignment.group_id);
+
+    const card = addItem(
+      'assignmentsList',
+      person?.full_name || assignment.servant_id,
+      group?.name || assignment.group_id
     );
+
+    if (currentProfile?.role === 'admin') {
+      const button = document.createElement('button');
+      button.className = 'danger';
+      button.textContent = 'إلغاء التعيين';
+
+      button.onclick = async () => {
+        if (!confirm('إلغاء تعيين الخادم؟')) return;
+
+        const result = await supabase
+          .from('servant_group_assignments')
+          .delete()
+          .eq('servant_id', assignment.servant_id)
+          .eq('group_id', assignment.group_id);
+
+        if (result.error) alert(result.error.message);
+        else await loadAssignments();
+      };
+
+      card.appendChild(button);
+    }
   });
 }
 
-async function refreshSession() {
-  const { data, error } = await supabase.auth.getSession();
+async function loadAdminData() {
+  if (currentProfile?.role !== 'admin' || currentProfile?.approval_status !== 'approved') return;
 
-  if (error || !data.session) {
-    currentUser = null;
-    currentProfile = null;
-    showDashboard(false);
+  await loadGroups();
+
+  const {data, error} = await supabase
+    .from('profiles')
+    .select('id,full_name,role,approval_status,points,group_id')
+    .order('full_name');
+
+  if (error) {
+    msg('accountMessage', 'تعذر تحميل بيانات الإدارة: ' + error.message);
     return;
   }
 
-  currentUser = data.session.user;
+  cachedPeople = data || [];
 
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("id,full_name,role,approval_status,points,group_id")
-    .eq("id", currentUser.id)
+  fillSelect(
+    'assignServant',
+    cachedPeople.filter(p => p.role === 'servant' && p.approval_status === 'approved'),
+    p => p.full_name || p.id
+  );
+
+  fillSelect(
+    'pointsMember',
+    cachedPeople.filter(p => p.approval_status === 'approved' && p.role !== 'admin'),
+    p => (p.full_name || p.id) + ' — ' + p.role
+  );
+
+  const pending = $('pendingUsersList');
+  pending.replaceChildren();
+
+  const waiting = cachedPeople.filter(p => p.approval_status === 'pending');
+
+  if (!waiting.length) addItem('pendingUsersList', 'لا توجد حسابات معلّقة');
+
+  waiting.forEach(person => {
+    const card = addItem('pendingUsersList', person.full_name || person.id, person.id);
+
+    const approve = document.createElement('button');
+    approve.className = 'primary';
+    approve.textContent = 'موافقة';
+    approve.onclick = () => setApproval(person.id, 'approved');
+
+    const reject = document.createElement('button');
+    reject.className = 'danger';
+    reject.textContent = 'رفض';
+    reject.style.marginInlineStart = '8px';
+    reject.onclick = () => setApproval(person.id, 'rejected');
+
+    card.append(approve, reject);
+  });
+
+  const peopleList = $('peopleList');
+  peopleList.replaceChildren();
+
+  cachedPeople.forEach(person => {
+    const group = cachedGroups.find(g => g.id === person.group_id);
+
+    addItem(
+      'peopleList',
+      person.full_name || person.id,
+      `الدور: ${person.role || '—'} | الحالة: ${person.approval_status || '—'} | النقاط: ${person.points ?? 0}`,
+      `المجموعة: ${group?.name || 'بدون مجموعة'} | ID: ${person.id}`
+    );
+  });
+
+  await loadAssignments();
+  await Promise.all([
+    loadLessons('adminLessonsList'),
+    loadEvents('adminEventsList')
+  ]);
+}
+
+async function setApproval(userId, status) {
+  const {error} = await supabase
+    .from('profiles')
+    .update({approval_status:status})
+    .eq('id', userId);
+
+  if (error) {
+    alert('فشل تحديث الحساب. راجع صلاحيات UPDATE وسياسات RLS لجدول profiles.\n' + error.message);
+    return;
+  }
+
+  await loadAdminData();
+}
+
+async function loadServantMembers() {
+  const {data: assignments, error: assignmentError} = await supabase
+    .from('servant_group_assignments')
+    .select('group_id')
+    .eq('servant_id', currentUser.id);
+
+  if (assignmentError) {
+    msg('servantPointsMessage', 'تعذر تحميل المجموعات: ' + assignmentError.message);
+    return;
+  }
+
+  const groupIds = [...new Set((assignments || []).map(x => x.group_id))];
+
+  if (!groupIds.length) {
+    fillSelect('servantPointsMember', [], p => p.full_name);
+    msg('servantPointsMessage', 'حسابك غير معيّن لأي مجموعة.');
+    return;
+  }
+
+  const {data, error} = await supabase
+    .from('profiles')
+    .select('id,full_name,role,approval_status,group_id')
+    .in('group_id', groupIds)
+    .eq('approval_status', 'approved')
+    .neq('role', 'admin')
+    .order('full_name');
+
+  if (error) {
+    msg('servantPointsMessage', 'تعذر تحميل الأعضاء: ' + error.message);
+    return;
+  }
+
+  fillSelect('servantPointsMember', data || [], p => p.full_name || p.id);
+}
+
+async function refreshSession() {
+  const {data:{session}} = await supabase.auth.getSession();
+
+  if (!session) {
+    currentUser = null;
+    currentProfile = null;
+    showDashboard(false);
+    $('authForms').classList.remove('hidden');
+    return;
+  }
+
+  currentUser = session.user;
+
+  const {data:profile, error} = await supabase
+    .from('profiles')
+    .select('id,full_name,role,approval_status,points,group_id')
+    .eq('id', session.user.id)
     .maybeSingle();
 
-  if (profileError || !profile) {
+  if (error || !profile) {
     showDashboard(false);
-    message("accountMessage",
-      "تعذر تحميل بيانات الحساب: " +
-      (profileError?.message || "لم يتم العثور على الملف الشخصي"));
+    msg('accountMessage', 'تعذر تحميل البروفايل: ' + (error?.message || 'لم يتم العثور على profile'));
     return;
   }
 
   currentProfile = profile;
 
-  $("dashName").textContent =
-    profile.full_name || currentUser.email || "—";
-  $("dashPoints").textContent = String(profile.points ?? 0);
+  $('dashName').textContent = profile.full_name || session.user.email || '—';
+  $('dashPoints').textContent = String(profile.points ?? 0);
+  $('dashRole').textContent = 'الدور: ' + (profile.role || '—');
 
-  const statusLabels = {
-    approved: "تمت الموافقة",
-    pending: "في انتظار موافقة المسؤول",
-    rejected: "تم رفض الحساب"
-  };
+  $('dashStatus').textContent = ({
+    approved:'تمت الموافقة',
+    pending:'في انتظار الموافقة',
+    rejected:'تم رفض الحساب'
+  })[profile.approval_status] || profile.approval_status || '—';
 
-  $("dashStatus").textContent =
-    statusLabels[profile.approval_status] ||
-    profile.approval_status || "غير معروف";
-
-  $("dashRole").textContent = "الدور: " + profile.role;
+  $('pendingNotice').textContent =
+    profile.approval_status === 'pending' ? 'حسابك في انتظار موافقة المسؤول.' :
+    profile.approval_status === 'rejected' ? 'الحساب مرفوض حاليًا.' : '';
 
   showDashboard(true);
+  $('authForms').classList.add('hidden');
 
-  const approved = profile.approval_status === "approved";
-  const isAdmin = profile.role === "admin";
-  const isServant = profile.role === "servant";
+  const isAdmin = profile.role === 'admin' && profile.approval_status === 'approved';
+  const isServant = profile.role === 'servant' && profile.approval_status === 'approved';
 
-  $("servantPanel").classList.toggle(
-    "hidden", !(approved && (isAdmin || isServant))
-  );
-  $("adminPanel").classList.toggle("hidden", !(approved && isAdmin));
+  $('adminPanel').classList.toggle('hidden', !isAdmin);
+  $('adminNavLink').classList.toggle('hidden', !isAdmin);
+  $('servantPanel').classList.toggle('hidden', !isServant);
+  $('servantNavLink').classList.toggle('hidden', !isServant);
 
   await Promise.all([
-    loadEvents("dashboardEventsList"),
-    loadLessons("dashboardLessonsList")
+    loadEvents('dashboardEventsList'),
+    loadLessons('dashboardLessonsList')
   ]);
 
-  if (approved && (isAdmin || isServant)) {
-    await loadAssignedMembers();
-  }
-
-  if (approved && isAdmin) {
-    await loadAdminData();
-  }
+  if (isAdmin) await loadAdminData();
+  if (isServant) await loadServantMembers();
 }
 
-$("signupForm").addEventListener("submit", async event => {
+$('signupForm').addEventListener('submit', async event => {
   event.preventDefault();
-  message("signupMessage", "جاري إنشاء الحساب...");
+  msg('signupMessage', 'جاري إنشاء الحساب...');
 
-  const fullName = $("signupName").value.trim();
-  const email = $("signupEmail").value.trim();
-  const password = $("signupPassword").value;
+  const full_name = $('signupName').value.trim();
+  const email = $('signupEmail').value.trim();
+  const password = $('signupPassword').value;
 
-  const { data, error } = await supabase.auth.signUp({
+  const {data, error} = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      data: { full_name: fullName },
-      emailRedirectTo: location.origin + location.pathname
+    options:{
+      data:{full_name},
+      emailRedirectTo:location.origin + location.pathname
     }
   });
 
   if (error) {
-    message("signupMessage", error.message);
+    msg('signupMessage', error.message);
     return;
   }
 
-  message(
-    "signupMessage",
+  msg(
+    'signupMessage',
     data.session
-      ? "تم إنشاء الحساب. حسابك في انتظار موافقة المسؤول."
-      : "راجع بريدك الإلكتروني لتأكيد الحساب، ثم انتظر موافقة المسؤول."
+      ? 'تم إنشاء الحساب، وهو في انتظار موافقة الأدمن.'
+      : 'تم إرسال رسالة تأكيد للبريد. أكّد البريد ثم سجّل الدخول وانتظر الموافقة.'
   );
 });
 
-$("loginForm").addEventListener("submit", async event => {
+$('loginForm').addEventListener('submit', async event => {
   event.preventDefault();
-  message("loginMessage", "جاري تسجيل الدخول...");
+  msg('loginMessage', 'جاري تسجيل الدخول...');
 
-  const email = $("loginEmail").value.trim();
-  const password = $("loginPassword").value;
-
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password
+  const {error} = await supabase.auth.signInWithPassword({
+    email:$('loginEmail').value.trim(),
+    password:$('loginPassword').value
   });
 
   if (error) {
-    message("loginMessage", error.message);
+    msg('loginMessage', error.message);
     return;
   }
 
-  message("loginMessage", "تم تسجيل الدخول.");
+  msg('loginMessage', 'تم تسجيل الدخول.');
   await refreshSession();
 });
 
-$("logoutBtn").addEventListener("click", async () => {
-  const { error } = await supabase.auth.signOut();
+$('createGroupForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  if (currentProfile?.role !== 'admin') return;
+
+  msg('groupMessage', 'جاري إنشاء المجموعة...');
+
+  const {error} = await supabase
+    .from('ministry_groups')
+    .insert({name:$('newGroupName').value.trim()});
 
   if (error) {
-    message("accountMessage", error.message);
+    msg('groupMessage', 'فشل إنشاء المجموعة: ' + error.message);
     return;
   }
 
-  currentUser = null;
-  currentProfile = null;
-  showDashboard(false);
+  $('createGroupForm').reset();
+  msg('groupMessage', 'تم إنشاء المجموعة.');
+  await loadAdminData();
 });
 
-$("pointsForm").addEventListener("submit", async event => {
+$('assignGroupForm').addEventListener('submit', async event => {
   event.preventDefault();
-  message("pointsMessage", "جاري تنفيذ العملية...");
+  if (currentProfile?.role !== 'admin') return;
 
-  if (!currentProfile ||
-      !["admin", "servant"].includes(currentProfile.role) ||
-      currentProfile.approval_status !== "approved") {
-    message("pointsMessage", "ليس لديك صلاحية إضافة النقاط.");
+  const servant_id = $('assignServant').value;
+  const group_id = $('assignGroup').value;
+
+  if (!servant_id || !group_id) {
+    msg('assignMessage', 'اختار الخادم والمجموعة.');
     return;
   }
 
-  const memberId = $("pointsMember").value;
-  const amount = Number($("pointsAmount").value);
-  const reason = $("pointsReason").value.trim();
-
-  if (!memberId || !Number.isInteger(amount) ||
-      amount === 0 || amount < -100 || amount > 100 ||
-      !reason || reason.length > 200) {
-    message("pointsMessage", "راجع العضو وعدد النقاط والسبب.");
-    return;
-  }
-
-  const { error } = await supabase.rpc("award_points", {
-    p_member_id: memberId,
-    p_amount: amount,
-    p_reason: reason
-  });
+  const {error} = await supabase
+    .from('servant_group_assignments')
+    .upsert({servant_id, group_id, assigned_by:currentUser.id});
 
   if (error) {
-    message("pointsMessage", "فشلت العملية: " + error.message);
+    msg('assignMessage', 'فشل التعيين: ' + error.message);
     return;
   }
 
-  message("pointsMessage", "تم تسجيل النقاط بنجاح.");
-  $("pointsForm").reset();
-
-  await refreshSession();
-});
-
-$("assignForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  message("assignMessage", "جاري تعيين الخادم...");
-
-  if (!currentProfile ||
-      currentProfile.role !== "admin" ||
-      currentProfile.approval_status !== "approved") {
-    message("assignMessage", "هذه العملية للأدمن المعتمد فقط.");
-    return;
-  }
-
-  const servantId = $("servantSelect").value;
-  const groupId = $("groupSelect").value;
-
-  if (!servantId || !groupId) {
-    message("assignMessage", "اختار الخادم والمجموعة.");
-    return;
-  }
-
-  const { error } = await supabase
-    .from("servant_group_assignments")
-    .upsert({
-      servant_id: servantId,
-      group_id: groupId,
-      assigned_by: currentUser.id
-    }, {
-      onConflict: "servant_id,group_id"
-    });
-
-  if (error) {
-    message("assignMessage", "فشل التعيين: " + error.message);
-    return;
-  }
-
-  message("assignMessage", "تم تعيين الخادم للمجموعة.");
+  msg('assignMessage', 'تم تعيين الخادم للمجموعة.');
   await loadAssignments();
 });
 
-$("themeBtn").addEventListener("click", () => {
-  document.body.classList.toggle("light");
-  $("themeBtn").textContent =
-    document.body.classList.contains("light") ? "☾" : "☀";
+$('lessonForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  if (currentProfile?.role !== 'admin') return;
+
+  msg('lessonMessage', 'جاري نشر الدرس...');
+
+  const lesson = {
+    title:$('lessonTitle').value.trim(),
+    description:$('lessonDescription').value.trim(),
+    content_url:$('lessonUrl').value.trim() || null,
+    group_id:$('lessonGroup').value || null,
+    created_by:currentUser.id
+  };
+
+  const {error} = await supabase.from('lessons').insert(lesson);
+
+  if (error) {
+    msg('lessonMessage', 'فشل نشر الدرس: ' + error.message);
+    return;
+  }
+
+  $('lessonForm').reset();
+  msg('lessonMessage', 'تم نشر الدرس بنجاح.');
+  await refreshContent();
 });
 
-$("langBtn").addEventListener("click", () => {
-  lang = lang === "ar" ? "en" : "ar";
-  document.documentElement.lang = lang;
-  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-  $("langBtn").textContent = lang === "ar" ? "EN" : "عربي";
+$('eventForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  if (currentProfile?.role !== 'admin') return;
 
-  message("accountMessage",
-    lang === "en"
-      ? "Some dashboard content is still in Arabic."
-      : "تم الرجوع للواجهة العربية.");
+  const date = $('eventDate').value;
+
+  if (!date) {
+    msg('eventMessage', 'اختار التاريخ والوقت.');
+    return;
+  }
+
+  msg('eventMessage', 'جاري إضافة الفعالية...');
+
+  const eventData = {
+    title:$('eventTitle').value.trim(),
+    description:$('eventDescription').value.trim(),
+    location:$('eventLocation').value.trim(),
+    starts_at:new Date(date).toISOString(),
+    group_id:$('eventGroup').value || null,
+    created_by:currentUser.id
+  };
+
+  const {error} = await supabase.from('events').insert(eventData);
+
+  if (error) {
+    msg('eventMessage', 'فشل إضافة الفعالية: ' + error.message);
+    return;
+  }
+
+  $('eventForm').reset();
+  msg('eventMessage', 'تمت إضافة الفعالية.');
+  await refreshContent();
+});
+
+async function awardPoints(memberId, amount, reason, messageId) {
+  const number = Number(amount);
+
+  if (!memberId || !Number.isInteger(number) || number === 0 ||
+      number < -100 || number > 100 || !reason.trim()) {
+    msg(messageId, 'راجع العضو وعدد النقاط والسبب.');
+    return;
+  }
+
+  msg(messageId, 'جاري حفظ النقاط...');
+
+  const {error} = await supabase.rpc('award_points', {
+    p_member_id:memberId,
+    p_amount:number,
+    p_reason:reason.trim()
+  });
+
+  if (error) {
+    msg(messageId, 'فشل حفظ النقاط: ' + error.message);
+    return;
+  }
+
+  msg(messageId, 'تم تسجيل النقاط بنجاح.');
+  await refreshSession();
+}
+
+$('pointsForm').addEventListener('submit', event => {
+  event.preventDefault();
+  awardPoints(
+    $('pointsMember').value,
+    $('pointsAmount').value,
+    $('pointsReason').value,
+    'pointsMessage'
+  );
+});
+
+$('servantPointsForm').addEventListener('submit', event => {
+  event.preventDefault();
+  awardPoints(
+    $('servantPointsMember').value,
+    $('servantPointsAmount').value,
+    $('servantPointsReason').value,
+    'servantPointsMessage'
+  );
+});
+
+$('dashboardLogoutBtn').addEventListener('click', async () => {
+  const {error} = await supabase.auth.signOut();
+
+  if (error) {
+    msg('accountMessage', error.message);
+  } else {
+    showDashboard(false);
+    $('authForms').classList.remove('hidden');
+  }
 });
 
 supabase.auth.onAuthStateChange(() => {
-  setTimeout(() => refreshSession(), 0);
+  setTimeout(refreshSession, 0);
 });
 
 await Promise.all([
-  loadEvents("eventsList"),
-  loadLessons("lessonsList"),
+  loadEvents('eventsList'),
+  loadLessons('lessonsList'),
   refreshSession()
 ]);
 </script>
