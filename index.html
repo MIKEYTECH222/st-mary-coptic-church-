@@ -2,347 +2,487 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>شبابنا | خدمة الشباب</title>
-<style>
-:root {
-  --bg:#080b16; --text:#f8f9ff; --muted:#a6adc4;
-  --glass:rgba(255,255,255,.075); --border:rgba(255,255,255,.15);
-}
-body.light {
-  --bg:#edf1fb; --text:#171c30; --muted:#626b83;
-  --glass:rgba(255,255,255,.65); --border:rgba(55,70,110,.15);
-}
-* {box-sizing:border-box}
-html {scroll-behavior:smooth}
-body {
-  margin:0; font-family:Arial,Tahoma,sans-serif;
-  background:var(--bg);color:var(--text);min-height:100vh;
-  transition:background .3s,color .3s;
-}
-button,input {font:inherit}
-button,a {cursor:pointer}
-a {color:inherit;text-decoration:none}
-.ambient {position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
-.orb {position:absolute;width:350px;height:350px;border-radius:50%;filter:blur(100px);opacity:.3}
-.orb.one {background:#6658ff;top:-150px;right:-80px}
-.orb.two {background:#168ac7;bottom:-180px;left:-80px}
-.glass {
-  background:var(--glass);border:1px solid var(--border);
-  backdrop-filter:blur(24px) saturate(150%);
-  -webkit-backdrop-filter:blur(24px) saturate(150%);
-  box-shadow:0 16px 50px rgba(0,0,0,.08);
-}
-.nav-wrap {position:sticky;top:10px;z-index:10;padding:0 4%;margin-top:10px}
-nav {
-  max-width:1150px;margin:auto;padding:12px 18px;border-radius:20px;
-  display:flex;align-items:center;justify-content:space-between;gap:12px
-}
-.brand {display:flex;align-items:center;gap:10px;font-weight:bold}
-.brand-icon {
-  display:grid;place-items:center;width:40px;height:40px;border-radius:13px;
-  background:linear-gradient(135deg,#aabaff,#b8e8ff);color:#171a40;font-size:22px
-}
-.nav-links,.actions {display:flex;align-items:center;gap:12px}
-.nav-links {color:var(--muted);font-size:14px}
-.nav-links a:hover {color:var(--text)}
-button,.button {
-  border:1px solid var(--border);border-radius:13px;padding:11px 15px;
-  background:var(--glass);color:var(--text);display:inline-block
-}
-.primary {
-  background:linear-gradient(135deg,#d5dcff,#a8dfff);
-  color:#111731;border:0;font-weight:bold
-}
-button:hover,.button:hover {transform:translateY(-1px)}
-main {max-width:1150px;margin:auto;padding:0 22px}
-.hero {
-  min-height:70vh;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;text-align:center;padding:80px 0
-}
-.eyebrow {
-  display:inline-block;padding:9px 15px;border:1px solid var(--border);
-  background:var(--glass);border-radius:30px;color:var(--muted);font-size:13px
-}
-h1 {font-size:clamp(40px,7vw,75px);line-height:1.2;margin:25px 0 15px}
-.gradient {
-  background:linear-gradient(100deg,#c3caff,#a0e0ff,#e1d0ff);
-  color:transparent;background-clip:text;-webkit-background-clip:text
-}
-.hero p {max-width:600px;line-height:2;color:var(--muted)}
-.hero-actions {display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:15px}
-.section {padding:45px 0 65px}
-.section-head {margin-bottom:22px}
-.section-head h2 {font-size:clamp(27px,4vw,38px);margin-bottom:8px}
-.muted {color:var(--muted);line-height:1.8}
-.grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.feature {padding:24px;border-radius:22px;min-height:180px}
-.feature-icon {
-  display:grid;place-items:center;width:48px;height:48px;border-radius:15px;
-  background:rgba(180,195,255,.13);font-size:23px;margin-bottom:20px
-}
-.feature h3 {margin:0 0 10px}
-.feature p {color:var(--muted);line-height:1.8}
-.welcome {padding:30px;border-radius:25px}
-.account-panel {padding:25px;border-radius:25px}
-.account-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.form-card {padding:20px;border:1px solid var(--border);border-radius:20px}
-.form-card label {display:block;margin:13px 0 7px;color:var(--muted);font-size:14px}
-.form-card input {
-  width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);
-  background:var(--bg);color:var(--text)
-}
-.form-card button {margin-top:15px}
-.status-message {line-height:1.8;color:var(--muted);overflow-wrap:anywhere}
-.hidden,.page-hidden {display:none!important}
-.data-list {display:grid;gap:13px}
-.data-item {padding:19px;border:1px solid var(--border);border-radius:17px;background:var(--glass)}
-.data-item h3 {margin:0 0 8px}
-.data-item p {color:var(--muted);line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
-.dashboard {padding:35px 0 65px}
-.dashboard-header {padding:26px;border-radius:25px;margin-bottom:18px}
-.dashboard-header h1 {font-size:clamp(30px,5vw,48px);margin:18px 0}
-.dashboard-nav {display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
-.dashboard-nav a {padding:10px 13px;border-radius:12px;border:1px solid var(--border);background:var(--glass)}
-.dashboard-block {padding:23px;border-radius:23px;margin:18px 0}
-.dashboard-cards {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
-.stat-card {padding:20px;border-radius:18px}
-.stat-label {color:var(--muted);font-size:14px}
-.stat-value {font-size:25px;font-weight:bold;margin-top:12px;overflow-wrap:anywhere}
-.quiz-question {padding:18px;border:1px solid var(--border);border-radius:17px;margin:12px 0}
-.quiz-question label {display:block;padding:9px;cursor:pointer}
-footer {border-top:1px solid var(--border);padding:28px;text-align:center;color:var(--muted);font-size:13px}
-@media(max-width:760px) {
-  .nav-links {display:none}
-  .nav-wrap {padding:0 10px}
-  nav {padding:10px}
-  main {padding:0 15px}
-  .grid,.account-grid,.dashboard-cards {grid-template-columns:1fr}
-  .hero {min-height:65vh}
-  .dashboard-block,.dashboard-header,.account-panel {padding:17px}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>شبابنا | خدمة الشباب</title>
+
+  <style>
+    :root {
+      --bg:#080b16;
+      --text:#f8f9ff;
+      --muted:#a6adc4;
+      --glass:rgba(255,255,255,.075);
+      --border:rgba(255,255,255,.15);
+      --primary:#c8dcff;
+      --danger:#ffaaaa;
+    }
+
+    body.light {
+      --bg:#edf1fb;
+      --text:#171c30;
+      --muted:#626b83;
+      --glass:rgba(255,255,255,.75);
+      --border:rgba(55,70,110,.18);
+    }
+
+    * { box-sizing:border-box; }
+
+    html { scroll-behavior:smooth; }
+
+    body {
+      margin:0;
+      font-family:Arial,Tahoma,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      transition:background .25s,color .25s;
+    }
+
+    button,input,select,textarea { font:inherit; }
+
+    button,a { cursor:pointer; }
+
+    a { color:inherit;text-decoration:none; }
+
+    button,.button {
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:11px 15px;
+      background:var(--glass);
+      color:var(--text);
+      display:inline-block;
+    }
+
+    button:hover,.button:hover { opacity:.85; }
+
+    .primary {
+      background:linear-gradient(135deg,#d5dcff,#a8dfff);
+      color:#111731;
+      border:0;
+      font-weight:bold;
+    }
+
+    .danger { color:var(--danger); }
+
+    .glass {
+      background:var(--glass);
+      border:1px solid var(--border);
+      backdrop-filter:blur(20px);
+      box-shadow:0 16px 50px rgba(0,0,0,.08);
+    }
+
+    .wrap { max-width:1150px;margin:auto;padding:18px; }
+
+    nav {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      padding:15px;
+      border-radius:18px;
+      margin-bottom:22px;
+    }
+
+    .brand { font-size:21px;font-weight:bold; }
+
+    .nav-actions { display:flex;gap:8px;flex-wrap:wrap; }
+
+    .hero {
+      text-align:center;
+      padding:65px 20px;
+      border-radius:25px;
+      margin-bottom:25px;
+    }
+
+    h1 { font-size:clamp(32px,6vw,58px); }
+
+    h2 { margin-top:0; }
+
+    .muted { color:var(--muted);line-height:1.8; }
+
+    .panel {
+      padding:23px;
+      border-radius:22px;
+      margin:20px 0;
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+    }
+
+    .form-card {
+      border:1px solid var(--border);
+      border-radius:17px;
+      padding:18px;
+      min-width:0;
+    }
+
+    label {
+      display:block;
+      margin:12px 0 7px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    input,select,textarea {
+      display:block;
+      width:100%;
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius:11px;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    textarea { resize:vertical;min-height:85px; }
+
+    form button { margin-top:14px; }
+
+    .status {
+      white-space:pre-wrap;
+      overflow-wrap:anywhere;
+      line-height:1.7;
+      color:var(--muted);
+    }
+
+    .hidden { display:none!important; }
+
+    .list { display:grid;gap:12px; }
+
+    .item {
+      padding:17px;
+      border:1px solid var(--border);
+      border-radius:15px;
+      background:var(--glass);
+      overflow-wrap:anywhere;
+    }
+
+    .item h3 { margin-top:0; }
+
+    .item p {
+      color:var(--muted);
+      line-height:1.8;
+      white-space:pre-wrap;
+    }
+
+    .stats {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .stat {
+      padding:18px;
+      border-radius:16px;
+    }
+
+    .stat strong {
+      display:block;
+      font-size:25px;
+      margin-top:10px;
+      overflow-wrap:anywhere;
+    }
+
+    .section-links {
+      display:flex;
+      gap:9px;
+      flex-wrap:wrap;
+      margin:15px 0;
+    }
+
+    .section-links a {
+      border:1px solid var(--border);
+      padding:9px 12px;
+      border-radius:10px;
+    }
+
+    footer {
+      text-align:center;
+      padding:25px;
+      color:var(--muted);
+    }
+
+    @media(max-width:700px) {
+      .grid,.stats { grid-template-columns:1fr; }
+      .panel { padding:16px; }
+      .wrap { padding:10px; }
+    }
+  </style>
 </head>
+
 <body>
-<div class="ambient"><div class="orb one"></div><div class="orb two"></div></div>
+<div class="wrap">
 
-<div class="nav-wrap">
-<nav class="glass">
-  <a href="#home" class="brand"><span class="brand-icon">✦</span><span>شبابنا</span></a>
-  <div class="nav-links">
-    <a href="#home">الرئيسية</a>
-    <a href="#sections">الأقسام</a>
-    <a href="#about">عن الخدمة</a>
-  </div>
-  <div class="actions">
-    <button id="langBtn">EN</button>
-    <button id="themeBtn">☀</button>
-  </div>
-</nav>
-</div>
-
-<main id="publicPage">
-  <section class="hero" id="home">
-    <div class="eyebrow">✦ مكان واحد يجمعنا</div>
-    <h1>إيمان يجمعنا،<br><span class="gradient">ومحبة تكبر بينا.</span></h1>
-    <p>مساحة خدمة الشباب للقاءاتنا ودروسنا وفعالياتنا، وكل خطوة بنكبر فيها مع بعض.</p>
-    <div class="hero-actions">
-      <a class="button primary" href="#sections">اكتشف الموقع ↗</a>
-      <a class="button" href="#about">اعرف أكتر</a>
+  <nav class="glass">
+    <a class="brand" href="#home">✦ شبابنا</a>
+    <div class="nav-actions">
+      <button id="langBtn" type="button">EN</button>
+      <button id="themeBtn" type="button">☀</button>
+      <button id="logoutBtn" type="button" class="hidden">تسجيل الخروج</button>
     </div>
-  </section>
+  </nav>
 
-  <section class="section" id="sections">
-    <div class="section-head"><h2>كل حاجة في مكانها.</h2><p class="muted">مساحتك لمتابعة كل جديد في الخدمة.</p></div>
-    <div class="grid">
-      <a class="feature glass" href="#events"><div class="feature-icon">✧</div><h3>الفعاليات واللقاءات</h3><p>تابع مواعيد الاجتماعات والأنشطة القادمة.</p></a>
-      <a class="feature glass" href="#lessons"><div class="feature-icon">▤</div><h3>الدروس والمراجع</h3><p>مكان منظم للدروس والملفات والمواد الدراسية.</p></a>
-      <a class="feature glass" href="#account"><div class="feature-icon">♧</div><h3>حسابك ونقاطك</h3><p>تابع حسابك ونقاطك بعد تسجيل الدخول.</p></a>
-    </div>
-  </section>
+  <main id="publicPage">
+    <section class="hero glass" id="home">
+      <p>✦ مكان واحد يجمعنا</p>
+      <h1>إيمان يجمعنا،<br>ومحبة تكبر بينا.</h1>
+      <p class="muted">
+        مساحة خدمة الشباب لمتابعة الفعاليات والدروس والنقاط.
+      </p>
+      <a class="button primary" href="#account">حسابك الشخصي</a>
+    </section>
 
-  <section class="section" id="about">
-    <div class="welcome glass"><h2>لسه البداية.</h2><p class="muted">مساحة تجمع أعضاء الخدمة والخدام، وتسهّل الوصول للمعلومات والأنشطة.</p></div>
-  </section>
+    <section class="panel glass" id="events">
+      <h2>الفعاليات واللقاءات</h2>
+      <div id="eventsList" class="list">
+        <p class="muted">جاري تحميل الفعاليات...</p>
+      </div>
+    </section>
 
-  <section class="section" id="events">
-    <div class="section-head"><h2>الفعاليات القادمة</h2></div>
-    <div id="eventsList" class="data-list"><p class="muted">جاري تحميل الفعاليات...</p></div>
-  </section>
+    <section class="panel glass" id="lessons">
+      <h2>الدروس والمواد</h2>
+      <div id="lessonsList" class="list">
+        <p class="muted">جاري تحميل الدروس...</p>
+      </div>
+    </section>
 
-  <section class="section" id="lessons">
-    <div class="section-head"><h2>الدروس والمواد</h2></div>
-    <div id="lessonsList" class="data-list"><p class="muted">جاري تحميل الدروس...</p></div>
-  </section>
+    <section class="panel glass" id="account">
+      <h2>حسابك الشخصي</h2>
+      <p class="muted">
+        الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.
+      </p>
 
-  <section class="section" id="account">
-    <div class="account-panel glass">
-      <h2>مساحتك الشخصية</h2>
-      <p class="muted">أنشئ حسابًا أو سجّل الدخول. الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.</p>
-      <div id="authForms" class="account-grid">
+      <div id="authForms" class="grid">
         <form id="signupForm" class="form-card">
           <h3>إنشاء حساب</h3>
           <label for="signupName">الاسم الكامل</label>
           <input id="signupName" required maxlength="100" autocomplete="name">
+
           <label for="signupEmail">البريد الإلكتروني</label>
           <input id="signupEmail" type="email" required autocomplete="email">
+
           <label for="signupPassword">كلمة المرور (8 أحرف على الأقل)</label>
-          <input id="signupPassword" type="password" minlength="8" required autocomplete="new-password">
+          <input id="signupPassword" type="password" minlength="8"
+                 required autocomplete="new-password">
+
           <button class="primary" type="submit">إنشاء الحساب</button>
-          <p id="signupMessage" class="status-message" role="status"></p>
+          <p id="signupMessage" class="status" role="status"></p>
         </form>
 
         <form id="loginForm" class="form-card">
           <h3>تسجيل الدخول</h3>
           <label for="loginEmail">البريد الإلكتروني</label>
           <input id="loginEmail" type="email" required autocomplete="email">
+
           <label for="loginPassword">كلمة المرور</label>
-          <input id="loginPassword" type="password" required autocomplete="current-password">
+          <input id="loginPassword" type="password" required
+                 autocomplete="current-password">
+
           <button class="primary" type="submit">دخول</button>
-          <p id="loginMessage" class="status-message" role="status"></p>
+          <p id="loginMessage" class="status" role="status"></p>
         </form>
       </div>
-      <p id="accountMessage" class="status-message" role="status"></p>
-    </div>
-  </section>
-</main>
 
-<section id="dashboard" class="dashboard page-hidden">
-  <div class="dashboard-header glass">
-    <div class="eyebrow">✦ مساحتك الشخصية</div>
-    <h1>أهلاً بيك في خدمة الشباب</h1>
-    <p class="muted">هنا هتلاقي بروفايلك ونقاطك ومواعيد الخدمة والدروس والاختبارات.</p>
-    <div class="dashboard-nav">
-      <a href="#dashboardProfile">البروفايل والاسكور</a>
-      <a href="#dashboardEvents">المواعيد</a>
-      <a href="#dashboardLessons">الدروس</a>
-      <a href="#dashboardQuizzes">أسئلة الدروس</a>
-    </div>
-  </div>
+      <p id="accountMessage" class="status" role="status"></p>
+    </section>
+  </main>
 
-  <div id="dashboardProfile" class="dashboard-block glass">
-    <h2>البروفايل والاسكور</h2>
-    <div class="dashboard-cards">
-      <div class="stat-card glass"><div class="stat-label">الاسم</div><div id="dashName" class="stat-value">—</div></div>
-      <div class="stat-card glass"><div class="stat-label">النقاط (Score)</div><div id="dashPoints" class="stat-value">0</div></div>
-      <div class="stat-card glass"><div class="stat-label">حالة الحساب</div><div id="dashStatus" class="stat-value">—</div></div>
-    </div>
-    <p id="dashRole" class="muted"></p>
-  </div>
+  <main id="dashboard" class="hidden">
+    <section class="panel glass">
+      <h1 style="font-size:36px">أهلاً بيك في خدمة الشباب</h1>
+      <p class="muted">مساحتك الشخصية حسب صلاحيات حسابك.</p>
 
-  <div id="dashboardEvents" class="dashboard-block glass">
-    <h2>مواعيد وفعاليات الخدمة</h2>
-    <div id="dashboardEventsList" class="data-list"><p class="muted">جاري التحميل...</p></div>
-  </div>
+      <div class="section-links">
+        <a href="#profilePanel">البروفايل</a>
+        <a href="#myEvents">الفعاليات</a>
+        <a href="#myLessons">الدروس</a>
+        <a href="#servantPanel">إدارة النقاط</a>
+        <a href="#adminPanel">إدارة المجموعات</a>
+      </div>
+    </section>
 
-  <div id="dashboardLessons" class="dashboard-block glass">
-    <h2>الدروس والمواد</h2>
-    <div id="dashboardLessonsList" class="data-list"><p class="muted">جاري التحميل...</p></div>
-  </div>
+    <section id="profilePanel" class="panel glass">
+      <h2>البروفايل والنقاط</h2>
+      <div class="stats">
+        <div class="stat glass">
+          الاسم
+          <strong id="dashName">—</strong>
+        </div>
+        <div class="stat glass">
+          رصيد النقاط
+          <strong id="dashPoints">0</strong>
+        </div>
+        <div class="stat glass">
+          حالة الحساب
+          <strong id="dashStatus">—</strong>
+        </div>
+      </div>
+      <p id="dashRole" class="muted"></p>
+    </section>
 
-  <div id="dashboardQuizzes" class="dashboard-block glass">
-    <h2>أسئلة على الدروس</h2>
-    <p class="muted">الاختبارات هتظهر هنا بعد إضافة الأسئلة والإجابات في قاعدة البيانات.</p>
-    <div id="dashboardQuizzesList" class="data-list">
-      <article class="data-item">
-        <h3>الاختبارات قريبًا</h3>
-        <p>لسه محتاجين نجهز جدول للأسئلة والإجابات والتصحيح وحفظ درجات الاختبارات.</p>
-      </article>
-    </div>
-  </div>
-  <button id="dashboardLogoutBtn" class="primary">تسجيل الخروج</button>
-</section>
+    <section id="myEvents" class="panel glass">
+      <h2>الفعاليات</h2>
+      <div id="dashboardEventsList" class="list"></div>
+    </section>
+
+    <section id="myLessons" class="panel glass">
+      <h2>الدروس</h2>
+      <div id="dashboardLessonsList" class="list"></div>
+    </section>
+
+    <section id="servantPanel" class="panel glass hidden">
+      <h2>إدارة نقاط الأعضاء</h2>
+      <p class="muted">
+        اختار عضوًا من المجموعات المسندة إليك، ثم اكتب النقاط وسبب الإضافة أو الخصم.
+      </p>
+
+      <form id="pointsForm" class="form-card">
+        <label for="pointsMember">العضو</label>
+        <select id="pointsMember" required>
+          <option value="">جاري تحميل الأعضاء...</option>
+        </select>
+
+        <label for="pointsAmount">عدد النقاط (السالب للخصم)</label>
+        <input id="pointsAmount" type="number" min="-100" max="100"
+               step="1" required>
+
+        <label for="pointsReason">السبب</label>
+        <input id="pointsReason" maxlength="200" required
+               placeholder="مثال: حضور التسبحة">
+
+        <button class="primary" type="submit">تنفيذ العملية</button>
+        <p id="pointsMessage" class="status" role="status"></p>
+      </form>
+    </section>
+
+    <section id="adminPanel" class="panel glass hidden">
+      <h2>إدارة الخدام والمجموعات</h2>
+      <p class="muted">
+        الأدمن يستطيع تعيين الخادم على أكثر من مجموعة. لازم تكون المجموعة موجودة بالفعل.
+      </p>
+
+      <form id="assignForm" class="form-card">
+        <label for="servantSelect">حساب الخادم</label>
+        <select id="servantSelect" required>
+          <option value="">جاري تحميل الخدام...</option>
+        </select>
+
+        <label for="groupSelect">المجموعة</label>
+        <select id="groupSelect" required>
+          <option value="">جاري تحميل المجموعات...</option>
+        </select>
+
+        <button class="primary" type="submit">تعيين الخادم للمجموعة</button>
+        <p id="assignMessage" class="status" role="status"></p>
+      </form>
+
+      <h3>التعيينات الحالية</h3>
+      <div id="assignmentsList" class="list"></div>
+    </section>
+
+    <section class="panel glass">
+      <h2>ملاحظة</h2>
+      <p class="muted">
+        الاختبارات وتصحيح الإجابات لم يتم تفعليهما في هذه النسخة.
+      </p>
+    </section>
+  </main>
+</div>
 
 <footer>خدمة الشباب • إيمان ومحبة ونمو</footer>
 
 <script type="module">
-import { supabase } from './supabase.js';
+import { supabase } from "./supabase.js";
 
 const $ = id => document.getElementById(id);
-const publicPage = $('publicPage');
-const dashboard = $('dashboard');
-let lang = 'ar';
 
-$('langBtn').addEventListener('click', () => {
-  lang = lang === 'ar' ? 'en' : 'ar';
-  document.documentElement.lang = lang;
-  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-  $('langBtn').textContent = lang === 'ar' ? 'EN' : 'عربي';
-  alert(lang === 'en'
-    ? 'The English layout switch is enabled, but dashboard content is currently in Arabic.'
-    : 'تم الرجوع للواجهة العربية.');
-});
+let currentUser = null;
+let currentProfile = null;
+let lang = "ar";
 
-$('themeBtn').addEventListener('click', () => {
-  document.body.classList.toggle('light');
-  $('themeBtn').textContent = document.body.classList.contains('light') ? '☾' : '☀';
-});
-
-function showMessage(id, text) {
-  $(id).textContent = text;
+function message(id, text) {
+  $(id).textContent = text || "";
 }
 
-function showDashboard(enabled) {
-  publicPage.classList.toggle('page-hidden', enabled);
-  dashboard.classList.toggle('page-hidden', !enabled);
+function escapeText(value) {
+  return String(value ?? "");
+}
 
-  if (enabled) {
-    history.replaceState(null, '', location.pathname + location.search + '#dashboard');
-    window.scrollTo({top:0,behavior:'smooth'});
+function showDashboard(show) {
+  $("publicPage").classList.toggle("hidden", show);
+  $("dashboard").classList.toggle("hidden", !show);
+  $("logoutBtn").classList.toggle("hidden", !show);
+  $("authForms").classList.toggle("hidden", show);
+
+  if (show) {
+    location.hash = "dashboard";
+    window.scrollTo({ top: 0, behavior: "smooth" });
   } else {
-    history.replaceState(null, '', location.pathname + location.search + '#account');
+    location.hash = "account";
   }
 }
 
-function addItem(container, title, description, extra = '') {
-  const card = document.createElement('article');
-  card.className = 'data-item';
+function addItem(targetId, title, description, extra = "") {
+  const target = $(targetId);
+  const article = document.createElement("article");
+  article.className = "item";
 
-  const heading = document.createElement('h3');
-  heading.textContent = title || 'بدون عنوان';
-  card.appendChild(heading);
+  const heading = document.createElement("h3");
+  heading.textContent = escapeText(title || "بدون عنوان");
+  article.appendChild(heading);
 
   if (description) {
-    const p = document.createElement('p');
-    p.textContent = description;
-    card.appendChild(p);
+    const p = document.createElement("p");
+    p.textContent = escapeText(description);
+    article.appendChild(p);
   }
 
   if (extra) {
-    const p = document.createElement('p');
-    p.textContent = extra;
-    card.appendChild(p);
+    const p = document.createElement("p");
+    p.textContent = escapeText(extra);
+    article.appendChild(p);
   }
 
-  container.appendChild(card);
+  target.appendChild(article);
+}
+
+function formatDate(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString("ar-EG");
 }
 
 async function loadEvents(targetId) {
   const target = $(targetId);
   target.replaceChildren();
 
-  const {data, error} = await supabase
-    .from('events')
-    .select('title,description,location,starts_at')
-    .order('starts_at', {ascending:true});
+  const { data, error } = await supabase
+    .from("events")
+    .select("title,description,location,starts_at")
+    .order("starts_at", { ascending: true });
 
   if (error) {
-    addItem(target, 'تعذر تحميل المواعيد', error.message);
+    addItem(targetId, "تعذر تحميل الفعاليات", error.message);
     return;
   }
 
-  if (!data || data.length === 0) {
-    addItem(target, 'لا توجد فعاليات حاليًا', 'ستظهر المواعيد هنا بعد إضافتها إلى قاعدة البيانات.');
+  if (!data?.length) {
+    addItem(targetId, "لا توجد فعاليات حاليًا",
+      "ستظهر الفعاليات هنا بعد إضافتها.");
     return;
   }
 
   data.forEach(event => {
-    const date = event.starts_at
-      ? new Date(event.starts_at).toLocaleString('ar-EG')
-      : '';
-    addItem(target, event.title, event.description,
-      [event.location,date].filter(Boolean).join(' • '));
+    addItem(
+      targetId,
+      event.title,
+      event.description,
+      [event.location, formatDate(event.starts_at)].filter(Boolean).join(" • ")
+    );
   });
 }
 
@@ -350,157 +490,425 @@ async function loadLessons(targetId) {
   const target = $(targetId);
   target.replaceChildren();
 
-  const {data, error} = await supabase
-    .from('lessons')
-    .select('title,description,content_url')
-    .order('id', {ascending:false});
+  const { data, error } = await supabase
+    .from("lessons")
+    .select("title,description,content_url")
+    .order("id", { ascending: false });
 
   if (error) {
-    addItem(target, 'تعذر تحميل الدروس', error.message);
+    addItem(targetId, "تعذر تحميل الدروس", error.message);
     return;
   }
 
-  if (!data || data.length === 0) {
-    addItem(target, 'لا توجد دروس حاليًا', 'ستظهر الدروس هنا بعد إضافتها إلى قاعدة البيانات.');
+  if (!data?.length) {
+    addItem(targetId, "لا توجد دروس حاليًا",
+      "ستظهر الدروس هنا بعد إضافتها.");
     return;
   }
 
   data.forEach(lesson => {
-    const card = document.createElement('article');
-    card.className = 'data-item';
+    const article = document.createElement("article");
+    article.className = "item";
 
-    const heading = document.createElement('h3');
-    heading.textContent = lesson.title || 'درس';
-    card.appendChild(heading);
+    const heading = document.createElement("h3");
+    heading.textContent = lesson.title || "درس";
+    article.appendChild(heading);
 
-    const description = document.createElement('p');
-    description.textContent = lesson.description || '';
-    card.appendChild(description);
+    const p = document.createElement("p");
+    p.textContent = lesson.description || "";
+    article.appendChild(p);
 
     if (lesson.content_url) {
-      const link = document.createElement('a');
-      link.className = 'button primary';
+      const link = document.createElement("a");
+      link.className = "button primary";
       link.href = lesson.content_url;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.textContent = 'فتح الدرس ↗';
-      card.appendChild(link);
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "فتح الدرس ↗";
+      article.appendChild(link);
     }
 
-    target.appendChild(card);
+    target.appendChild(article);
+  });
+}
+
+async function loadAssignedMembers() {
+  const select = $("pointsMember");
+  select.replaceChildren(new Option("اختار العضو", ""));
+
+  let groupIds = [];
+
+  if (currentProfile.role === "admin") {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id,full_name,group_id")
+      .eq("approval_status", "approved")
+      .order("full_name");
+
+    if (error) {
+      message("pointsMessage", "تعذر تحميل الأعضاء: " + error.message);
+      return;
+    }
+
+    (data || []).forEach(member => {
+      select.add(new Option(
+        member.full_name || member.id,
+        member.id
+      ));
+    });
+    return;
+  }
+
+  const { data: assignments, error: assignmentError } = await supabase
+    .from("servant_group_assignments")
+    .select("group_id");
+
+  if (assignmentError) {
+    message("pointsMessage", "تعذر تحميل مجموعاتك: " + assignmentError.message);
+    return;
+  }
+
+  groupIds = [...new Set((assignments || []).map(x => x.group_id))];
+
+  if (!groupIds.length) {
+    message("pointsMessage", "لم يتم تعيينك على أي مجموعة بعد.");
+    return;
+  }
+
+  const { data: members, error: membersError } = await supabase
+    .from("profiles")
+    .select("id,full_name,group_id")
+    .eq("approval_status", "approved")
+    .in("group_id", groupIds)
+    .order("full_name");
+
+  if (membersError) {
+    message("pointsMessage",
+      "تعذر تحميل أعضاء مجموعاتك. راجع سياسات RLS لجدول profiles: " +
+      membersError.message);
+    return;
+  }
+
+  (members || []).forEach(member => {
+    select.add(new Option(
+      member.full_name || member.id,
+      member.id
+    ));
+  });
+
+  if (!members?.length) {
+    message("pointsMessage", "لا يوجد أعضاء ظاهرون في مجموعاتك.");
+  }
+}
+
+async function loadAdminData() {
+  const servantsSelect = $("servantSelect");
+  const groupsSelect = $("groupSelect");
+
+  servantsSelect.replaceChildren(new Option("اختار الخادم", ""));
+  groupsSelect.replaceChildren(new Option("اختار المجموعة", ""));
+
+  const [servantsResult, groupsResult] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id,full_name")
+      .eq("role", "servant")
+      .eq("approval_status", "approved")
+      .order("full_name"),
+
+    supabase
+      .from("ministry_groups")
+      .select("id,name")
+      .order("name")
+  ]);
+
+  if (servantsResult.error) {
+    message("assignMessage",
+      "تعذر تحميل الخدام: " + servantsResult.error.message);
+  } else {
+    (servantsResult.data || []).forEach(servant => {
+      servantsSelect.add(new Option(
+        servant.full_name || servant.id,
+        servant.id
+      ));
+    });
+  }
+
+  if (groupsResult.error) {
+    message("assignMessage",
+      "تعذر تحميل المجموعات: " + groupsResult.error.message);
+  } else {
+    (groupsResult.data || []).forEach(group => {
+      groupsSelect.add(new Option(group.name, group.id));
+    });
+  }
+
+  await loadAssignments();
+}
+
+async function loadAssignments() {
+  const target = $("assignmentsList");
+  target.replaceChildren();
+
+  const { data, error } = await supabase
+    .from("servant_group_assignments")
+    .select("servant_id,group_id,profiles:servant_id(full_name),ministry_groups:group_id(name)")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    addItem("assignmentsList", "تعذر تحميل التعيينات", error.message);
+    return;
+  }
+
+  if (!data?.length) {
+    addItem("assignmentsList", "لا توجد تعيينات بعد", "");
+    return;
+  }
+
+  data.forEach(item => {
+    addItem(
+      "assignmentsList",
+      item.profiles?.full_name || item.servant_id,
+      item.ministry_groups?.name || item.group_id
+    );
   });
 }
 
 async function refreshSession() {
-  const {data:{session}, error:sessionError} = await supabase.auth.getSession();
+  const { data, error } = await supabase.auth.getSession();
 
-  if (sessionError || !session) {
+  if (error || !data.session) {
+    currentUser = null;
+    currentProfile = null;
     showDashboard(false);
-    $('authForms').classList.remove('hidden');
     return;
   }
 
-  const {data:profile, error} = await supabase
-    .from('profiles')
-    .select('full_name,role,approval_status,points')
-    .eq('id',session.user.id)
+  currentUser = data.session.user;
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("id,full_name,role,approval_status,points,group_id")
+    .eq("id", currentUser.id)
     .maybeSingle();
 
-  if (error || !profile) {
+  if (profileError || !profile) {
     showDashboard(false);
-    showMessage('accountMessage',
-      'تم تسجيل الدخول لكن تعذر قراءة البروفايل. راجع إعدادات RLS في Supabase: ' +
-      (error?.message || 'Profile not found'));
+    message("accountMessage",
+      "تعذر تحميل بيانات الحساب: " +
+      (profileError?.message || "لم يتم العثور على الملف الشخصي"));
     return;
   }
 
-  $('dashName').textContent = profile.full_name || session.user.email || '—';
-  $('dashPoints').textContent = String(profile.points ?? 0);
-  $('dashRole').textContent = 'الدور: ' + profile.role;
+  currentProfile = profile;
+
+  $("dashName").textContent =
+    profile.full_name || currentUser.email || "—";
+  $("dashPoints").textContent = String(profile.points ?? 0);
 
   const statusLabels = {
-    approved: 'تمت الموافقة',
-    pending: 'في انتظار موافقة المسؤول',
-    rejected: 'تم رفض الحساب'
+    approved: "تمت الموافقة",
+    pending: "في انتظار موافقة المسؤول",
+    rejected: "تم رفض الحساب"
   };
-  $('dashStatus').textContent =
-    statusLabels[profile.approval_status] || profile.approval_status || 'غير معروف';
+
+  $("dashStatus").textContent =
+    statusLabels[profile.approval_status] ||
+    profile.approval_status || "غير معروف";
+
+  $("dashRole").textContent = "الدور: " + profile.role;
 
   showDashboard(true);
 
+  const approved = profile.approval_status === "approved";
+  const isAdmin = profile.role === "admin";
+  const isServant = profile.role === "servant";
+
+  $("servantPanel").classList.toggle(
+    "hidden", !(approved && (isAdmin || isServant))
+  );
+  $("adminPanel").classList.toggle("hidden", !(approved && isAdmin));
+
   await Promise.all([
-    loadEvents('dashboardEventsList'),
-    loadLessons('dashboardLessonsList')
+    loadEvents("dashboardEventsList"),
+    loadLessons("dashboardLessonsList")
   ]);
+
+  if (approved && (isAdmin || isServant)) {
+    await loadAssignedMembers();
+  }
+
+  if (approved && isAdmin) {
+    await loadAdminData();
+  }
 }
 
-$('signupForm').addEventListener('submit', async event => {
+$("signupForm").addEventListener("submit", async event => {
   event.preventDefault();
-  showMessage('signupMessage','جاري إنشاء الحساب...');
+  message("signupMessage", "جاري إنشاء الحساب...");
 
-  const fullName = $('signupName').value.trim();
-  const email = $('signupEmail').value.trim();
-  const password = $('signupPassword').value;
+  const fullName = $("signupName").value.trim();
+  const email = $("signupEmail").value.trim();
+  const password = $("signupPassword").value;
 
-  const {data,error} = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      data:{full_name:fullName},
-      emailRedirectTo:location.origin + location.pathname
+      data: { full_name: fullName },
+      emailRedirectTo: location.origin + location.pathname
     }
   });
 
   if (error) {
-    showMessage('signupMessage',error.message);
+    message("signupMessage", error.message);
     return;
   }
 
-  showMessage('signupMessage',
+  message(
+    "signupMessage",
     data.session
-      ? 'تم إنشاء الحساب. حسابك في انتظار موافقة مسؤول الخدمة.'
-      : 'تم إرسال رسالة تحقق لبريدك الإلكتروني. أكّد البريد ثم سجّل الدخول. حسابك يحتاج أيضًا موافقة المسؤول.');
+      ? "تم إنشاء الحساب. حسابك في انتظار موافقة المسؤول."
+      : "راجع بريدك الإلكتروني لتأكيد الحساب، ثم انتظر موافقة المسؤول."
+  );
 });
 
-$('loginForm').addEventListener('submit', async event => {
+$("loginForm").addEventListener("submit", async event => {
   event.preventDefault();
-  showMessage('loginMessage','جاري تسجيل الدخول...');
+  message("loginMessage", "جاري تسجيل الدخول...");
 
-  const email = $('loginEmail').value.trim();
-  const password = $('loginPassword').value;
+  const email = $("loginEmail").value.trim();
+  const password = $("loginPassword").value;
 
-  const {error} = await supabase.auth.signInWithPassword({email,password});
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
 
   if (error) {
-    showMessage('loginMessage',error.message);
+    message("loginMessage", error.message);
     return;
   }
 
-  showMessage('loginMessage','تم تسجيل الدخول بنجاح.');
+  message("loginMessage", "تم تسجيل الدخول.");
   await refreshSession();
 });
 
-async function logout() {
-  const {error} = await supabase.auth.signOut();
+$("logoutBtn").addEventListener("click", async () => {
+  const { error } = await supabase.auth.signOut();
+
   if (error) {
-    showMessage('accountMessage',error.message);
+    message("accountMessage", error.message);
     return;
   }
 
+  currentUser = null;
+  currentProfile = null;
   showDashboard(false);
-  $('authForms').classList.remove('hidden');
-  location.hash = 'account';
-}
+});
 
-$('dashboardLogoutBtn').addEventListener('click',logout);
+$("pointsForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  message("pointsMessage", "جاري تنفيذ العملية...");
 
-supabase.auth.onAuthStateChange((event,session) => {
-  setTimeout(() => refreshSession(),0);
+  if (!currentProfile ||
+      !["admin", "servant"].includes(currentProfile.role) ||
+      currentProfile.approval_status !== "approved") {
+    message("pointsMessage", "ليس لديك صلاحية إضافة النقاط.");
+    return;
+  }
+
+  const memberId = $("pointsMember").value;
+  const amount = Number($("pointsAmount").value);
+  const reason = $("pointsReason").value.trim();
+
+  if (!memberId || !Number.isInteger(amount) ||
+      amount === 0 || amount < -100 || amount > 100 ||
+      !reason || reason.length > 200) {
+    message("pointsMessage", "راجع العضو وعدد النقاط والسبب.");
+    return;
+  }
+
+  const { error } = await supabase.rpc("award_points", {
+    p_member_id: memberId,
+    p_amount: amount,
+    p_reason: reason
+  });
+
+  if (error) {
+    message("pointsMessage", "فشلت العملية: " + error.message);
+    return;
+  }
+
+  message("pointsMessage", "تم تسجيل النقاط بنجاح.");
+  $("pointsForm").reset();
+
+  await refreshSession();
+});
+
+$("assignForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  message("assignMessage", "جاري تعيين الخادم...");
+
+  if (!currentProfile ||
+      currentProfile.role !== "admin" ||
+      currentProfile.approval_status !== "approved") {
+    message("assignMessage", "هذه العملية للأدمن المعتمد فقط.");
+    return;
+  }
+
+  const servantId = $("servantSelect").value;
+  const groupId = $("groupSelect").value;
+
+  if (!servantId || !groupId) {
+    message("assignMessage", "اختار الخادم والمجموعة.");
+    return;
+  }
+
+  const { error } = await supabase
+    .from("servant_group_assignments")
+    .upsert({
+      servant_id: servantId,
+      group_id: groupId,
+      assigned_by: currentUser.id
+    }, {
+      onConflict: "servant_id,group_id"
+    });
+
+  if (error) {
+    message("assignMessage", "فشل التعيين: " + error.message);
+    return;
+  }
+
+  message("assignMessage", "تم تعيين الخادم للمجموعة.");
+  await loadAssignments();
+});
+
+$("themeBtn").addEventListener("click", () => {
+  document.body.classList.toggle("light");
+  $("themeBtn").textContent =
+    document.body.classList.contains("light") ? "☾" : "☀";
+});
+
+$("langBtn").addEventListener("click", () => {
+  lang = lang === "ar" ? "en" : "ar";
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  $("langBtn").textContent = lang === "ar" ? "EN" : "عربي";
+
+  message("accountMessage",
+    lang === "en"
+      ? "Some dashboard content is still in Arabic."
+      : "تم الرجوع للواجهة العربية.");
+});
+
+supabase.auth.onAuthStateChange(() => {
+  setTimeout(() => refreshSession(), 0);
 });
 
 await Promise.all([
-  loadEvents('eventsList'),
-  loadLessons('lessonsList'),
+  loadEvents("eventsList"),
+  loadLessons("lessonsList"),
   refreshSession()
 ]);
 </script>
