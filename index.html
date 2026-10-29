@@ -7,16 +7,8 @@
   <title>شبابنا | خدمة الشباب</title>
 
   <style>
-    @font-face {
-      font-family: 'TROX R';
-      src: url('./fonts/Trox-R.ttf') format('truetype');
-      font-weight: 400;
-      font-style: normal;
-      font-display: swap;
-    }
-
     :root {
-      --bg:#001112;
+      --bg:#080b16;
       --text:#f8f9ff;
       --muted:#a6adc4;
       --glass:rgba(255,255,255,.075);
@@ -34,22 +26,22 @@
     }
 
     * { box-sizing:border-box; }
+
     html { scroll-behavior:smooth; }
 
     body {
       margin:0;
-      font-family:'TROX R',Arial,Tahoma,sans-serif;
+      font-family:Arial,Tahoma,sans-serif;
       background:var(--bg);
       color:var(--text);
       min-height:100vh;
       transition:background .25s,color .25s;
     }
 
-    button,input,select,textarea {
-      font-family:'TROX R',Arial,Tahoma,sans-serif;
-    }
+    button,input,select,textarea { font:inherit; }
 
     button,a { cursor:pointer; }
+
     a { color:inherit;text-decoration:none; }
 
     button,.button {
@@ -61,12 +53,7 @@
       display:inline-block;
     }
 
-    button:disabled {
-      opacity:.5;
-      cursor:not-allowed;
-    }
-
-    button:hover:not(:disabled),.button:hover { opacity:.85; }
+    button:hover,.button:hover { opacity:.85; }
 
     .primary {
       background:linear-gradient(135deg,#d5dcff,#a8dfff);
@@ -98,6 +85,7 @@
     }
 
     .brand { font-size:21px;font-weight:bold; }
+
     .nav-actions { display:flex;gap:8px;flex-wrap:wrap; }
 
     .hero {
@@ -108,7 +96,9 @@
     }
 
     h1 { font-size:clamp(32px,6vw,58px); }
+
     h2 { margin-top:0; }
+
     .muted { color:var(--muted);line-height:1.8; }
 
     .panel {
@@ -148,6 +138,7 @@
     }
 
     textarea { resize:vertical;min-height:85px; }
+
     form button { margin-top:14px; }
 
     .status {
@@ -158,6 +149,7 @@
     }
 
     .hidden { display:none!important; }
+
     .list { display:grid;gap:12px; }
 
     .item {
@@ -169,6 +161,8 @@
     }
 
     .item h3 { margin-top:0; }
+    .lesson-body { white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere; }
+    .row-actions { display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px; }
 
     .item p {
       color:var(--muted);
@@ -207,28 +201,6 @@
       border-radius:10px;
     }
 
-    .attendance-row {
-      display:grid;
-      grid-template-columns:minmax(0,1fr) minmax(140px,220px);
-      gap:12px;
-      align-items:center;
-    }
-
-    .attendance-row label {
-      margin:0;
-      font-size:16px;
-      color:var(--text);
-    }
-
-    .attendance-row select { margin-top:5px; }
-
-    .attendance-actions {
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:12px;
-    }
-
     footer {
       text-align:center;
       padding:25px;
@@ -239,10 +211,6 @@
       .grid,.stats { grid-template-columns:1fr; }
       .panel { padding:16px; }
       .wrap { padding:10px; }
-    }
-
-    @media(max-width:750px) {
-      .attendance-row { grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -283,9 +251,19 @@
       </div>
     </section>
 
+    <section class="panel glass" id="bibleSection">
+      <h2>📖 الكتاب المقدس</h2>
+      <p class="muted">اقرأ الكتاب المقدس وابحث في الآيات، وحدد آية تريد أن تسأل عنها خادمك.</p>
+      <div class="section-links">
+        <a class="button primary" href="bible.html">افتح الكتاب المقدس ←</a>
+      </div>
+    </section>
+
     <section class="panel glass" id="account">
       <h2>حسابك الشخصي</h2>
-      <p class="muted">الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.</p>
+      <p class="muted">
+        الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.
+      </p>
 
       <div id="authForms" class="grid">
         <form id="signupForm" class="form-card">
@@ -331,18 +309,33 @@
         <a href="#profilePanel">البروفايل</a>
         <a href="#myEvents">الفعاليات</a>
         <a href="#myLessons">الدروس</a>
+        <a href="bible.html">📖 الكتاب المقدس</a>
         <a href="#servantPanel">إدارة النقاط</a>
         <a href="#adminPanel">إدارة المجموعات</a>
-        <a href="#attendancePanel" id="attendanceNavLink" class="hidden">الحضور</a>
       </div>
+    </section>
+
+    <section class="panel glass" id="dashboardBibleCard">
+      <h2>📖 الكتاب المقدس</h2>
+      <p class="muted">افتح صفحة الكتاب المقدس المستقلة للقراءة والبحث وتحديد الآيات.</p>
+      <a class="button primary" href="bible.html">فتح الكتاب المقدس</a>
     </section>
 
     <section id="profilePanel" class="panel glass">
       <h2>البروفايل والنقاط</h2>
       <div class="stats">
-        <div class="stat glass">الاسم<strong id="dashName">—</strong></div>
-        <div class="stat glass">رصيد النقاط<strong id="dashPoints">0</strong></div>
-        <div class="stat glass">حالة الحساب<strong id="dashStatus">—</strong></div>
+        <div class="stat glass">
+          الاسم
+          <strong id="dashName">—</strong>
+        </div>
+        <div class="stat glass">
+          رصيد النقاط
+          <strong id="dashPoints">0</strong>
+        </div>
+        <div class="stat glass">
+          حالة الحساب
+          <strong id="dashStatus">—</strong>
+        </div>
       </div>
       <p id="dashRole" class="muted"></p>
     </section>
@@ -356,12 +349,88 @@
       <h2>الدروس</h2>
       <div id="dashboardLessonsList" class="list"></div>
     </section>
+    <section id="myQuizzes" class="panel glass">
+      <h2>الأسئلة والامتحانات</h2>
+      <div id="quizzesList" class="list"></div>
+    </section>
 
     <section id="servantPanel" class="panel glass hidden">
       <h2>إدارة نقاط الأعضاء</h2>
       <p class="muted">
         اختار عضوًا من المجموعات المسندة إليك، ثم اكتب النقاط وسبب الإضافة أو الخصم.
       </p>
+
+      <div class="grid">
+        <form id="lessonCreateForm" class="form-card">
+          <h3>نشر درس مكتوب</h3>
+          <label for="lessonGroup">المجموعة</label>
+          <select id="lessonGroup" required><option value="">جاري تحميل المجموعات...</option></select>
+          <label for="lessonTitle">عنوان الدرس</label>
+          <input id="lessonTitle" required maxlength="180">
+          <label for="lessonDescription">وصف مختصر (اختياري)</label>
+          <textarea id="lessonDescription" maxlength="1000"></textarea>
+          <label for="lessonBody">محتوى الدرس</label>
+          <textarea id="lessonBody" required rows="8" maxlength="30000" placeholder="اكتب الدرس هنا..."></textarea>
+          <label for="lessonUrl">لينك إضافي (اختياري)</label>
+          <input id="lessonUrl" type="url" placeholder="https://...">
+          <button class="primary" type="submit">نشر الدرس</button>
+          <p id="lessonCreateMessage" class="status" role="status"></p>
+        </form>
+
+        <form id="quizCreateForm" class="form-card">
+          <h3>إنشاء اختبار اختيار من متعدد</h3>
+          <label for="quizGroup">المجموعة</label>
+          <select id="quizGroup" required><option value="">جاري تحميل المجموعات...</option></select>
+          <label for="quizType">نوع الاختبار</label>
+          <select id="quizType"><option value="exam">امتحان مستقل</option><option value="lesson">أسئلة بعد درس</option></select>
+          <label for="quizLesson">الدرس (للأسئلة المرتبطة بدرس)</label>
+          <select id="quizLesson"><option value="">اختار الدرس</option></select>
+          <label for="quizTitle">عنوان الاختبار</label>
+          <input id="quizTitle" required maxlength="180">
+          <label for="quizDescription">وصف (اختياري)</label>
+          <textarea id="quizDescription" maxlength="1000"></textarea>
+          <button class="primary" type="submit">إنشاء الاختبار</button>
+          <p id="quizCreateMessage" class="status" role="status"></p>
+        </form>
+      </div>
+
+      <form id="questionCreateForm" class="form-card">
+        <h3>إضافة سؤال لاختبار موجود</h3>
+        <label for="questionQuiz">الاختبار</label>
+        <select id="questionQuiz" required><option value="">جاري تحميل الاختبارات...</option></select>
+        <label for="questionText">السؤال</label>
+        <textarea id="questionText" required maxlength="1000"></textarea>
+        <div class="grid">
+          <div><label for="option0">الاختيار الأول</label><input id="option0" required maxlength="500"></div>
+          <div><label for="option1">الاختيار الثاني</label><input id="option1" required maxlength="500"></div>
+          <div><label for="option2">الاختيار الثالث</label><input id="option2" required maxlength="500"></div>
+          <div><label for="option3">الاختيار الرابع</label><input id="option3" required maxlength="500"></div>
+        </div>
+        <label for="correctOption">الإجابة الصحيحة</label>
+        <select id="correctOption"><option value="0">الاختيار الأول</option><option value="1">الاختيار الثاني</option><option value="2">الاختيار الثالث</option><option value="3">الاختيار الرابع</option></select>
+        <button class="primary" type="submit">إضافة السؤال</button>
+        <p id="questionCreateMessage" class="status" role="status"></p>
+      </form>
+
+      <div class="form-card">
+        <h3>كشف الحضور والغياب</h3>
+        <label for="attendanceGroup">المجموعة</label>
+        <select id="attendanceGroup" required><option value="">اختار المجموعة</option></select>
+        <label for="attendanceTitle">اسم اللقاء</label>
+        <input id="attendanceTitle" value="لقاء الخدمة" required maxlength="180">
+        <label for="attendanceDate">التاريخ</label>
+        <input id="attendanceDate" type="date" required>
+        <button id="loadAttendanceBtn" class="primary" type="button">تحميل كشف الأسماء</button>
+        <p id="attendanceMessage" class="status" role="status"></p>
+        <div id="attendanceRoster" class="list"></div>
+        <button id="saveAttendanceBtn" class="primary" type="button">حفظ الحضور والغياب</button>
+      </div>
+
+      <div class="form-card">
+        <h3>تنبيهات الغياب</h3>
+        <p class="muted">تظهر هنا تنبيهات الأعضاء الذين سجل عليهم 3 غيابات أو أكثر.</p>
+        <div id="servantNotifications" class="list"></div>
+      </div>
 
       <form id="pointsForm" class="form-card">
         <label for="pointsMember">العضو</label>
@@ -407,74 +476,11 @@
       <div id="assignmentsList" class="list"></div>
     </section>
 
-    <section id="attendancePanel" class="panel glass hidden">
-      <h2>تسجيل الحضور اليدوي</h2>
-      <p class="muted">
-        أنشئ جلسة للمجموعة، ثم اختار حالة الحضور لكل عضو واحفظ التغييرات.
-      </p>
-
-      <form id="attendanceSessionForm" class="form-card">
-        <h3>إنشاء جلسة حضور</h3>
-
-        <label for="attendanceGroup">المجموعة</label>
-        <select id="attendanceGroup" required>
-          <option value="">جاري تحميل المجموعات...</option>
-        </select>
-
-        <label for="attendanceTitle">عنوان الاجتماع</label>
-        <input id="attendanceTitle" required maxlength="180"
-               placeholder="مثال: اجتماع الشباب">
-
-        <label for="attendanceDate">تاريخ الاجتماع</label>
-        <input id="attendanceDate" type="date" required>
-
-        <label for="attendanceTime">وقت الاجتماع</label>
-        <input id="attendanceTime" type="time" value="18:00" required>
-
-        <button class="primary" type="submit">إنشاء الجلسة</button>
-        <p id="attendanceSessionMessage" class="status" role="status"></p>
-      </form>
-
-      <div class="form-card" style="margin-top:15px">
-        <h3>جلسات الحضور</h3>
-
-        <button id="toggleSessionsBtn" type="button">
-          عرض كل الجلسات
-        </button>
-
-        <div id="sessionsTools" class="hidden">
-          <p class="muted">
-            اختر المجموعة من نموذج إنشاء الجلسة بالأعلى، ثم أنشئ جلسات الجمعة
-            حتى 12 ديسمبر 2027. الجلسات المتكررة الموجودة لن تتكرر.
-          </p>
-
-          <button id="generateFridaySessionsBtn" class="primary" type="button">
-            إنشاء جلسات الجمعة للمجموعة المختارة
-          </button>
-
-          <p id="generateSessionsMessage" class="status" role="status"></p>
-        </div>
-
-        <div id="attendanceSessionsList" class="list hidden"
-             style="margin-top:15px"></div>
-      </div>
-
-      <div class="form-card" style="margin-top:15px">
-        <h3 id="attendanceMembersTitle">أعضاء المجموعة</h3>
-        <p class="muted">اختار حالة كل عضو ثم اضغط حفظ الحضور.</p>
-
-        <div id="attendanceMembersList" class="list"></div>
-
-        <button id="saveAttendanceBtn" class="primary"
-                type="button" disabled>حفظ الحضور</button>
-
-        <p id="attendanceSaveMessage" class="status" role="status"></p>
-      </div>
-    </section>
-
     <section class="panel glass">
       <h2>ملاحظة</h2>
-      <p class="muted">الاختبارات وتصحيح الإجابات لم يتم تفعليهما في هذه النسخة.</p>
+      <p class="muted">
+        الاختبارات وتصحيح الإجابات لم يتم تفعليهما في هذه النسخة.
+      </p>
     </section>
   </main>
 </div>
@@ -490,30 +496,12 @@ let currentUser = null;
 let currentProfile = null;
 let lang = "ar";
 
-let attendanceGroups = [];
-let selectedAttendanceSession = null;
-let attendanceMembers = [];
-let sessionsExpanded = false;
-
-const FRIDAY_START = "2026-10-30";
-const FRIDAY_END = "2027-12-12";
-const DEFAULT_SESSION_TIME = "18:00";
-
 function message(id, text) {
   $(id).textContent = text || "";
 }
 
 function escapeText(value) {
   return String(value ?? "");
-}
-
-function todayInCairo() {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Africa/Cairo",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).format(new Date());
 }
 
 function showDashboard(show) {
@@ -597,7 +585,7 @@ async function loadLessons(targetId) {
 
   const { data, error } = await supabase
     .from("lessons")
-    .select("title,description,content_url")
+    .select("id,title,description,content_url,body,group_id,lesson_type")
     .order("id", { ascending: false });
 
   if (error) {
@@ -623,6 +611,13 @@ async function loadLessons(targetId) {
     p.textContent = lesson.description || "";
     article.appendChild(p);
 
+    if (lesson.body) {
+      const body = document.createElement("div");
+      body.className = "lesson-body";
+      body.textContent = lesson.body;
+      article.appendChild(body);
+    }
+
     if (lesson.content_url) {
       const link = document.createElement("a");
       link.className = "button primary";
@@ -641,6 +636,8 @@ async function loadAssignedMembers() {
   const select = $("pointsMember");
   select.replaceChildren(new Option("اختار العضو", ""));
 
+  let groupIds = [];
+
   if (currentProfile.role === "admin") {
     const { data, error } = await supabase
       .from("profiles")
@@ -654,22 +651,24 @@ async function loadAssignedMembers() {
     }
 
     (data || []).forEach(member => {
-      select.add(new Option(member.full_name || member.id, member.id));
+      select.add(new Option(
+        member.full_name || member.id,
+        member.id
+      ));
     });
     return;
   }
 
   const { data: assignments, error: assignmentError } = await supabase
     .from("servant_group_assignments")
-    .select("group_id")
-    .eq("servant_id", currentUser.id);
+    .select("group_id");
 
   if (assignmentError) {
     message("pointsMessage", "تعذر تحميل مجموعاتك: " + assignmentError.message);
     return;
   }
 
-  const groupIds = [...new Set((assignments || []).map(x => x.group_id))];
+  groupIds = [...new Set((assignments || []).map(x => x.group_id))];
 
   if (!groupIds.length) {
     message("pointsMessage", "لم يتم تعيينك على أي مجموعة بعد.");
@@ -691,12 +690,188 @@ async function loadAssignedMembers() {
   }
 
   (members || []).forEach(member => {
-    select.add(new Option(member.full_name || member.id, member.id));
+    select.add(new Option(
+      member.full_name || member.id,
+      member.id
+    ));
   });
 
   if (!members?.length) {
     message("pointsMessage", "لا يوجد أعضاء ظاهرون في مجموعاتك.");
   }
+}
+
+
+
+async function loadQuizzes() {
+  const target=$("quizzesList"); target.replaceChildren();
+  const {data,error}=await supabase.from("quizzes")
+    .select("id,title,description,quiz_type,group_id,is_published,created_by")
+    .order("created_at",{ascending:false});
+  if(error){addItem("quizzesList","تعذر تحميل الاختبارات",error.message);return;}
+  const visible=(data||[]).filter(q=>q.is_published || q.created_by===currentUser?.id || currentProfile?.role==="admin");
+  if(!visible.length){addItem("quizzesList","لا توجد أسئلة أو امتحانات منشورة حالياً","");return;}
+  for(const quiz of visible){
+    const article=document.createElement("article");article.className="item";
+    const title=document.createElement("h3");title.textContent=quiz.title;article.appendChild(title);
+    const desc=document.createElement("p");desc.textContent=(quiz.quiz_type==="lesson"?"أسئلة بعد الدرس":"امتحان مستقل")+" • "+(quiz.description||"");article.appendChild(desc);
+    const canManage=quiz.created_by===currentUser?.id||currentProfile?.role==="admin";
+    if(canManage){
+      const publish=document.createElement("button");publish.textContent=quiz.is_published?"إلغاء النشر":"نشر الاختبار";
+      publish.addEventListener("click",async()=>{
+        const {error}=await supabase.rpc("set_quiz_published",{p_quiz_id:quiz.id,p_published:!quiz.is_published});
+        if(error){message("questionCreateMessage","تعذر تغيير حالة النشر: "+error.message);return;}
+        await loadQuizzes();
+      });article.appendChild(publish);
+    }
+    if(quiz.is_published && currentProfile?.approval_status==="approved"){
+      const start=document.createElement("button");start.textContent="حل الاختبار";
+      start.addEventListener("click",async()=>{
+        const {data:questions,error}=await supabase.from("quiz_questions")
+          .select("id,question_text,options,points,sort_order").eq("quiz_id",quiz.id).order("sort_order");
+        if(error){article.append(document.createTextNode(" تعذر تحميل الأسئلة: "+error.message));return;}
+        if(!questions?.length){article.append(document.createTextNode(" لا توجد أسئلة."));return;}
+        article.querySelectorAll(".quiz-form").forEach(n=>n.remove());
+        const form=document.createElement("form");form.className="quiz-form";
+        const answerInputs=[];
+        questions.forEach((q,index)=>{
+          const field=document.createElement("fieldset");field.className="form-card";
+          const legend=document.createElement("legend");legend.textContent=(index+1)+". "+q.question_text;field.appendChild(legend);
+          (q.options||[]).forEach((opt,optIndex)=>{
+            const label=document.createElement("label");const radio=document.createElement("input");
+            radio.type="radio";radio.name="q_"+q.id;radio.value=String(optIndex);radio.required=true;radio.style.display="inline-block";radio.style.width="auto";
+            label.append(radio,document.createTextNode(" "+opt));field.appendChild(label);
+          });
+          form.appendChild(field);answerInputs.push(q.id);
+        });
+        const submit=document.createElement("button");submit.className="primary";submit.textContent="إرسال الإجابات وتصحيحها";form.appendChild(submit);
+        const result=document.createElement("p");result.className="status";form.appendChild(result);
+        form.addEventListener("submit",async ev=>{
+          ev.preventDefault();const answers={};
+          questions.forEach(q=>{const chosen=form.querySelector('input[name="q_'+q.id+'"]:checked');if(chosen)answers[q.id]=Number(chosen.value);});
+          submit.disabled=true;
+          const {data,error}=await supabase.rpc("submit_quiz",{p_quiz_id:quiz.id,p_answers:answers});
+          submit.disabled=false;
+          if(error){result.textContent="تعذر تصحيح الاختبار: "+error.message;return;}
+          const score=Array.isArray(data)?data[0]:data;
+          result.textContent="نتيجتك: "+score.score+" من "+score.max_score;
+        });
+        article.appendChild(form);
+      });
+      article.appendChild(start);
+    }
+    target.appendChild(article);
+  }
+}
+
+async function loadServantGroups() {
+  const idsResult = currentProfile.role === "admin"
+    ? null
+    : await supabase.from("servant_group_assignments").select("group_id").eq("servant_id", currentUser.id);
+  if (idsResult?.error) {
+    message("lessonCreateMessage", "تعذر تحميل المجموعات: " + idsResult.error.message);
+    return;
+  }
+  let query = supabase.from("ministry_groups").select("id,name").order("name");
+  if (idsResult) {
+    const ids = [...new Set((idsResult.data || []).map(x => x.group_id))];
+    if (!ids.length) {
+      ["lessonGroup","quizGroup","attendanceGroup"].forEach(id => $(id).replaceChildren(new Option("لا توجد مجموعات معينة لك","")));
+      return;
+    }
+    query = query.in("id", ids);
+  }
+  const {data,error} = await query;
+  if (error) {
+    message("lessonCreateMessage", "تعذر تحميل المجموعات: " + error.message);
+    return;
+  }
+  for (const id of ["lessonGroup","quizGroup","attendanceGroup"]) {
+    const sel=$(id); sel.replaceChildren(new Option("اختار المجموعة",""));
+    (data||[]).forEach(g=>sel.add(new Option(g.name,g.id)));
+  }
+}
+async function loadQuizDropdowns() {
+  const [quizzesResult, lessonsResult] = await Promise.all([
+    supabase.from("quizzes").select("id,title,quiz_type").order("created_at",{ascending:false}),
+    supabase.from("lessons").select("id,title").order("id",{ascending:false})
+  ]);
+  if (!quizzesResult.error) {
+    const sel=$("questionQuiz"); sel.replaceChildren(new Option("اختار الاختبار",""));
+    (quizzesResult.data||[]).forEach(q=>sel.add(new Option(q.title+" ("+(q.quiz_type==="lesson"?"أسئلة درس":"امتحان")+")",q.id)));
+  } else message("questionCreateMessage","تعذر تحميل الاختبارات: "+quizzesResult.error.message);
+  if (!lessonsResult.error) {
+    const sel=$("quizLesson"); sel.replaceChildren(new Option("اختار الدرس",""));
+    (lessonsResult.data||[]).forEach(l=>sel.add(new Option(l.title,l.id)));
+  }
+}
+async function loadAttendanceRoster() {
+  const groupId=$("attendanceGroup").value;
+  const date=$("attendanceDate").value;
+  const title=$("attendanceTitle").value.trim() || "لقاء الخدمة";
+  const target=$("attendanceRoster"); target.replaceChildren();
+  if (!groupId || !date) { message("attendanceMessage","اختار المجموعة والتاريخ."); return; }
+  message("attendanceMessage","جاري تحميل الأسماء...");
+  const {data:members,error:membersError}=await supabase.from("profiles")
+    .select("id,full_name").eq("group_id",groupId).eq("approval_status","approved").order("full_name");
+  if (membersError) { message("attendanceMessage","تعذر تحميل الأعضاء: "+membersError.message); return; }
+  const {data:session,error:sessionError}=await supabase.from("attendance_sessions")
+    .select("id").eq("group_id",groupId).eq("session_date",date).eq("title",title).maybeSingle();
+  if (sessionError) { message("attendanceMessage","تعذر قراءة اللقاء: "+sessionError.message); return; }
+  let records=[];
+  if (session) {
+    const {data,error}=await supabase.from("attendance_records").select("member_id,status").eq("session_id",session.id);
+    if(error){message("attendanceMessage","تعذر تحميل الحضور السابق: "+error.message);return;}
+    records=data||[];
+  }
+  const saved=new Map(records.map(r=>[r.member_id,r.status]));
+  (members||[]).forEach(m=>{
+    const row=document.createElement("div"); row.className="item";
+    const label=document.createElement("label"); label.textContent=m.full_name||m.id;
+    const select=document.createElement("select"); select.dataset.memberId=m.id;
+    select.add(new Option("حاضر (+20 نقطة)","present"));
+    select.add(new Option("غائب","absent"));
+    select.add(new Option("لم يتم التسجيل","unmarked"));
+    select.value=saved.get(m.id)||"unmarked";
+    row.append(label,select); target.appendChild(row);
+  });
+  target.dataset.sessionId=session?.id||"";
+  message("attendanceMessage",`عدد الأعضاء: ${(members||[]).length}. اختار حالة كل عضو ثم احفظ.`);
+}
+async function saveAttendanceRoster() {
+  const groupId=$("attendanceGroup").value, date=$("attendanceDate").value;
+  const title=$("attendanceTitle").value.trim()||"لقاء الخدمة";
+  if(!groupId||!date){message("attendanceMessage","اختار المجموعة والتاريخ.");return;}
+  const {data:session,error:sessionError}=await supabase.from("attendance_sessions")
+    .upsert({group_id:groupId,session_date:date,title,created_by:currentUser.id},
+      {onConflict:"group_id,session_date,title"}).select("id").single();
+  if(sessionError){message("attendanceMessage","فشل إنشاء اللقاء: "+sessionError.message);return;}
+  const selects=[...$("attendanceRoster").querySelectorAll("select[data-member-id]")];
+  for(const sel of selects){
+    if(sel.value==="unmarked") continue;
+    const {error}=await supabase.from("attendance_records").upsert({
+      session_id:session.id,member_id:sel.dataset.memberId,status:sel.value,marked_by:currentUser.id
+    },{onConflict:"session_id,member_id"});
+    if(error){message("attendanceMessage","فشل حفظ الحضور: "+error.message);return;}
+  }
+  message("attendanceMessage","تم حفظ كشف الحضور. تم إضافة 20 نقطة لكل حاضر جديد.");
+  await loadServantNotifications();
+}
+async function loadServantNotifications() {
+  const target=$("servantNotifications"); target.replaceChildren();
+  const {data,error}=await supabase.from("site_notifications")
+    .select("id,message,created_at,read_at").order("created_at",{ascending:false});
+  if(error){addItem("servantNotifications","تعذر تحميل التنبيهات",error.message);return;}
+  if(!data?.length){addItem("servantNotifications","لا توجد تنبيهات غياب حالياً","");return;}
+  (data||[]).forEach(n=>{
+    const article=document.createElement("article");article.className="item";
+    const p=document.createElement("p");p.textContent=n.message+" • "+formatDate(n.created_at);article.appendChild(p);
+    if(!n.read_at){const btn=document.createElement("button");btn.textContent="تمت المتابعة";btn.addEventListener("click",async()=>{
+      const {error}=await supabase.from("site_notifications").update({read_at:new Date().toISOString()}).eq("id",n.id);
+      if(error) message("attendanceMessage","تعذر تحديث التنبيه: "+error.message); else await loadServantNotifications();
+    });article.appendChild(btn);}
+    target.appendChild(article);
+  });
 }
 
 async function loadAdminData() {
@@ -725,7 +900,10 @@ async function loadAdminData() {
       "تعذر تحميل الخدام: " + servantsResult.error.message);
   } else {
     (servantsResult.data || []).forEach(servant => {
-      servantsSelect.add(new Option(servant.full_name || servant.id, servant.id));
+      servantsSelect.add(new Option(
+        servant.full_name || servant.id,
+        servant.id
+      ));
     });
   }
 
@@ -769,599 +947,12 @@ async function loadAssignments() {
   });
 }
 
-/* =========================
-   إدارة الحضور
-========================= */
-
-function canManageAttendance() {
-  return Boolean(
-    currentUser &&
-    currentProfile &&
-    currentProfile.approval_status === "approved" &&
-    ["admin", "servant"].includes(currentProfile.role)
-  );
-}
-
-async function loadAttendanceGroups() {
-  const select = $("attendanceGroup");
-  select.replaceChildren(new Option("اختار المجموعة", ""));
-  attendanceGroups = [];
-
-  if (!canManageAttendance()) return;
-
-  let groupsQuery = supabase
-    .from("ministry_groups")
-    .select("id,name")
-    .order("name");
-
-  if (currentProfile.role === "servant") {
-    const { data: assignments, error: assignmentError } = await supabase
-      .from("servant_group_assignments")
-      .select("group_id")
-      .eq("servant_id", currentUser.id);
-
-    if (assignmentError) {
-      message("attendanceSessionMessage",
-        "تعذر تحميل المجموعات المسندة إليك: " + assignmentError.message);
-      return;
-    }
-
-    const groupIds = [...new Set((assignments || []).map(x => x.group_id))];
-
-    if (!groupIds.length) {
-      select.replaceChildren(new Option("لم يتم تعيين مجموعة لك", ""));
-      return;
-    }
-
-    groupsQuery = groupsQuery.in("id", groupIds);
-  }
-
-  const { data, error } = await groupsQuery;
-
-  if (error) {
-    message("attendanceSessionMessage",
-      "تعذر تحميل المجموعات: " + error.message);
-    return;
-  }
-
-  attendanceGroups = data || [];
-
-  attendanceGroups.forEach(group => {
-    select.add(new Option(group.name, group.id));
-  });
-
-  if (!attendanceGroups.length) {
-    select.replaceChildren(new Option("لا توجد مجموعات متاحة", ""));
-  }
-}
-
-function canEditSessionSchedule(session) {
-  return Boolean(
-    session &&
-    session.is_open &&
-    session.session_date &&
-    session.session_date < todayInCairo()
-  );
-}
-
-async function loadAttendanceSessions() {
-  const target = $("attendanceSessionsList");
-  target.replaceChildren();
-
-  if (!canManageAttendance()) return;
-
-  const { data, error } = await supabase
-    .from("attendance_sessions")
-    .select("id,group_id,title,session_date,session_time,is_recurring,is_open,created_at")
-    .order("session_date", { ascending: false })
-    .order("session_time", { ascending: false });
-
-  if (error) {
-    addItem("attendanceSessionsList", "تعذر تحميل الجلسات", error.message);
-    return;
-  }
-
-  const allowedGroupIds = new Set(attendanceGroups.map(group => group.id));
-  const sessions = (data || []).filter(session =>
-    allowedGroupIds.has(session.group_id)
-  );
-
-  if (!sessions.length) {
-    addItem("attendanceSessionsList", "لا توجد جلسات حضور بعد",
-      "أنشئ جلسة جديدة من النموذج الموجود بالأعلى.");
-    return;
-  }
-
-  sessions.forEach(session => {
-    const group = attendanceGroups.find(g => g.id === session.group_id);
-    const article = document.createElement("article");
-    article.className = "item";
-
-    const heading = document.createElement("h3");
-    heading.textContent = session.title || "جلسة حضور";
-    article.appendChild(heading);
-
-    const info = document.createElement("p");
-    info.textContent =
-      "المجموعة: " + (group?.name || "—") +
-      "\nالتاريخ: " + (session.session_date || "—") +
-      "\nالوقت: " + (session.session_time || DEFAULT_SESSION_TIME) +
-      "\nالنوع: " + (session.is_recurring ? "جلسة جمعة متكررة" : "جلسة عادية") +
-      "\nالحالة: " + (session.is_open ? "مفتوحة" : "مغلقة");
-    article.appendChild(info);
-
-    const actions = document.createElement("div");
-    actions.className = "attendance-actions";
-
-    const openButton = document.createElement("button");
-    openButton.type = "button";
-    openButton.className = "primary";
-    openButton.textContent = "تسجيل / مراجعة الحضور";
-    openButton.addEventListener("click", () => openAttendanceSession(session));
-    actions.appendChild(openButton);
-
-    const editButton = document.createElement("button");
-    editButton.type = "button";
-    editButton.textContent = "تعديل التاريخ والوقت";
-    editButton.disabled = !canEditSessionSchedule(session);
-    editButton.title = editButton.disabled
-      ? "يمكن تعديل موعد الجلسات المفتوحة التي مرّ تاريخها فقط"
-      : "تعديل موعد جلسة سابقة";
-    editButton.addEventListener("click", () => editAttendanceSession(session));
-    actions.appendChild(editButton);
-
-    if (session.is_open) {
-      const closeButton = document.createElement("button");
-      closeButton.type = "button";
-      closeButton.textContent = "إغلاق الجلسة";
-      closeButton.addEventListener("click", () => closeAttendanceSession(session));
-      actions.appendChild(closeButton);
-    }
-
-    article.appendChild(actions);
-    target.appendChild(article);
-  });
-}
-
-async function editAttendanceSession(session) {
-  if (!canManageAttendance()) {
-    message("attendanceSessionMessage", "ليس لديك صلاحية تعديل الجلسات.");
-    return;
-  }
-
-  if (!canEditSessionSchedule(session)) {
-    message("attendanceSessionMessage",
-      "لا يمكن تعديل موعد جلسة إلا بعد مرور تاريخها، ويجب أن تكون مفتوحة.");
-    return;
-  }
-
-  const newDate = prompt(
-    "أدخل التاريخ الجديد بصيغة YYYY-MM-DD",
-    session.session_date
-  );
-
-  if (newDate === null) return;
-
-  const dateValue = newDate.trim();
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
-    message("attendanceSessionMessage", "صيغة التاريخ غير صحيحة.");
-    return;
-  }
-
-  const parsedDate = new Date(dateValue + "T12:00:00Z");
-  if (Number.isNaN(parsedDate.getTime()) ||
-      parsedDate.toISOString().slice(0, 10) !== dateValue) {
-    message("attendanceSessionMessage", "التاريخ الذي أدخلته غير صالح.");
-    return;
-  }
-
-  const newTime = prompt(
-    "أدخل الوقت الجديد بصيغة 24 ساعة HH:MM",
-    (session.session_time || DEFAULT_SESSION_TIME).slice(0, 5)
-  );
-
-  if (newTime === null) return;
-
-  const timeValue = newTime.trim();
-  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(timeValue)) {
-    message("attendanceSessionMessage", "صيغة الوقت غير صحيحة. مثال: 18:30");
-    return;
-  }
-
-  if (dateValue >= todayInCairo()) {
-    message("attendanceSessionMessage",
-      "موعد الجلسة الجديدة يجب أن يكون في الماضي أيضًا.");
-    return;
-  }
-
-  const { error } = await supabase
-    .from("attendance_sessions")
-    .update({
-      session_date: dateValue,
-      session_time: timeValue
-    })
-    .eq("id", session.id)
-    .eq("is_open", true);
-
-  if (error) {
-    message("attendanceSessionMessage",
-      "تعذر تعديل الموعد: " + error.message);
-    return;
-  }
-
-  message("attendanceSessionMessage", "تم تعديل تاريخ ووقت الجلسة.");
-  await loadAttendanceSessions();
-}
-
-async function createAttendanceSession(event) {
-  event.preventDefault();
-  message("attendanceSessionMessage", "جاري إنشاء الجلسة...");
-
-  if (!canManageAttendance()) {
-    message("attendanceSessionMessage", "ليس لديك صلاحية إنشاء جلسة حضور.");
-    return;
-  }
-
-  const groupId = $("attendanceGroup").value;
-  const title = $("attendanceTitle").value.trim();
-  const sessionDate = $("attendanceDate").value;
-  const sessionTime = $("attendanceTime").value;
-
-  if (!groupId || !title || !sessionDate || !sessionTime) {
-    message("attendanceSessionMessage",
-      "املأ المجموعة والعنوان والتاريخ والوقت.");
-    return;
-  }
-
-  if (!attendanceGroups.some(group => group.id === groupId)) {
-    message("attendanceSessionMessage", "المجموعة المختارة غير متاحة لحسابك.");
-    return;
-  }
-
-  const { data, error } = await supabase
-    .from("attendance_sessions")
-    .insert({
-      group_id: groupId,
-      title,
-      session_date: sessionDate,
-      session_time: sessionTime,
-      is_recurring: false,
-      created_by: currentUser.id,
-      is_open: true
-    })
-    .select("id")
-    .single();
-
-  if (error) {
-    message("attendanceSessionMessage",
-      "فشل إنشاء الجلسة: " + error.message);
-    return;
-  }
-
-  $("attendanceTitle").value = "";
-  message("attendanceSessionMessage", "تم إنشاء جلسة الحضور بنجاح.");
-
-  await loadAttendanceSessions();
-
-  const { data: session, error: sessionError } = await supabase
-    .from("attendance_sessions")
-    .select("id,group_id,title,session_date,session_time,is_recurring,is_open")
-    .eq("id", data.id)
-    .single();
-
-  if (sessionError) {
-    message("attendanceSessionMessage",
-      "تم إنشاء الجلسة لكن تعذر فتحها: " + sessionError.message);
-    return;
-  }
-
-  await openAttendanceSession(session);
-}
-
-function getFridayDates(startString, endString) {
-  const dates = [];
-  const current = new Date(startString + "T12:00:00Z");
-  const end = new Date(endString + "T12:00:00Z");
-
-  while (current <= end) {
-    if (current.getUTCDay() === 5) {
-      dates.push(current.toISOString().slice(0, 10));
-    }
-    current.setUTCDate(current.getUTCDate() + 1);
-  }
-
-  return dates;
-}
-
-async function generateFridaySessions() {
-  message("generateSessionsMessage", "");
-
-  if (!canManageAttendance()) {
-    message("generateSessionsMessage", "ليس لديك صلاحية إنشاء الجلسات.");
-    return;
-  }
-
-  const groupId = $("attendanceGroup").value;
-  if (!groupId || !attendanceGroups.some(group => group.id === groupId)) {
-    message("generateSessionsMessage", "اختار المجموعة أولًا من نموذج إنشاء الجلسة.");
-    return;
-  }
-
-  const confirmed = confirm(
-    "سيتم إنشاء جلسات الجمعة للمجموعة المختارة من " +
-    FRIDAY_START + " حتى " + FRIDAY_END +
-    " الساعة " + DEFAULT_SESSION_TIME +
-    ". الجلسات المتكررة الموجودة لن تتكرر. هل تريد المتابعة؟"
-  );
-
-  if (!confirmed) return;
-
-  const button = $("generateFridaySessionsBtn");
-  button.disabled = true;
-  message("generateSessionsMessage", "جاري فحص الجلسات الموجودة...");
-
-  try {
-    const fridayDates = getFridayDates(FRIDAY_START, FRIDAY_END);
-
-    const { data: existing, error: existingError } = await supabase
-      .from("attendance_sessions")
-      .select("session_date")
-      .eq("group_id", groupId)
-      .eq("is_recurring", true)
-      .gte("session_date", FRIDAY_START)
-      .lte("session_date", FRIDAY_END);
-
-    if (existingError) throw existingError;
-
-    const existingDates = new Set(
-      (existing || []).map(item => item.session_date)
-    );
-
-    const missingDates = fridayDates.filter(date => !existingDates.has(date));
-
-    if (!missingDates.length) {
-      message("generateSessionsMessage",
-        "كل جلسات الجمعة المتكررة في النطاق ده موجودة بالفعل.");
-      return;
-    }
-
-    const rows = missingDates.map(date => ({
-      group_id: groupId,
-      title: "اجتماع الجمعة",
-      session_date: date,
-      session_time: DEFAULT_SESSION_TIME,
-      is_recurring: true,
-      created_by: currentUser.id,
-      is_open: true
-    }));
-
-    const { error: insertError } = await supabase
-      .from("attendance_sessions")
-      .insert(rows);
-
-    if (insertError) throw insertError;
-
-    message("generateSessionsMessage",
-      "تم إنشاء " + rows.length +
-      " جلسة جمعة جديدة. لم يتم تكرار الجلسات الموجودة.");
-
-    await loadAttendanceSessions();
-  } catch (error) {
-    message("generateSessionsMessage",
-      "تعذر إنشاء جلسات الجمعة: " +
-      (error?.message || "خطأ غير معروف") +
-      "\nتأكد من تشغيل كود SQL الخاص بأعمدة session_time و is_recurring والفهرس.");
-  } finally {
-    button.disabled = false;
-  }
-}
-
-async function openAttendanceSession(session) {
-  if (!canManageAttendance()) {
-    message("attendanceSaveMessage", "ليس لديك صلاحية تسجيل الحضور.");
-    return;
-  }
-
-  selectedAttendanceSession = session;
-  attendanceMembers = [];
-
-  $("attendanceMembersList").replaceChildren();
-  $("saveAttendanceBtn").disabled = true;
-  message("attendanceSaveMessage", "جاري تحميل الأعضاء...");
-
-  const group = attendanceGroups.find(g => g.id === session.group_id);
-  $("attendanceMembersTitle").textContent =
-    "أعضاء المجموعة: " + (group?.name || "—") +
-    " — " + (session.title || "");
-
-  const { data: members, error: membersError } = await supabase
-    .from("profiles")
-    .select("id,full_name,group_id")
-    .eq("group_id", session.group_id)
-    .eq("approval_status", "approved")
-    .neq("role", "admin")
-    .order("full_name");
-
-  if (membersError) {
-    message("attendanceSaveMessage",
-      "تعذر تحميل الأعضاء: " + membersError.message);
-    return;
-  }
-
-  const { data: records, error: recordsError } = await supabase
-    .from("attendance_records")
-    .select("member_id,status")
-    .eq("session_id", session.id);
-
-  if (recordsError) {
-    message("attendanceSaveMessage",
-      "تعذر تحميل الحضور السابق: " + recordsError.message);
-    return;
-  }
-
-  const existingRecords = new Map(
-    (records || []).map(record => [record.member_id, record.status])
-  );
-
-  attendanceMembers = (members || []).map(member => ({
-    ...member,
-    status: existingRecords.get(member.id) || "present"
-  }));
-
-  const target = $("attendanceMembersList");
-  target.replaceChildren();
-
-  if (!attendanceMembers.length) {
-    addItem("attendanceMembersList", "لا يوجد أعضاء في المجموعة",
-      "تأكد من أن الأعضاء معتمدون ومضافون للمجموعة المختارة.");
-    message("attendanceSaveMessage", "");
-    return;
-  }
-
-  attendanceMembers.forEach(member => {
-    const row = document.createElement("div");
-    row.className = "item attendance-row";
-
-    const name = document.createElement("div");
-    const heading = document.createElement("strong");
-    heading.textContent = member.full_name || member.id;
-    name.appendChild(heading);
-
-    const selectWrap = document.createElement("div");
-    const label = document.createElement("label");
-    label.textContent = "حالة الحضور";
-
-    const select = document.createElement("select");
-    select.dataset.memberId = member.id;
-
-    [
-      ["present", "حاضر"],
-      ["late", "متأخر"],
-      ["absent", "غائب"],
-      ["excused", "غياب بعذر"]
-    ].forEach(([value, labelText]) => {
-      select.add(new Option(labelText, value));
-    });
-
-    select.value = member.status;
-    select.disabled = !session.is_open;
-
-    select.addEventListener("change", () => {
-      const found = attendanceMembers.find(item => item.id === member.id);
-      if (found) found.status = select.value;
-    });
-
-    selectWrap.appendChild(label);
-    selectWrap.appendChild(select);
-    row.appendChild(name);
-    row.appendChild(selectWrap);
-    target.appendChild(row);
-  });
-
-  $("saveAttendanceBtn").disabled = !session.is_open;
-  message("attendanceSaveMessage",
-    session.is_open
-      ? "تم تحميل الأعضاء. راجع الحالات واضغط حفظ الحضور."
-      : "هذه الجلسة مغلقة للقراءة فقط.");
-
-  $("attendancePanel").scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-async function saveAttendance() {
-  if (!canManageAttendance() || !selectedAttendanceSession) {
-    message("attendanceSaveMessage", "اختار جلسة حضور أولًا.");
-    return;
-  }
-
-  if (!selectedAttendanceSession.is_open) {
-    message("attendanceSaveMessage", "الجلسة مغلقة ولا يمكن تعديل الحضور.");
-    return;
-  }
-
-  message("attendanceSaveMessage", "جاري حفظ الحضور...");
-  $("saveAttendanceBtn").disabled = true;
-
-  const rows = attendanceMembers.map(member => ({
-    session_id: selectedAttendanceSession.id,
-    member_id: member.id,
-    status: member.status,
-    marked_by: currentUser.id,
-    check_in_method: "manual"
-  }));
-
-  if (!rows.length) {
-    message("attendanceSaveMessage", "لا يوجد أعضاء لحفظ حضورهم.");
-    $("saveAttendanceBtn").disabled = false;
-    return;
-  }
-
-  const { error } = await supabase
-    .from("attendance_records")
-    .upsert(rows, { onConflict: "session_id,member_id" });
-
-  if (error) {
-    message("attendanceSaveMessage", "فشل حفظ الحضور: " + error.message);
-    $("saveAttendanceBtn").disabled = false;
-    return;
-  }
-
-  message("attendanceSaveMessage", "تم حفظ الحضور بنجاح.");
-  $("saveAttendanceBtn").disabled = false;
-}
-
-async function closeAttendanceSession(session) {
-  if (!canManageAttendance()) {
-    message("attendanceSessionMessage", "ليس لديك صلاحية إغلاق الجلسة.");
-    return;
-  }
-
-  const confirmed = confirm(
-    'هل أنت متأكد من إغلاق جلسة "' + session.title + '"؟\n' +
-    "بعد الإغلاق لن يمكن تعديل الحضور فيها."
-  );
-
-  if (!confirmed) return;
-
-  const { error } = await supabase
-    .from("attendance_sessions")
-    .update({ is_open: false })
-    .eq("id", session.id)
-    .eq("is_open", true);
-
-  if (error) {
-    message("attendanceSessionMessage",
-      "تعذر إغلاق الجلسة: " + error.message);
-    return;
-  }
-
-  if (selectedAttendanceSession?.id === session.id) {
-    selectedAttendanceSession = { ...session, is_open: false };
-    $("saveAttendanceBtn").disabled = true;
-
-    $("attendanceMembersList")
-      .querySelectorAll("select")
-      .forEach(select => select.disabled = true);
-
-    message("attendanceSaveMessage", "تم إغلاق الجلسة.");
-  }
-
-  message("attendanceSessionMessage", "تم إغلاق الجلسة.");
-  await loadAttendanceSessions();
-}
-
-/* نهاية إدارة الحضور */
-
 async function refreshSession() {
   const { data, error } = await supabase.auth.getSession();
 
   if (error || !data.session) {
     currentUser = null;
     currentProfile = null;
-    selectedAttendanceSession = null;
-    attendanceMembers = [];
-
-    $("attendanceNavLink").classList.add("hidden");
-    $("attendancePanel").classList.add("hidden");
     showDashboard(false);
     return;
   }
@@ -1384,7 +975,8 @@ async function refreshSession() {
 
   currentProfile = profile;
 
-  $("dashName").textContent = profile.full_name || currentUser.email || "—";
+  $("dashName").textContent =
+    profile.full_name || currentUser.email || "—";
   $("dashPoints").textContent = String(profile.points ?? 0);
 
   const statusLabels = {
@@ -1404,35 +996,28 @@ async function refreshSession() {
   const approved = profile.approval_status === "approved";
   const isAdmin = profile.role === "admin";
   const isServant = profile.role === "servant";
-  const canAttendance = approved && (isAdmin || isServant);
 
   $("servantPanel").classList.toggle(
     "hidden", !(approved && (isAdmin || isServant))
   );
   $("adminPanel").classList.toggle("hidden", !(approved && isAdmin));
-  $("attendancePanel").classList.toggle("hidden", !canAttendance);
-  $("attendanceNavLink").classList.toggle("hidden", !canAttendance);
 
   await Promise.all([
     loadEvents("dashboardEventsList"),
-    loadLessons("dashboardLessonsList")
+    loadLessons("dashboardLessonsList"),
+    loadQuizzes()
   ]);
 
   if (approved && (isAdmin || isServant)) {
-    await loadAssignedMembers();
+    await Promise.all([loadAssignedMembers(),loadServantGroups(),loadQuizDropdowns(),loadServantNotifications()]);
+    $("quizLesson").disabled = $("quizType").value !== "lesson";
+    $("quizLesson").required = $("quizType").value === "lesson";
   }
 
   if (approved && isAdmin) {
     await loadAdminData();
   }
-
-  if (canAttendance) {
-    await loadAttendanceGroups();
-    await loadAttendanceSessions();
-  }
 }
-
-/* إنشاء الحساب وتسجيل الدخول */
 
 $("signupForm").addEventListener("submit", async event => {
   event.preventDefault();
@@ -1456,10 +1041,12 @@ $("signupForm").addEventListener("submit", async event => {
     return;
   }
 
-  message("signupMessage",
+  message(
+    "signupMessage",
     data.session
       ? "تم إنشاء الحساب. حسابك في انتظار موافقة المسؤول."
-      : "راجع بريدك الإلكتروني لتأكيد الحساب، ثم انتظر موافقة المسؤول.");
+      : "راجع بريدك الإلكتروني لتأكيد الحساب، ثم انتظر موافقة المسؤول."
+  );
 });
 
 $("loginForm").addEventListener("submit", async event => {
@@ -1493,12 +1080,8 @@ $("logoutBtn").addEventListener("click", async () => {
 
   currentUser = null;
   currentProfile = null;
-  selectedAttendanceSession = null;
-  attendanceMembers = [];
   showDashboard(false);
 });
-
-/* النقاط */
 
 $("pointsForm").addEventListener("submit", async event => {
   event.preventDefault();
@@ -1535,10 +1118,9 @@ $("pointsForm").addEventListener("submit", async event => {
 
   message("pointsMessage", "تم تسجيل النقاط بنجاح.");
   $("pointsForm").reset();
+
   await refreshSession();
 });
-
-/* تعيين الخدام للمجموعات */
 
 $("assignForm").addEventListener("submit", async event => {
   event.preventDefault();
@@ -1576,27 +1158,59 @@ $("assignForm").addEventListener("submit", async event => {
 
   message("assignMessage", "تم تعيين الخادم للمجموعة.");
   await loadAssignments();
-  await loadAttendanceGroups();
-  await loadAttendanceSessions();
 });
 
-/* أزرار الحضور */
 
-$("attendanceSessionForm").addEventListener("submit", createAttendanceSession);
-$("saveAttendanceBtn").addEventListener("click", saveAttendance);
-$("generateFridaySessionsBtn").addEventListener("click", generateFridaySessions);
-
-$("toggleSessionsBtn").addEventListener("click", () => {
-  sessionsExpanded = !sessionsExpanded;
-
-  $("attendanceSessionsList").classList.toggle("hidden", !sessionsExpanded);
-  $("sessionsTools").classList.toggle("hidden", !sessionsExpanded);
-
-  $("toggleSessionsBtn").textContent =
-    sessionsExpanded ? "إخفاء الجلسات" : "عرض كل الجلسات";
+$("lessonCreateForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  message("lessonCreateMessage","جاري نشر الدرس...");
+  if(!currentUser||!currentProfile||currentProfile.approval_status!=="approved"){message("lessonCreateMessage","يلزم حساب خادم معتمد.");return;}
+  const groupId=$("lessonGroup").value, title=$("lessonTitle").value.trim();
+  const body=$("lessonBody").value.trim(), url=$("lessonUrl").value.trim();
+  if(!groupId||!title||!body){message("lessonCreateMessage","اختار المجموعة واكتب العنوان ومحتوى الدرس.");return;}
+  const {error}=await supabase.from("lessons").insert({
+    title,description:$("lessonDescription").value.trim(),body,
+    content_url:url||null,group_id:groupId,created_by:currentUser.id
+  });
+  if(error){message("lessonCreateMessage","فشل نشر الدرس: "+error.message);return;}
+  message("lessonCreateMessage","تم نشر الدرس.");
+  $("lessonCreateForm").reset(); await Promise.all([loadLessons("dashboardLessonsList"),loadLessons("lessonsList"),loadQuizDropdowns()]);
 });
-
-/* المظهر واللغة */
+$("quizType").addEventListener("change",()=>{
+  $("quizLesson").required=$("quizType").value==="lesson";
+  $("quizLesson").disabled=$("quizType").value!=="lesson";
+});
+$("quizCreateForm").addEventListener("submit",async event=>{
+  event.preventDefault();message("quizCreateMessage","جاري إنشاء الاختبار...");
+  const type=$("quizType").value, lessonId=$("quizLesson").value||null, groupId=$("quizGroup").value;
+  if(type==="lesson"&&!lessonId){message("quizCreateMessage","اختار الدرس المرتبط بالأسئلة.");return;}
+  const {data,error}=await supabase.from("quizzes").insert({
+    title:$("quizTitle").value.trim(),description:$("quizDescription").value.trim(),
+    group_id:groupId,lesson_id:type==="lesson"?Number(lessonId):null,quiz_type:type,
+    created_by:currentUser.id,is_published:false
+  }).select("id").single();
+  if(error){message("quizCreateMessage","فشل إنشاء الاختبار: "+error.message);return;}
+  message("quizCreateMessage","تم إنشاء الاختبار. أضف أسئلته من النموذج التالي. الاختبار غير منشور للشباب بعد.");
+  $("quizCreateForm").reset(); await loadQuizDropdowns(); $("questionQuiz").value=String(data.id); await loadQuizzes();
+});
+$("questionCreateForm").addEventListener("submit",async event=>{
+  event.preventDefault();message("questionCreateMessage","جاري إضافة السؤال...");
+  const quizId=$("questionQuiz").value;
+  const options=[0,1,2,3].map(i=>$("option"+i).value.trim());
+  if(!quizId||!options.every(Boolean)){message("questionCreateMessage","اختار الاختبار واكتب الاختيارات الأربعة.");return;}
+  const {data:question,error}=await supabase.from("quiz_questions").insert({
+    quiz_id:Number(quizId),question_text:$("questionText").value.trim(),options,sort_order:Date.now()%100000
+  }).select("id").single();
+  if(error){message("questionCreateMessage","فشل إضافة السؤال: "+error.message);return;}
+  const {error:keyError}=await supabase.from("quiz_answer_keys").insert({
+    question_id:question.id,correct_option:Number($("correctOption").value)
+  });
+  if(keyError){message("questionCreateMessage","تم إنشاء السؤال لكن فشل حفظ مفتاح الإجابة: "+keyError.message);return;}
+  message("questionCreateMessage","تمت إضافة السؤال والإجابة الصحيحة بشكل آمن.");
+  $("questionCreateForm").reset(); await loadQuizzes();
+});
+$("loadAttendanceBtn").addEventListener("click",loadAttendanceRoster);
+$("saveAttendanceBtn").addEventListener("click",saveAttendanceRoster);
 
 $("themeBtn").addEventListener("click", () => {
   document.body.classList.toggle("light");
@@ -1620,6 +1234,7 @@ supabase.auth.onAuthStateChange(() => {
   setTimeout(() => refreshSession(), 0);
 });
 
+$("attendanceDate").value = new Date().toLocaleDateString("en-CA");
 await Promise.all([
   loadEvents("eventsList"),
   loadLessons("lessonsList"),
