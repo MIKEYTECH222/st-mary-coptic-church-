@@ -1,4 +1,3 @@
-
 import { supabase } from "./supabase.js";
 
 const $ = id => document.getElementById(id);
@@ -6,6 +5,9 @@ const $ = id => document.getElementById(id);
 let currentUser = null;
 let currentProfile = null;
 let lang = "ar";
+
+// تثبيت الوضع الداكن
+document.documentElement.style.colorScheme = "dark";
 
 function message(id, text) {
   const element = $(id);
@@ -1099,14 +1101,6 @@ $("questionCreateForm").addEventListener("submit", async event => {
 // الحضور والغياب
 $("loadAttendanceBtn").addEventListener("click", loadAttendanceRoster);
 $("saveAttendanceBtn").addEventListener("click", saveAttendanceRoster);
-
-// تغيير المظهر
-$("themeBtn").addEventListener("click", () => {
-  document.body.classList.toggle("light");
-
-  $("themeBtn").textContent =
-    document.body.classList.contains("light") ? "☾" : "☀";
-});
 
 // تغيير اتجاه ولغة الصفحة
 $("langBtn").addEventListener("click", () => {
