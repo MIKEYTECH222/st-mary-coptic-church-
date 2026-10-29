@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة الخادم | أسرة الشباب</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #101522;
+      color: #f4f5f8;
+    }
+
+    header {
+      background: #191f30;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 35px auto;
+      padding: 18px;
+    }
+
+    .welcome, .card {
+      background: #1b2334;
+      border: 1px solid #30394d;
+      border-radius: 15px;
+      padding: 23px;
+      margin-bottom: 18px;
+    }
+
+    .welcome {
+      background: linear-gradient(135deg, #263b68, #394d83);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+    }
+
+    .card h3 { color: #9db8ff; }
+
+    a, button {
+      display: inline-block;
+      padding: 11px 17px;
+      border-radius: 9px;
+      text-decoration: none;
+      border: 0;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    a {
+      background: #344d83;
+      color: white;
+    }
+
+    button {
+      background: #e05252;
+      color: white;
+    }
+
+    #status {
+      line-height: 1.8;
+      color: #c5cce0;
+    }
+
+    @media(max-width: 550px) {
+      header { padding: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h2>لوحة الخادم</h2>
+  <a href="dashboard.html">لوحة العضو</a>
+</header>
+
+<main>
+
+  <section class="welcome">
+    <h1>أهلاً يا خادم <span id="servantName">...</span> 👋</h1>
+    <p>من هنا تقدر تتابع مجموعتك وتساعد في تنظيم أنشطتها.</p>
+    <p>المجموعة: <strong id="groupName">جاري التحميل...</strong></p>
+  </section>
+
+  <h2>أدوات الخادم</h2>
+
+  <section class="grid">
+    <div class="card">
+      <h3>👥 أعضاء المجموعة</h3>
+      <p>متابعة أعضاء مجموعتك وبياناتهم.</p>
+      <p>عدد الأعضاء: <strong id="memberCount">--</strong></p>
+    </div>
+
+    <div class="card">
+      <h3>⭐ متابعة النقاط</h3>
+      <p>مراجعة نقاط أعضاء المجموعة.</p>
+      <p>إدارة النقاط هتتضاف بعد ربط الصلاحيات.</p>
+    </div>
+
+    <div class="card">
+      <h3>📅 الفعاليات</h3>
+      <p>متابعة اللقاءات والأنشطة.</p>
+      <a href="events.html">فتح الفعاليات</a>
+    </div>
+
+    <div class="card">
+      <h3>📚 الدروس</h3>
+      <p>الوصول إلى المواد التعليمية.</p>
+      <a href="lessons.html">فتح الدروس</a>
+    </div>
+  </section>
+
+  <p id="status">جاري التحقق من صلاحيات الحساب...</p>
+
+</main>
+
+<script type="module">
+  import { supabase } from "./supabase.js";
+
+  const status = document.getElementById("status");
+
+  async function loadServantDashboard() {
+    const { data: authData, error: authError } =
+      await supabase.auth.getUser();
+
+    if (authError || !authData.user) {
+      location.href = "account.html";
+      return;
+    }
+
+    const user = authData.user;
+
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("full_name, role, approval_status, group_id")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      status.textContent = "حدث خطأ: " + error.message;
+      return;
+    }
+
+    if (!profile || profile.approval_status !== "approved") {
+      status.textContent = "الحساب غير معتمد أو لا توجد بيانات شخصية.";
+      await supabase.auth.signOut();
+      location.href = "account.html";
+      return;
+    }
+
+    if (!["servant", "admin"].includes(profile.role)) {
+      status.textContent = "هذه الصفحة مخصصة للخدام والإدارة فقط.";
+      setTimeout(() => location.href = "dashboard.html", 2000);
+      return;
+    }
+
+    document.getElementById("servantName").textContent =
+      profile.full_name || "خادم";
+
+    document.getElementById("groupName").textContent =
+      profile.group_id || "لم يتم تعيين مجموعة";
+
+    // سيتم ربط عدد الأعضاء بعد تجهيز جدول المجموعات.
+    document.getElementById("memberCount").textContent = "--";
+
+    status.textContent = "تم التحقق من الحساب بنجاح.";
+  }
+
+  loadServantDashboard();
+</script>
+
+</body>
+</html>
