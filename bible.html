@@ -10,7 +10,7 @@
 <body>
 <header><div class="wrap top"><div><h1>الكتاب المقدس</h1><p>اقرأ، ابحث، وحدد الآية التي تريد أن تسأل عنها</p></div><a class="back" href="index.html">العودة للموقع</a></div></header>
 <main class="wrap">
-<div class="notice"><b>مهم:</b> هذه واجهة القراءة. نص الكتاب المقدس الكامل لم يُضمّن بعد؛ يجب توفير ملف نصي موثوق للترجمة العربية المطلوبة والتحقق من اشتماله على الأسفار القانونية الثانية ومن حقوق إعادة النشر.</div>
+<div class="notice"><b>ملاحظة:</b> يتم تحميل نص ترجمة فان دايك العربية من مصدر بيانات مفتوح عند توفر الاتصال بالإنترنت. هذه النسخة تشمل الأسفار الـ66، ولا تشمل الأسفار القانونية الثانية.</div>
 <section class="card"><h2>اختيار السفر والإصحاح</h2><div class="grid">
 <div><label for="testament">العهد</label><select id="testament"><option value="old">العهد القديم</option><option value="new">العهد الجديد</option></select></div>
 <div><label for="book">السفر</label><select id="book"></select></div><div><label for="chapter">الإصحاح</label><select id="chapter" disabled></select></div></div>
@@ -19,7 +19,7 @@
 <section class="card"><h2 id="chapterTitle">نص الإصحاح</h2><p class="muted">بعد إضافة ملف النص، اضغط على الآية لتحديدها.</p><div id="verses"><div class="empty">ملف النص غير متصل بعد.</div></div><div class="actions"><button id="favorite" class="secondary" disabled>حفظ الآية المفضلة</button><button id="ask" disabled>اسأل خادمك عن الآية</button><button id="showFav" class="secondary">عرض المفضلة</button></div><p id="selectionStatus" class="status"></p></section>
 <section id="favCard" class="card hidden"><h2>آياتي المفضلة</h2><div id="favList"></div><p id="favEmpty" class="muted">لا توجد آيات محفوظة.</p></section>
 <section id="questionCard" class="card hidden"><h2>إرسال سؤال للخادم</h2><p id="reference" class="muted"></p><label for="question">اكتب سؤالك</label><textarea id="question" maxlength="3000" placeholder="ما الجزء الذي لم تفهمه؟"></textarea><div class="actions"><button id="send">إرسال السؤال</button><button id="cancel" class="secondary">إلغاء</button></div><p id="qStatus" class="status"></p><p class="muted">إرسال السؤال يحتاج إلى ربط تسجيل دخول الموقع وجدول الأسئلة في Supabase؛ لن يتم إرساله قبل إعداد الربط.</p></section>
-<section class="card"><h2>ملف النص المطلوب</h2><p>ضع ملفًا باسم <code>bible-ar.json</code> بجوار هذا الملف بعد الحصول على نص كامل ومرخّص. الشكل المتوقع: <code>{"translation":"اسم الترجمة","books":[{"id":"john","name":"إنجيل يوحنا","testament":"new","chapters":[["نص الآية الأولى","نص الآية الثانية"]]}]}</code></p></section>
+<section class="card"><h2>مصدر النص</h2><p>ترجمة فان دايك العربية (1865)، مصدر البيانات: <a href="https://github.com/midvash/bible-data" target="_blank" rel="noopener">مشروع Bible Data المفتوح</a>. يحتاج عرض الآيات لأول مرة إلى اتصال بالإنترنت.</p></section>
 </main><footer>شبابنا · الكتاب المقدس والدراسة</footer>
 <script>
 "use strict";
@@ -40,6 +40,23 @@ $("favorite").onclick=()=>{if(!selected)return;let a=favs();if(!a.some(x=>x.refe
 $("showFav").onclick=()=>{$("favCard").classList.toggle("hidden");renderFavs()};$("ask").onclick=()=>{if(!selected)return;$("questionCard").classList.remove("hidden");$("reference").textContent=selected.reference+" — "+selected.text;$("question").focus()};$("cancel").onclick=()=> $("questionCard").classList.add("hidden");$("send").onclick=()=>say("qStatus","لم يُرسل السؤال بعد. يلزم ربط تسجيل الدخول وجدول الأسئلة في Supabase.");
 function move(d){if(!data)return say("status","التنقل يتطلب ربط ملف النص.");let n=+$("chapter").value+d;if(n<1||n>+$("chapter").options.length)return say("status","لا يوجد إصحاح آخر في هذا الاتجاه.");$("chapter").value=n;render()}
 $("prev").onclick=()=>move(-1);$("next").onclick=()=>move(1);
-async function load(){try{let r=await fetch("bible-ar.json");if(!r.ok)throw Error("الملف غير موجود");let j=await r.json();if(!Array.isArray(j.books)||!j.books.length)throw Error("تنسيق الملف غير صحيح");data=j;$("chapter").disabled=false;fillBooks();say("status","تم تحميل النص: "+(j.translation||"ترجمة غير محددة"))}catch(e){fillBooks();say("status","واجهة القراءة جاهزة، لكن النص غير متصل: "+e.message+". أضف ملفًا موثوقًا باسم bible-ar.json.")}}
+const arabicBookNames={Gen:"التكوين",Exod:"الخروج",Lev:"اللاويين",Num:"العدد",Deut:"التثنية",Josh:"يشوع",Judg:"القضاة",Ruth:"راعوث","1Sam":"صموئيل الأول","2Sam":"صموئيل الثاني","1Kgs":"الملوك الأول","2Kgs":"الملوك الثاني","1Chr":"أخبار الأيام الأول","2Chr":"أخبار الأيام الثاني",Ezra:"عزرا",Neh:"نحميا",Esth:"أستير",Job:"أيوب",Ps:"المزامير",Prov:"الأمثال",Eccl:"الجامعة",Song:"نشيد الأنشاد",Isa:"إشعياء",Jer:"إرميا",Lam:"مراثي إرميا",Ezek:"حزقيال",Dan:"دانيال",Hos:"هوشع",Joel:"يوئيل",Amos:"عاموس",Obad:"عوبديا",Jonah:"يونان",Mic:"ميخا",Nah:"ناحوم",Hab:"حبقوق",Zeph:"صفنيا",Hag:"حجي",Zech:"زكريا",Mal:"ملاخي",Matt:"إنجيل متى",Mark:"إنجيل مرقس",Luke:"إنجيل لوقا",John:"إنجيل يوحنا",Acts:"أعمال الرسل",Rom:"رومية","1Cor":"كورنثوس الأولى","2Cor":"كورنثوس الثانية",Gal:"غلاطية",Eph:"أفسس",Phil:"فيلبي",Col:"كولوسي","1Thess":"تسالونيكي الأولى","2Thess":"تسالونيكي الثانية","1Tim":"تيموثاوس الأولى","2Tim":"تيموثاوس الثانية",Titus:"تيطس",Phlm:"فليمون",Heb:"العبرانيين",Jas:"يعقوب","1Pet":"بطرس الأولى","2Pet":"بطرس الثانية","1John":"يوحنا الأولى","2John":"يوحنا الثانية","3John":"يوحنا الثالثة",Jude:"يهوذا",Rev:"رؤيا يوحنا اللاهوتي"};
+async function load(){
+  try{
+    say("status","جاري تحميل نص الكتاب المقدس…");
+    const url="https://raw.githubusercontent.com/midvash/bible-data/main/versions/ar/svd/svd.json";
+    const response=await fetch(url);
+    if(!response.ok)throw Error("تعذر الوصول إلى مصدر نص الكتاب (HTTP "+response.status+")");
+    const source=await response.json();
+    if(!Array.isArray(source.books)||!source.books.length)throw Error("صيغة بيانات النص غير متوقعة");
+    data={translation:"فان دايك العربية (1865)",books:source.books.map(b=>({id:b.book,name:arabicBookNames[b.book]||b.book,testament:(b.testament==="NT"?"new":"old"),chapters:(b.chapters||[]).map(c=>(c.verses||[]).map(v=>v.text||""))}))};
+    fillBooks();
+    say("status","تم تحميل نص فان دايك بنجاح. اختر السفر والإصحاح لعرض الآيات.");
+  }catch(e){
+    data=null;fillBooks();
+    say("status","لم نتمكن من تحميل الآيات. تأكد من اتصال الإنترنت ثم حدّث الصفحة. التفاصيل: "+e.message);
+    $("verses").innerHTML='<div class="empty">تعذر تحميل نص الكتاب الآن. جرّب تحديث الصفحة أو فتحها بعد التأكد من اتصال الإنترنت.</div>';
+  }
+}
 fillBooks();load();renderFavs();
 </script></body></html>
