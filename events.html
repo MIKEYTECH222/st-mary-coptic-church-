@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101521">
+  <title>الفعاليات واللقاءات | شبابنا</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="wrap">
+    <nav class="glass">
+      <a class="brand" href="./index.html">✦ شبابنا</a>
+      <div class="nav-actions">
+        <a class="button" href="./index.html">الرئيسية</a>
+        <a class="button" href="./lessons.html">الدروس</a>
+        <a class="button" href="./account.html">حسابي</a>
+      </div>
+    </nav>
+
+    <main>
+      <section class="hero glass">
+        <p>✦ دايمًا مع بعض</p>
+        <h1>الفعاليات واللقاءات</h1>
+        <p>تابع مواعيد لقاءاتنا وفعاليات خدمة الشباب.</p>
+      </section>
+
+      <section class="panel glass">
+        <h2>الفعاليات القادمة</h2>
+        <div id="eventsList" class="list">
+          <p class="muted">جاري تحميل الفعاليات...</p>
+        </div>
+        <p id="eventsMessage" class="status" role="status"></p>
+      </section>
+    </main>
+  </div>
+
+  <footer>خدمة الشباب • إيمان ومحبة ونمو</footer>
+
+  <script type="module">
+    import { supabase } from "./supabase.js";
+
+    const list = document.getElementById("eventsList");
+    const message = document.getElementById("eventsMessage");
+
+    function addEvent(event) {
+      const card = document.createElement("article");
+      card.className = "item";
+
+      const title = document.createElement("h3");
+      title.textContent = event.title || "لقاء جديد";
+      card.appendChild(title);
+
+      if (event.description) {
+        const description = document.createElement("p");
+        description.textContent = event.description;
+        card.appendChild(description);
+      }
+
+      const details = document.createElement("p");
+      const date = event.starts_at
+        ? new Date(event.starts_at).toLocaleString("ar-EG")
+        : "";
+
+      details.textContent = [event.location, date]
+        .filter(Boolean)
+        .join(" • ");
+
+      card.appendChild(details);
+      list.appendChild(card);
+    }
+
+    async function loadEvents() {
+      const { data, error } = await supabase
+        .from("events")
+        .select("title,description,location,starts_at")
+        .order("starts_at", { ascending: true });
+
+      list.replaceChildren();
+
+      if (error) {
+        message.textContent = "تعذر تحميل الفعاليات. حاول مرة أخرى لاحقًا.";
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        list.textContent = "لا توجد فعاليات حاليًا.";
+        return;
+      }
+
+      data.forEach(addEvent);
+      message.textContent = "";
+    }
+
+    loadEvents();
+  </script>
+</body>
+</html>
