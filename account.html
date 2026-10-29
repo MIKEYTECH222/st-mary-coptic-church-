@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الحساب | خدمة الشباب</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .account-container {
+      max-width: 460px;
+      margin: 50px auto;
+      padding: 25px;
+      border-radius: 16px;
+      background: #1e293b;
+      color: white;
+    }
+    .account-container input {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px;
+      margin: 12px 0;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: white;
+    }
+    .account-container button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 10px;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+    }
+    #message {
+      margin-top: 15px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+    .account-links {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="account-container">
+    <h1>حسابك في خدمة الشباب</h1>
+    <p>سجّل الدخول أو أنشئ حسابًا جديدًا.</p>
+
+    <h2>إنشاء حساب</h2>
+    <form id="signupForm">
+      <input id="signupName" type="text" placeholder="الاسم بالكامل" required>
+      <input id="signupEmail" type="email" placeholder="البريد الإلكتروني" required>
+      <input id="signupPassword" type="password" placeholder="كلمة المرور (6 أحرف على الأقل)" minlength="6" required>
+      <button type="submit">إنشاء الحساب</button>
+    </form>
+
+    <hr>
+
+    <h2>تسجيل الدخول</h2>
+    <form id="loginForm">
+      <input id="loginEmail" type="email" placeholder="البريد الإلكتروني" required>
+      <input id="loginPassword" type="password" placeholder="كلمة المرور" required>
+      <button type="submit">تسجيل الدخول</button>
+    </form>
+
+    <p id="message" role="status"></p>
+
+    <div class="account-links">
+      <a href="index.html">العودة للرئيسية</a>
+    </div>
+  </main>
+
+  <script type="module">
+    import { supabase } from "./supabase.js";
+
+    const message = document.getElementById("message");
+
+    function showMessage(text, color = "#facc15") {
+      message.textContent = text;
+      message.style.color = color;
+    }
+
+    document.getElementById("signupForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("signupName").value.trim();
+      const email = document.getElementById("signupEmail").value.trim();
+      const password = document.getElementById("signupPassword").value;
+
+      showMessage("جاري إنشاء الحساب...");
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: name },
+          emailRedirectTo: location.origin + location.pathname
+        }
+      });
+
+      if (error) {
+        showMessage(error.message, "#f87171");
+        return;
+      }
+
+      if (data.session) {
+        showMessage("تم إنشاء الحساب وتسجيل الدخول. جاري التحقق من حالة الحساب...");
+        await checkProfile();
+      } else {
+        showMessage("تم إرسال رسالة تأكيد إلى بريدك الإلكتروني. افتحها لتأكيد الحساب.");
+      }
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
+
+      showMessage("جاري تسجيل الدخول...");
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        showMessage(error.message, "#f87171");
+        return;
+      }
+
+      await checkProfile();
+    });
+
+    async function checkProfile() {
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+
+      if (authError || !authData.user) {
+        showMessage("تعذر التحقق من الحساب. حاول تسجيل الدخول مرة أخرى.", "#f87171");
+        return;
+      }
+
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("full_name, role, approval_status, points, group_id")
+        .eq("id", authData.user.id)
+        .maybeSingle();
+
+      if (error) {
+        showMessage("تم تسجيل الدخول، لكن تعذر تحميل بيانات الملف الشخصي: " + error.message, "#f87171");
+        return;
+      }
+
+      if (!profile) {
+        showMessage("تم تسجيل الدخول، لكن لم يتم العثور على ملفك الشخصي. تواصل مع المسؤول.");
+        return;
+      }
+
+      if (profile.approval_status !== "approved") {
+        showMessage("حسابك قيد المراجعة أو لم تتم الموافقة عليه بعد. تواصل مع المسؤول.");
+        return;
+      }
+
+      showMessage("أهلاً " + (profile.full_name || "بك") + "، تم تسجيل الدخول بنجاح. جاري فتح حسابك...", "#4ade80");
+      location.href = "dashboard.html";
+    }
+
+    const { data: sessionData } = await supabase.auth.getSession();
+
+    if (sessionData.session) {
+      checkProfile();
+    }
+  </script>
+
+</body>
+</html>
