@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الاختبارات | أسرة الشباب</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #101522;
+      color: #f4f5f8;
+    }
+
+    header {
+      background: #191f30;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 35px auto;
+      padding: 18px;
+    }
+
+    .intro, .quiz-card, .question-card, .result {
+      background: #1b2334;
+      border: 1px solid #30394d;
+      border-radius: 15px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+
+    .intro {
+      background: linear-gradient(135deg, #263b68, #394d83);
+    }
+
+    .quiz-card h3 { color: #9db8ff; }
+
+    button, .back-link {
+      border: 0;
+      border-radius: 9px;
+      padding: 12px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    button {
+      background: #526fc1;
+      color: white;
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .back-link {
+      background: #344d83;
+      color: white;
+    }
+
+    .option {
+      display: block;
+      background: #252f44;
+      border: 1px solid #3b4964;
+      padding: 13px;
+      border-radius: 9px;
+      margin: 10px 0;
+      cursor: pointer;
+    }
+
+    .option input { margin-left: 8px; }
+
+    .option:has(input:checked) {
+      border-color: #8daaff;
+      background: #303f61;
+    }
+
+    #quizArea, #resultArea { display: none; }
+
+    #progress {
+      color: #b8c8ef;
+      margin-bottom: 15px;
+    }
+
+    .result strong {
+      color: #ffd36a;
+      font-size: 25px;
+    }
+
+    #message { line-height: 1.8; }
+
+    @media (max-width: 550px) {
+      main { margin: 15px auto; }
+      header { padding: 15px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h2>📝 الاختبارات</h2>
+  <a class="back-link" href="dashboard.html">العودة للوحة العضو</a>
+</header>
+
+<main>
+
+  <section class="intro">
+    <h1>اختبر معلوماتك! 🧠</h1>
+    <p>اختار اختبار وجرب معلوماتك. كل اختبار هيساعدك تتعلم حاجة جديدة.</p>
+  </section>
+
+  <section id="quizList">
+    <h2>الاختبارات المتاحة</h2>
+
+    <div class="quiz-card">
+      <h3>اختبار تجريبي</h3>
+      <p>اختبار مبدئي للتأكد من أن نظام الأسئلة والنتائج يعمل.</p>
+      <p>عدد الأسئلة: 3</p>
+      <button id="startBtn">ابدأ الاختبار</button>
+    </div>
+
+    <p style="color:#aeb9ce">
+      الاختبار ده تجريبي حاليًا، ولسه هنضيف الاختبارات الحقيقية من لوحة الخادم.
+    </p>
+  </section>
+
+  <section id="quizArea">
+    <div id="progress"></div>
+    <div class="question-card">
+      <h2 id="questionText"></h2>
+      <div id="options"></div>
+    </div>
+    <button id="nextBtn">السؤال التالي</button>
+  </section>
+
+  <section id="resultArea" class="result">
+    <h2>انتهى الاختبار 🎉</h2>
+    <p>نتيجتك:</p>
+    <strong id="score"></strong>
+    <p id="message"></p>
+    <button id="retryBtn">إعادة الاختبار</button>
+    <a class="back-link" href="dashboard.html">العودة للرئيسية</a>
+  </section>
+
+</main>
+
+<script>
+  const questions = [
+    {
+      question: "ما هو الكتاب الذي يحتوي على الأناجيل الأربعة؟",
+      options: [
+        "العهد القديم",
+        "العهد الجديد",
+        "سفر المزامير",
+        "سفر التكوين"
+      ],
+      answer: 1
+    },
+    {
+      question: "كم عدد الأناجيل القانونية؟",
+      options: ["2", "3", "4", "5"],
+      answer: 2
+    },
+    {
+      question: "ما أول سفر في الكتاب المقدس؟",
+      options: [
+        "الخروج",
+        "التكوين",
+        "المزامير",
+        "إشعياء"
+      ],
+      answer: 1
+    }
+  ];
+
+  let currentQuestion = 0;
+  let userAnswers = [];
+
+  const quizList = document.getElementById("quizList");
+  const quizArea = document.getElementById("quizArea");
+  const resultArea = document.getElementById("resultArea");
+
+  function startQuiz() {
+    currentQuestion = 0;
+    userAnswers = [];
+    quizList.style.display = "none";
+    resultArea.style.display = "none";
+    quizArea.style.display = "block";
+    showQuestion();
+  }
+
+  function showQuestion() {
+    const q = questions[currentQuestion];
+
+    document.getElementById("progress").textContent =
+      `السؤال ${currentQuestion + 1} من ${questions.length}`;
+
+    document.getElementById("questionText").textContent = q.question;
+
+    const optionsContainer = document.getElementById("options");
+    optionsContainer.innerHTML = "";
+
+    q.options.forEach((option, index) => {
+      const label = document.createElement("label");
+      label.className = "option";
+
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "answer";
+      radio.value = index;
+      radio.checked = userAnswers[currentQuestion] === index;
+
+      label.appendChild(radio);
+      label.appendChild(document.createTextNode(option));
+      optionsContainer.appendChild(label);
+    });
+
+    document.getElementById("nextBtn").textContent =
+      currentQuestion === questions.length - 1
+        ? "إنهاء الاختبار"
+        : "السؤال التالي";
+  }
+
+  function nextQuestion() {
+    const selected = document.querySelector('input[name="answer"]:checked');
+
+    if (!selected) {
+      alert("اختار إجابة الأول!");
+      return;
+    }
+
+    userAnswers[currentQuestion] = Number(selected.value);
+
+    if (currentQuestion < questions.length - 1) {
+      currentQuestion++;
+      showQuestion();
+    } else {
+      finishQuiz();
+    }
+  }
+
+  function finishQuiz() {
+    let correct = 0;
+
+    questions.forEach((q, index) => {
+      if (userAnswers[index] === q.answer) {
+        correct++;
+      }
+    });
+
+    quizArea.style.display = "none";
+    resultArea.style.display = "block";
+
+    document.getElementById("score").textContent =
+      `${correct} / ${questions.length}`;
+
+    document.getElementById("message").textContent =
+      correct === questions.length
+        ? "ممتاز! جاوبت على كل الأسئلة صح."
+        : "حاول تراجع إجاباتك وتجرب تاني.";
+  }
+
+  document.getElementById("startBtn").addEventListener("click", startQuiz);
+  document.getElementById("nextBtn").addEventListener("click", nextQuestion);
+  document.getElementById("retryBtn").addEventListener("click", startQuiz);
+</script>
+
+</body>
+</html>
