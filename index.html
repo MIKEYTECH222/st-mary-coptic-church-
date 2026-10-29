@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -7,20 +8,13 @@
 
   <style>
     @font-face {
-  font-family: 'TROX R';
-  src: url('./fonts/Trox-R.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+      font-family: 'TROX R';
+      src: url('./fonts/Trox-R.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
 
-body,
-button,
-input,
-select,
-textarea {
-  font-family: 'TROX R', sans-serif;
-}
     :root {
       --bg:#001112;
       --text:#f8f9ff;
@@ -44,14 +38,17 @@ textarea {
 
     body {
       margin:0;
-      font-family:Arial,Tahoma,sans-serif;
+      font-family:'TROX R',Arial,Tahoma,sans-serif;
       background:var(--bg);
       color:var(--text);
       min-height:100vh;
       transition:background .25s,color .25s;
     }
 
-    button,input,select,textarea { font:trox; }
+    button,input,select,textarea {
+      font-family:'TROX R',Arial,Tahoma,sans-serif;
+    }
+
     button,a { cursor:pointer; }
     a { color:inherit;text-decoration:none; }
 
@@ -64,7 +61,12 @@ textarea {
       display:inline-block;
     }
 
-    button:hover,.button:hover { opacity:.85; }
+    button:disabled {
+      opacity:.5;
+      cursor:not-allowed;
+    }
+
+    button:hover:not(:disabled),.button:hover { opacity:.85; }
 
     .primary {
       background:linear-gradient(135deg,#d5dcff,#a8dfff);
@@ -283,9 +285,7 @@ textarea {
 
     <section class="panel glass" id="account">
       <h2>حسابك الشخصي</h2>
-      <p class="muted">
-        الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.
-      </p>
+      <p class="muted">الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.</p>
 
       <div id="authForms" class="grid">
         <form id="signupForm" class="form-card">
@@ -340,18 +340,9 @@ textarea {
     <section id="profilePanel" class="panel glass">
       <h2>البروفايل والنقاط</h2>
       <div class="stats">
-        <div class="stat glass">
-          الاسم
-          <strong id="dashName">—</strong>
-        </div>
-        <div class="stat glass">
-          رصيد النقاط
-          <strong id="dashPoints">0</strong>
-        </div>
-        <div class="stat glass">
-          حالة الحساب
-          <strong id="dashStatus">—</strong>
-        </div>
+        <div class="stat glass">الاسم<strong id="dashName">—</strong></div>
+        <div class="stat glass">رصيد النقاط<strong id="dashPoints">0</strong></div>
+        <div class="stat glass">حالة الحساب<strong id="dashStatus">—</strong></div>
       </div>
       <p id="dashRole" class="muted"></p>
     </section>
@@ -416,7 +407,6 @@ textarea {
       <div id="assignmentsList" class="list"></div>
     </section>
 
-    <!-- لوحة الحضور الجديدة -->
     <section id="attendancePanel" class="panel glass hidden">
       <h2>تسجيل الحضور اليدوي</h2>
       <p class="muted">
@@ -438,20 +428,40 @@ textarea {
         <label for="attendanceDate">تاريخ الاجتماع</label>
         <input id="attendanceDate" type="date" required>
 
+        <label for="attendanceTime">وقت الاجتماع</label>
+        <input id="attendanceTime" type="time" value="18:00" required>
+
         <button class="primary" type="submit">إنشاء الجلسة</button>
         <p id="attendanceSessionMessage" class="status" role="status"></p>
       </form>
 
       <div class="form-card" style="margin-top:15px">
         <h3>جلسات الحضور</h3>
-        <div id="attendanceSessionsList" class="list"></div>
+
+        <button id="toggleSessionsBtn" type="button">
+          عرض كل الجلسات
+        </button>
+
+        <div id="sessionsTools" class="hidden">
+          <p class="muted">
+            اختر المجموعة من نموذج إنشاء الجلسة بالأعلى، ثم أنشئ جلسات الجمعة
+            حتى 12 ديسمبر 2027. الجلسات المتكررة الموجودة لن تتكرر.
+          </p>
+
+          <button id="generateFridaySessionsBtn" class="primary" type="button">
+            إنشاء جلسات الجمعة للمجموعة المختارة
+          </button>
+
+          <p id="generateSessionsMessage" class="status" role="status"></p>
+        </div>
+
+        <div id="attendanceSessionsList" class="list hidden"
+             style="margin-top:15px"></div>
       </div>
 
       <div class="form-card" style="margin-top:15px">
         <h3 id="attendanceMembersTitle">أعضاء المجموعة</h3>
-        <p class="muted">
-          اختار حالة كل عضو ثم اضغط حفظ الحضور.
-        </p>
+        <p class="muted">اختار حالة كل عضو ثم اضغط حفظ الحضور.</p>
 
         <div id="attendanceMembersList" class="list"></div>
 
@@ -464,9 +474,7 @@ textarea {
 
     <section class="panel glass">
       <h2>ملاحظة</h2>
-      <p class="muted">
-        الاختبارات وتصحيح الإجابات لم يتم تفعليهما في هذه النسخة.
-      </p>
+      <p class="muted">الاختبارات وتصحيح الإجابات لم يتم تفعليهما في هذه النسخة.</p>
     </section>
   </main>
 </div>
@@ -485,6 +493,11 @@ let lang = "ar";
 let attendanceGroups = [];
 let selectedAttendanceSession = null;
 let attendanceMembers = [];
+let sessionsExpanded = false;
+
+const FRIDAY_START = "2026-10-30";
+const FRIDAY_END = "2027-12-12";
+const DEFAULT_SESSION_TIME = "18:00";
 
 function message(id, text) {
   $(id).textContent = text || "";
@@ -492,6 +505,15 @@ function message(id, text) {
 
 function escapeText(value) {
   return String(value ?? "");
+}
+
+function todayInCairo() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Cairo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date());
 }
 
 function showDashboard(show) {
@@ -619,8 +641,6 @@ async function loadAssignedMembers() {
   const select = $("pointsMember");
   select.replaceChildren(new Option("اختار العضو", ""));
 
-  let groupIds = [];
-
   if (currentProfile.role === "admin") {
     const { data, error } = await supabase
       .from("profiles")
@@ -649,7 +669,7 @@ async function loadAssignedMembers() {
     return;
   }
 
-  groupIds = [...new Set((assignments || []).map(x => x.group_id))];
+  const groupIds = [...new Set((assignments || []).map(x => x.group_id))];
 
   if (!groupIds.length) {
     message("pointsMessage", "لم يتم تعيينك على أي مجموعة بعد.");
@@ -750,7 +770,7 @@ async function loadAssignments() {
 }
 
 /* =========================
-   إدارة الحضور اليدوي
+   إدارة الحضور
 ========================= */
 
 function canManageAttendance() {
@@ -815,6 +835,15 @@ async function loadAttendanceGroups() {
   }
 }
 
+function canEditSessionSchedule(session) {
+  return Boolean(
+    session &&
+    session.is_open &&
+    session.session_date &&
+    session.session_date < todayInCairo()
+  );
+}
+
 async function loadAttendanceSessions() {
   const target = $("attendanceSessionsList");
   target.replaceChildren();
@@ -823,8 +852,9 @@ async function loadAttendanceSessions() {
 
   const { data, error } = await supabase
     .from("attendance_sessions")
-    .select("id,group_id,title,session_date,is_open,created_at")
-    .order("session_date", { ascending: false });
+    .select("id,group_id,title,session_date,session_time,is_recurring,is_open,created_at")
+    .order("session_date", { ascending: false })
+    .order("session_time", { ascending: false });
 
   if (error) {
     addItem("attendanceSessionsList", "تعذر تحميل الجلسات", error.message);
@@ -855,6 +885,8 @@ async function loadAttendanceSessions() {
     info.textContent =
       "المجموعة: " + (group?.name || "—") +
       "\nالتاريخ: " + (session.session_date || "—") +
+      "\nالوقت: " + (session.session_time || DEFAULT_SESSION_TIME) +
+      "\nالنوع: " + (session.is_recurring ? "جلسة جمعة متكررة" : "جلسة عادية") +
       "\nالحالة: " + (session.is_open ? "مفتوحة" : "مغلقة");
     article.appendChild(info);
 
@@ -864,9 +896,19 @@ async function loadAttendanceSessions() {
     const openButton = document.createElement("button");
     openButton.type = "button";
     openButton.className = "primary";
-    openButton.textContent = "تسجيل / تعديل الحضور";
+    openButton.textContent = "تسجيل / مراجعة الحضور";
     openButton.addEventListener("click", () => openAttendanceSession(session));
     actions.appendChild(openButton);
+
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.textContent = "تعديل التاريخ والوقت";
+    editButton.disabled = !canEditSessionSchedule(session);
+    editButton.title = editButton.disabled
+      ? "يمكن تعديل موعد الجلسات المفتوحة التي مرّ تاريخها فقط"
+      : "تعديل موعد جلسة سابقة";
+    editButton.addEventListener("click", () => editAttendanceSession(session));
+    actions.appendChild(editButton);
 
     if (session.is_open) {
       const closeButton = document.createElement("button");
@@ -881,6 +923,76 @@ async function loadAttendanceSessions() {
   });
 }
 
+async function editAttendanceSession(session) {
+  if (!canManageAttendance()) {
+    message("attendanceSessionMessage", "ليس لديك صلاحية تعديل الجلسات.");
+    return;
+  }
+
+  if (!canEditSessionSchedule(session)) {
+    message("attendanceSessionMessage",
+      "لا يمكن تعديل موعد جلسة إلا بعد مرور تاريخها، ويجب أن تكون مفتوحة.");
+    return;
+  }
+
+  const newDate = prompt(
+    "أدخل التاريخ الجديد بصيغة YYYY-MM-DD",
+    session.session_date
+  );
+
+  if (newDate === null) return;
+
+  const dateValue = newDate.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+    message("attendanceSessionMessage", "صيغة التاريخ غير صحيحة.");
+    return;
+  }
+
+  const parsedDate = new Date(dateValue + "T12:00:00Z");
+  if (Number.isNaN(parsedDate.getTime()) ||
+      parsedDate.toISOString().slice(0, 10) !== dateValue) {
+    message("attendanceSessionMessage", "التاريخ الذي أدخلته غير صالح.");
+    return;
+  }
+
+  const newTime = prompt(
+    "أدخل الوقت الجديد بصيغة 24 ساعة HH:MM",
+    (session.session_time || DEFAULT_SESSION_TIME).slice(0, 5)
+  );
+
+  if (newTime === null) return;
+
+  const timeValue = newTime.trim();
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(timeValue)) {
+    message("attendanceSessionMessage", "صيغة الوقت غير صحيحة. مثال: 18:30");
+    return;
+  }
+
+  if (dateValue >= todayInCairo()) {
+    message("attendanceSessionMessage",
+      "موعد الجلسة الجديدة يجب أن يكون في الماضي أيضًا.");
+    return;
+  }
+
+  const { error } = await supabase
+    .from("attendance_sessions")
+    .update({
+      session_date: dateValue,
+      session_time: timeValue
+    })
+    .eq("id", session.id)
+    .eq("is_open", true);
+
+  if (error) {
+    message("attendanceSessionMessage",
+      "تعذر تعديل الموعد: " + error.message);
+    return;
+  }
+
+  message("attendanceSessionMessage", "تم تعديل تاريخ ووقت الجلسة.");
+  await loadAttendanceSessions();
+}
+
 async function createAttendanceSession(event) {
   event.preventDefault();
   message("attendanceSessionMessage", "جاري إنشاء الجلسة...");
@@ -893,9 +1005,11 @@ async function createAttendanceSession(event) {
   const groupId = $("attendanceGroup").value;
   const title = $("attendanceTitle").value.trim();
   const sessionDate = $("attendanceDate").value;
+  const sessionTime = $("attendanceTime").value;
 
-  if (!groupId || !title || !sessionDate) {
-    message("attendanceSessionMessage", "املأ المجموعة والعنوان والتاريخ.");
+  if (!groupId || !title || !sessionDate || !sessionTime) {
+    message("attendanceSessionMessage",
+      "املأ المجموعة والعنوان والتاريخ والوقت.");
     return;
   }
 
@@ -910,6 +1024,8 @@ async function createAttendanceSession(event) {
       group_id: groupId,
       title,
       session_date: sessionDate,
+      session_time: sessionTime,
+      is_recurring: false,
       created_by: currentUser.id,
       is_open: true
     })
@@ -929,7 +1045,7 @@ async function createAttendanceSession(event) {
 
   const { data: session, error: sessionError } = await supabase
     .from("attendance_sessions")
-    .select("id,group_id,title,session_date,is_open")
+    .select("id,group_id,title,session_date,session_time,is_recurring,is_open")
     .eq("id", data.id)
     .single();
 
@@ -940,6 +1056,104 @@ async function createAttendanceSession(event) {
   }
 
   await openAttendanceSession(session);
+}
+
+function getFridayDates(startString, endString) {
+  const dates = [];
+  const current = new Date(startString + "T12:00:00Z");
+  const end = new Date(endString + "T12:00:00Z");
+
+  while (current <= end) {
+    if (current.getUTCDay() === 5) {
+      dates.push(current.toISOString().slice(0, 10));
+    }
+    current.setUTCDate(current.getUTCDate() + 1);
+  }
+
+  return dates;
+}
+
+async function generateFridaySessions() {
+  message("generateSessionsMessage", "");
+
+  if (!canManageAttendance()) {
+    message("generateSessionsMessage", "ليس لديك صلاحية إنشاء الجلسات.");
+    return;
+  }
+
+  const groupId = $("attendanceGroup").value;
+  if (!groupId || !attendanceGroups.some(group => group.id === groupId)) {
+    message("generateSessionsMessage", "اختار المجموعة أولًا من نموذج إنشاء الجلسة.");
+    return;
+  }
+
+  const confirmed = confirm(
+    "سيتم إنشاء جلسات الجمعة للمجموعة المختارة من " +
+    FRIDAY_START + " حتى " + FRIDAY_END +
+    " الساعة " + DEFAULT_SESSION_TIME +
+    ". الجلسات المتكررة الموجودة لن تتكرر. هل تريد المتابعة؟"
+  );
+
+  if (!confirmed) return;
+
+  const button = $("generateFridaySessionsBtn");
+  button.disabled = true;
+  message("generateSessionsMessage", "جاري فحص الجلسات الموجودة...");
+
+  try {
+    const fridayDates = getFridayDates(FRIDAY_START, FRIDAY_END);
+
+    const { data: existing, error: existingError } = await supabase
+      .from("attendance_sessions")
+      .select("session_date")
+      .eq("group_id", groupId)
+      .eq("is_recurring", true)
+      .gte("session_date", FRIDAY_START)
+      .lte("session_date", FRIDAY_END);
+
+    if (existingError) throw existingError;
+
+    const existingDates = new Set(
+      (existing || []).map(item => item.session_date)
+    );
+
+    const missingDates = fridayDates.filter(date => !existingDates.has(date));
+
+    if (!missingDates.length) {
+      message("generateSessionsMessage",
+        "كل جلسات الجمعة المتكررة في النطاق ده موجودة بالفعل.");
+      return;
+    }
+
+    const rows = missingDates.map(date => ({
+      group_id: groupId,
+      title: "اجتماع الجمعة",
+      session_date: date,
+      session_time: DEFAULT_SESSION_TIME,
+      is_recurring: true,
+      created_by: currentUser.id,
+      is_open: true
+    }));
+
+    const { error: insertError } = await supabase
+      .from("attendance_sessions")
+      .insert(rows);
+
+    if (insertError) throw insertError;
+
+    message("generateSessionsMessage",
+      "تم إنشاء " + rows.length +
+      " جلسة جمعة جديدة. لم يتم تكرار الجلسات الموجودة.");
+
+    await loadAttendanceSessions();
+  } catch (error) {
+    message("generateSessionsMessage",
+      "تعذر إنشاء جلسات الجمعة: " +
+      (error?.message || "خطأ غير معروف") +
+      "\nتأكد من تشغيل كود SQL الخاص بأعمدة session_time و is_recurring والفهرس.");
+  } finally {
+    button.disabled = false;
+  }
 }
 
 async function openAttendanceSession(session) {
@@ -959,11 +1173,6 @@ async function openAttendanceSession(session) {
   $("attendanceMembersTitle").textContent =
     "أعضاء المجموعة: " + (group?.name || "—") +
     " — " + (session.title || "");
-
-  if (!session.is_open) {
-    message("attendanceSaveMessage",
-      "الجلسة مغلقة. يمكنك مراجعة الحضور المسجل، لكن لا يمكن حفظ تعديلات جديدة.");
-  }
 
   const { data: members, error: membersError } = await supabase
     .from("profiles")
@@ -1025,15 +1234,13 @@ async function openAttendanceSession(session) {
     const select = document.createElement("select");
     select.dataset.memberId = member.id;
 
-    const statuses = [
+    [
       ["present", "حاضر"],
       ["late", "متأخر"],
       ["absent", "غائب"],
       ["excused", "غياب بعذر"]
-    ];
-
-    statuses.forEach(([value, text]) => {
-      select.add(new Option(text, value));
+    ].forEach(([value, labelText]) => {
+      select.add(new Option(labelText, value));
     });
 
     select.value = member.status;
@@ -1109,7 +1316,7 @@ async function closeAttendanceSession(session) {
   }
 
   const confirmed = confirm(
-    "هل أنت متأكد من إغلاق جلسة \"" + session.title + "\"؟\n" +
+    'هل أنت متأكد من إغلاق جلسة "' + session.title + '"؟\n' +
     "بعد الإغلاق لن يمكن تعديل الحضور فيها."
   );
 
@@ -1177,8 +1384,7 @@ async function refreshSession() {
 
   currentProfile = profile;
 
-  $("dashName").textContent =
-    profile.full_name || currentUser.email || "—";
+  $("dashName").textContent = profile.full_name || currentUser.email || "—";
   $("dashPoints").textContent = String(profile.points ?? 0);
 
   const statusLabels = {
@@ -1203,9 +1409,7 @@ async function refreshSession() {
   $("servantPanel").classList.toggle(
     "hidden", !(approved && (isAdmin || isServant))
   );
-
   $("adminPanel").classList.toggle("hidden", !(approved && isAdmin));
-
   $("attendancePanel").classList.toggle("hidden", !canAttendance);
   $("attendanceNavLink").classList.toggle("hidden", !canAttendance);
 
@@ -1227,6 +1431,8 @@ async function refreshSession() {
     await loadAttendanceSessions();
   }
 }
+
+/* إنشاء الحساب وتسجيل الدخول */
 
 $("signupForm").addEventListener("submit", async event => {
   event.preventDefault();
@@ -1250,12 +1456,10 @@ $("signupForm").addEventListener("submit", async event => {
     return;
   }
 
-  message(
-    "signupMessage",
+  message("signupMessage",
     data.session
       ? "تم إنشاء الحساب. حسابك في انتظار موافقة المسؤول."
-      : "راجع بريدك الإلكتروني لتأكيد الحساب، ثم انتظر موافقة المسؤول."
-  );
+      : "راجع بريدك الإلكتروني لتأكيد الحساب، ثم انتظر موافقة المسؤول.");
 });
 
 $("loginForm").addEventListener("submit", async event => {
@@ -1294,6 +1498,8 @@ $("logoutBtn").addEventListener("click", async () => {
   showDashboard(false);
 });
 
+/* النقاط */
+
 $("pointsForm").addEventListener("submit", async event => {
   event.preventDefault();
   message("pointsMessage", "جاري تنفيذ العملية...");
@@ -1329,9 +1535,10 @@ $("pointsForm").addEventListener("submit", async event => {
 
   message("pointsMessage", "تم تسجيل النقاط بنجاح.");
   $("pointsForm").reset();
-
   await refreshSession();
 });
+
+/* تعيين الخدام للمجموعات */
 
 $("assignForm").addEventListener("submit", async event => {
   event.preventDefault();
@@ -1369,13 +1576,27 @@ $("assignForm").addEventListener("submit", async event => {
 
   message("assignMessage", "تم تعيين الخادم للمجموعة.");
   await loadAssignments();
-
   await loadAttendanceGroups();
   await loadAttendanceSessions();
 });
 
+/* أزرار الحضور */
+
 $("attendanceSessionForm").addEventListener("submit", createAttendanceSession);
 $("saveAttendanceBtn").addEventListener("click", saveAttendance);
+$("generateFridaySessionsBtn").addEventListener("click", generateFridaySessions);
+
+$("toggleSessionsBtn").addEventListener("click", () => {
+  sessionsExpanded = !sessionsExpanded;
+
+  $("attendanceSessionsList").classList.toggle("hidden", !sessionsExpanded);
+  $("sessionsTools").classList.toggle("hidden", !sessionsExpanded);
+
+  $("toggleSessionsBtn").textContent =
+    sessionsExpanded ? "إخفاء الجلسات" : "عرض كل الجلسات";
+});
+
+/* المظهر واللغة */
 
 $("themeBtn").addEventListener("click", () => {
   document.body.classList.toggle("light");
