@@ -1,21 +1,5 @@
-
 :root {
-  --bg: #f4f7fb;
-  --surface: #ffffff;
-  --surface-2: #edf2f8;
-  --text: #172033;
-  --muted: #667085;
-  --primary: #5267e8;
-  --primary-hover: #4054d0;
-  --border: #e1e7f0;
-  --success: #16865b;
-  --danger: #d64545;
-  --shadow: 0 8px 28px rgba(24, 39, 75, 0.08);
-  --radius: 18px;
-}
-
-/* الوضع الداكن */
-html[data-theme="dark"] {
+  color-scheme: dark;
   --bg: #101521;
   --surface: #192131;
   --surface-2: #222d40;
@@ -27,6 +11,7 @@ html[data-theme="dark"] {
   --success: #55d6a0;
   --danger: #ff8585;
   --shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  --radius: 18px;
 }
 
 * {
@@ -35,6 +20,7 @@ html[data-theme="dark"] {
 
 html {
   scroll-behavior: smooth;
+  background: var(--bg);
 }
 
 body {
@@ -44,6 +30,10 @@ body {
   color: var(--text);
   font-family: Arial, Tahoma, sans-serif;
   transition: background 0.25s ease, color 0.25s ease;
+}
+
+.hidden {
+  display: none !important;
 }
 
 button,
@@ -66,13 +56,11 @@ img {
   max-width: 100%;
 }
 
-/* الحاوية العامة */
 .wrap {
   width: min(1120px, calc(100% - 32px));
   margin-inline: auto;
 }
 
-/* الكروت */
 .glass,
 .panel,
 .form-card {
@@ -104,7 +92,6 @@ img {
   line-height: 1.8;
 }
 
-/* شريط التنقل */
 nav.glass {
   position: sticky;
   top: 0;
@@ -125,19 +112,22 @@ nav.glass {
   flex-wrap: wrap;
 }
 
-/* الأزرار */
 button,
-.btn {
+.btn,
+.button {
+  display: inline-block;
   border: 0;
   border-radius: 12px;
   padding: 11px 17px;
   background: var(--primary);
-  color: #fff;
+  color: #101521;
   transition: 0.2s ease;
+  text-decoration: none;
 }
 
 button:hover,
-.btn:hover {
+.btn:hover,
+.button:hover {
   background: var(--primary-hover);
   transform: translateY(-1px);
 }
@@ -148,7 +138,6 @@ button:disabled {
   transform: none;
 }
 
-/* الحقول */
 input,
 select,
 textarea {
@@ -166,7 +155,7 @@ input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(82, 103, 232, 0.12);
+  box-shadow: 0 0 0 3px rgba(135, 149, 255, 0.12);
 }
 
 textarea {
@@ -174,7 +163,13 @@ textarea {
   resize: vertical;
 }
 
-/* القوائم والعناصر */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
 .list {
   display: grid;
   gap: 12px;
@@ -194,6 +189,7 @@ textarea {
 .lesson-body {
   line-height: 1.9;
   overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .section-links {
@@ -211,19 +207,20 @@ textarea {
   padding: 20px;
   border: 1px solid var(--border);
   border-radius: 16px;
-  background: var(--surface);
+  background: var(--surface-2);
   color: var(--text);
   font-weight: bold;
   box-shadow: var(--shadow);
   transition: 0.2s ease;
+  text-align: center;
 }
 
 .section-links a:hover {
   transform: translateY(-4px);
   border-color: var(--primary);
+  background: #293650;
 }
 
-/* الإحصائيات */
 .stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -243,7 +240,6 @@ textarea {
   margin-top: 8px;
 }
 
-/* رسائل الحالة */
 .status {
   padding: 12px 14px;
   margin-block: 12px;
@@ -260,7 +256,6 @@ textarea {
   color: var(--danger);
 }
 
-/* العناوين */
 h1,
 h2,
 h3,
@@ -274,7 +269,6 @@ small,
   color: var(--muted);
 }
 
-/* الجداول */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -293,12 +287,30 @@ th {
   background: var(--surface-2);
 }
 
-/* الوضع الإنجليزي */
+fieldset {
+  min-width: 0;
+  border: 1px solid var(--border);
+}
+
+legend {
+  color: var(--text);
+  padding-inline: 8px;
+}
+
+footer {
+  text-align: center;
+  padding: 28px 16px;
+  color: var(--muted);
+}
+
+.mobile-bottom-nav {
+  display: none;
+}
+
 html[dir="ltr"] body {
   text-align: left;
 }
 
-/* الموبايل */
 @media (max-width: 700px) {
   .wrap {
     width: min(100% - 20px, 1120px);
