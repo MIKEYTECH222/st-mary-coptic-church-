@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101521">
+  <title>الدروس والمواد | شبابنا</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="wrap">
+    <nav class="glass">
+      <a class="brand" href="./index.html">✦ شبابنا</a>
+      <div class="nav-actions">
+        <a class="button" href="./index.html">الرئيسية</a>
+        <a class="button" href="./events.html">الفعاليات</a>
+        <a class="button" href="./account.html">حسابي</a>
+      </div>
+    </nav>
+
+    <main>
+      <section class="hero glass">
+        <p>✦ نتعلم وننمو مع بعض</p>
+        <h1>الدروس والمواد التعليمية</h1>
+        <p>كل الدروس والمحتوى اللي خدامنا بيشاركوه معانا.</p>
+      </section>
+
+      <section class="panel glass">
+        <h2>كل الدروس</h2>
+        <div id="lessonsList" class="list">
+          <p class="muted">جاري تحميل الدروس...</p>
+        </div>
+        <p id="lessonsMessage" class="status" role="status"></p>
+      </section>
+    </main>
+  </div>
+
+  <footer>خدمة الشباب • إيمان ومحبة ونمو</footer>
+
+  <script type="module">
+    import { supabase } from "./supabase.js";
+
+    const list = document.getElementById("lessonsList");
+    const message = document.getElementById("lessonsMessage");
+
+    function addLesson(lesson) {
+      const card = document.createElement("article");
+      card.className = "item";
+
+      const title = document.createElement("h3");
+      title.textContent = lesson.title || "درس جديد";
+      card.appendChild(title);
+
+      if (lesson.description) {
+        const description = document.createElement("p");
+        description.textContent = lesson.description;
+        card.appendChild(description);
+      }
+
+      if (lesson.body) {
+        const body = document.createElement("div");
+        body.className = "lesson-body";
+        body.textContent = lesson.body;
+        card.appendChild(body);
+      }
+
+      if (lesson.content_url) {
+        const link = document.createElement("a");
+        link.className = "button primary";
+        link.href = lesson.content_url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "فتح المادة الإضافية ↗";
+        card.appendChild(link);
+      }
+
+      list.appendChild(card);
+    }
+
+    async function loadLessons() {
+      const { data, error } = await supabase
+        .from("lessons")
+        .select("title,description,content_url,body")
+        .order("id", { ascending: false });
+
+      list.replaceChildren();
+
+      if (error) {
+        message.textContent = "تعذر تحميل الدروس. حاول مرة أخرى لاحقًا.";
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        list.textContent = "لا توجد دروس منشورة حاليًا.";
+        return;
+      }
+
+      data.forEach(addLesson);
+      message.textContent = "";
+    }
+
+    loadLessons();
+  </script>
+</body>
+</html>
