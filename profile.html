@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ملفي الشخصي | أسرة الشباب</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #101522;
+      color: #f4f5f8;
+    }
+    header {
+      background: #191f30;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    main { max-width: 750px; margin: 35px auto; padding: 18px; }
+    .card {
+      background: #1b2334;
+      border: 1px solid #30394d;
+      border-radius: 16px;
+      padding: 25px;
+    }
+    .avatar {
+      width: 85px;
+      height: 85px;
+      border-radius: 50%;
+      background: #344d83;
+      display: grid;
+      place-items: center;
+      font-size: 38px;
+      margin-bottom: 20px;
+    }
+    .info {
+      padding: 15px 0;
+      border-bottom: 1px solid #30394d;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+    .info strong { color: #9db8ff; }
+    .points {
+      color: #ffd36a;
+      font-size: 25px;
+      font-weight: bold;
+    }
+    a, button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 11px 18px;
+      border-radius: 9px;
+      border: 0;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    a { background: #344d83; color: white; }
+    button { background: #e05252; color: white; }
+    #status { line-height: 1.8; color: #c5cce0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h2>ملفي الشخصي</h2>
+  <a href="dashboard.html">العودة للوحة العضو</a>
+</header>
+
+<main>
+  <section class="card">
+    <div class="avatar">👤</div>
+    <h1 id="name">جاري التحميل...</h1>
+
+    <div class="info">
+      <strong>البريد الإلكتروني:</strong>
+      <span id="email">...</span>
+    </div>
+
+    <div class="info">
+      <strong>نوع الحساب:</strong>
+      <span id="role">...</span>
+    </div>
+
+    <div class="info">
+      <strong>حالة الحساب:</strong>
+      <span id="approval">...</span>
+    </div>
+
+    <div class="info">
+      <strong>مجموع النقاط:</strong>
+      <div class="points">⭐ <span id="points">...</span></div>
+    </div>
+
+    <p id="status">جاري تحميل بياناتك...</p>
+    <button id="logoutBtn">تسجيل الخروج</button>
+  </section>
+</main>
+
+<script type="module">
+  import { supabase } from "./supabase.js";
+
+  const status = document.getElementById("status");
+
+  async function loadProfile() {
+    const { data: authData, error: authError } =
+      await supabase.auth.getUser();
+
+    if (authError || !authData.user) {
+      location.href = "account.html";
+      return;
+    }
+
+    const user = authData.user;
+
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("full_name, role, approval_status, points")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      status.textContent = "تعذر تحميل البيانات: " + error.message;
+      return;
+    }
+
+    if (!profile) {
+      status.textContent = "لم يتم العثور على ملفك الشخصي.";
+      return;
+    }
+
+    if (profile.approval_status !== "approved") {
+      status.textContent = "حسابك لم تتم الموافقة عليه بعد.";
+      await supabase.auth.signOut();
+      setTimeout(() => location.href = "account.html", 2000);
+      return;
+    }
+
+    document.getElementById("name").textContent =
+      profile.full_name || "عضو";
+
+    document.getElementById("email").textContent =
+      user.email || "غير متاح";
+
+    document.getElementById("role").textContent =
+      profile.role || "member";
+
+    document.getElementById("approval").textContent =
+      "تمت الموافقة";
+
+    document.getElementById("points").textContent =
+      profile.points ?? 0;
+
+    status.textContent = "تم تحميل بيانات حسابك بنجاح.";
+  }
+
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    location.href = "account.html";
+  });
+
+  loadProfile();
+</script>
+
+</body>
+</html>
