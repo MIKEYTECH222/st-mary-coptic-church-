@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة العضو | أسرة الشباب</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #101522;
+      color: #f4f5f8;
+    }
+    header {
+      padding: 22px;
+      background: #191f30;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #30394d;
+    }
+    header h2 { margin: 0; }
+    main { max-width: 1000px; margin: 35px auto; padding: 18px; }
+    .welcome {
+      background: linear-gradient(135deg, #263b68, #394d83);
+      padding: 28px;
+      border-radius: 18px;
+      margin-bottom: 25px;
+    }
+    .welcome h1 { margin-top: 0; }
+    .points {
+      font-size: 22px;
+      font-weight: bold;
+      color: #ffd36a;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+    }
+    .item {
+      display: block;
+      background: #1b2334;
+      border: 1px solid #30394d;
+      border-radius: 14px;
+      padding: 22px;
+      color: white;
+      text-decoration: none;
+      transition: .2s;
+    }
+    .item:hover {
+      transform: translateY(-4px);
+      border-color: #789cff;
+    }
+    .item h3 { margin-top: 0; color: #9db8ff; }
+    button {
+      background: #e05252;
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 18px;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    #status { color: #c5cce0; line-height: 1.8; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h2>أسرة الشباب</h2>
+  <button id="logoutBtn">تسجيل الخروج</button>
+</header>
+
+<main>
+  <section class="welcome">
+    <h1>أهلاً بيك يا <span id="memberName">...</span> 👋</h1>
+    <p>دي مساحتك الشخصية في أسرة الشباب.</p>
+    <div class="points">
+      ⭐ نقاطك: <span id="memberPoints">...</span>
+    </div>
+    <p id="memberRole"></p>
+  </section>
+
+  <h2>الأقسام الرئيسية</h2>
+
+  <section class="grid">
+    <a class="item" href="events.html">
+      <h3>📅 الفعاليات واللقاءات</h3>
+      <p>تابع مواعيد الاجتماعات والأنشطة.</p>
+    </a>
+
+    <a class="item" href="lessons.html">
+      <h3>📚 الدروس والمذاكرة</h3>
+      <p>شوف الدروس والمواد التعليمية.</p>
+    </a>
+
+    <a class="item" href="quizzes.html">
+      <h3>📝 الاختبارات</h3>
+      <p>اختبر معلوماتك وتابع تقدمك.</p>
+    </a>
+
+    <a class="item" href="profile.html">
+      <h3>👤 ملفي الشخصي</h3>
+      <p>راجع بيانات حسابك ونقاطك.</p>
+    </a>
+
+    <a class="item" href="bible.html">
+      <h3>✝️ الكتاب المقدس</h3>
+      <p>افتح قسم الكتاب المقدس.</p>
+    </a>
+  </section>
+
+  <p id="status">جاري تحميل بيانات حسابك...</p>
+</main>
+
+<script type="module">
+  import { supabase } from "./supabase.js";
+
+  const nameElement = document.getElementById("memberName");
+  const pointsElement = document.getElementById("memberPoints");
+  const roleElement = document.getElementById("memberRole");
+  const statusElement = document.getElementById("status");
+
+  async function loadDashboard() {
+    const { data: authData, error: authError } =
+      await supabase.auth.getUser();
+
+    if (authError || !authData.user) {
+      location.href = "account.html";
+      return;
+    }
+
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("full_name, role, approval_status, points")
+      .eq("id", authData.user.id)
+      .maybeSingle();
+
+    if (error) {
+      statusElement.textContent =
+        "حصل خطأ أثناء تحميل بياناتك: " + error.message;
+      return;
+    }
+
+    if (!profile) {
+      statusElement.textContent =
+        "لم يتم العثور على ملفك الشخصي. تواصل مع المسؤول.";
+      return;
+    }
+
+    if (profile.approval_status !== "approved") {
+      statusElement.textContent =
+        "حسابك لم تتم الموافقة عليه بعد. تواصل مع المسؤول.";
+      await supabase.auth.signOut();
+      setTimeout(() => location.href = "account.html", 2500);
+      return;
+    }
+
+    nameElement.textContent = profile.full_name || "عضو";
+    pointsElement.textContent = profile.points ?? 0;
+    roleElement.textContent =
+      "نوع الحساب: " + (profile.role || "member");
+
+    statusElement.textContent = "تم تحميل بيانات حسابك بنجاح.";
+  }
+
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    location.href = "account.html";
+  });
+
+  loadDashboard();
+</script>
+
+</body>
+</html>
