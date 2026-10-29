@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة الإدارة | أسرة الشباب</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #101522;
+      color: #f4f5f8;
+    }
+
+    header {
+      background: #191f30;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid #30394d;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 18px;
+    }
+
+    .welcome {
+      background: linear-gradient(135deg, #263b68, #394d83);
+      padding: 25px;
+      border-radius: 16px;
+      margin-bottom: 25px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: #1b2334;
+      border: 1px solid #30394d;
+      border-radius: 14px;
+      padding: 22px;
+    }
+
+    .card h3 { color: #9db8ff; }
+
+    .number {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffd36a;
+    }
+
+    .section {
+      background: #1b2334;
+      border: 1px solid #30394d;
+      border-radius: 14px;
+      padding: 22px;
+      margin-top: 22px;
+    }
+
+    a, button {
+      display: inline-block;
+      padding: 11px 17px;
+      border: 0;
+      border-radius: 9px;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    a {
+      background: #344d83;
+      color: white;
+    }
+
+    button {
+      background: #e05252;
+      color: white;
+    }
+
+    #status {
+      line-height: 1.8;
+      color: #c5cce0;
+    }
+
+    @media(max-width: 550px) {
+      header { padding: 15px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h2>⚙️ لوحة الإدارة</h2>
+  <button id="logoutBtn">تسجيل الخروج</button>
+</header>
+
+<main>
+
+  <section class="welcome">
+    <h1>أهلاً يا <span id="adminName">...</span> 👋</h1>
+    <p>مرحبًا بك في لوحة إدارة أسرة الشباب.</p>
+    <p>من هنا هتقدر تتابع إدارة الموقع.</p>
+  </section>
+
+  <h2>نظرة عامة</h2>
+
+  <section class="grid">
+    <div class="card">
+      <h3>👥 الأعضاء</h3>
+      <div class="number" id="membersCount">--</div>
+      <p>إجمالي الأعضاء</p>
+    </div>
+
+    <div class="card">
+      <h3>⏳ الحسابات المعلقة</h3>
+      <div class="number" id="pendingCount">--</div>
+      <p>في انتظار الموافقة</p>
+    </div>
+
+    <div class="card">
+      <h3>🛡️ الخدام</h3>
+      <div class="number" id="servantsCount">--</div>
+      <p>إجمالي الخدام</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>إدارة الموقع</h2>
+
+    <div class="grid">
+      <div class="card">
+        <h3>👤 إدارة الأعضاء</h3>
+        <p>مراجعة حسابات الأعضاء وحالات الموافقة.</p>
+      </div>
+
+      <div class="card">
+        <h3>🛡️ إدارة الخدام</h3>
+        <p>تعيين الخدام ومتابعة صلاحياتهم.</p>
+      </div>
+
+      <div class="card">
+        <h3>👥 إدارة المجموعات</h3>
+        <p>إنشاء المجموعات وتعيين الخدام والأعضاء.</p>
+      </div>
+
+      <div class="card">
+        <h3>⭐ إدارة النقاط</h3>
+        <p>متابعة نظام نقاط الأعضاء.</p>
+      </div>
+
+      <div class="card">
+        <h3>📅 الفعاليات</h3>
+        <p>إدارة اللقاءات والأنشطة.</p>
+        <a href="events.html">فتح الفعاليات</a>
+      </div>
+
+      <div class="card">
+        <h3>📚 الدروس</h3>
+        <p>إدارة المحتوى التعليمي.</p>
+        <a href="lessons.html">فتح الدروس</a>
+      </div>
+
+      <div class="card">
+        <h3>📝 الاختبارات</h3>
+        <p>إدارة الأسئلة والامتحانات.</p>
+        <a href="quizzes.html">فتح الاختبارات</a>
+      </div>
+    </div>
+  </section>
+
+  <p id="status">جاري التحقق من صلاحيات الإدارة...</p>
+
+</main>
+
+<script type="module">
+  import { supabase } from "./supabase.js";
+
+  const status = document.getElementById("status");
+
+  async function loadAdminDashboard() {
+    const { data: authData, error: authError } =
+      await supabase.auth.getUser();
+
+    if (authError || !authData.user) {
+      location.href = "account.html";
+      return;
+    }
+
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("full_name, role, approval_status")
+      .eq("id", authData.user.id)
+      .maybeSingle();
+
+    if (error) {
+      status.textContent = "حدث خطأ: " + error.message;
+      return;
+    }
+
+    if (!profile || profile.approval_status !== "approved") {
+      status.textContent = "الحساب غير معتمد.";
+      await supabase.auth.signOut();
+      location.href = "account.html";
+      return;
+    }
+
+    if (profile.role !== "admin") {
+      status.textContent = "ليس لديك صلاحية دخول لوحة الإدارة.";
+      setTimeout(() => location.href = "dashboard.html", 2000);
+      return;
+    }
+
+    document.getElementById("adminName").textContent =
+      profile.full_name || "Admin";
+
+    status.textContent =
+      "تم التحقق من صلاحيات الإدارة بنجاح. الإحصائيات ستظهر بعد ربط جداول الإدارة.";
+
+  }
+
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    location.href = "account.html";
+  });
+
+  loadAdminDashboard();
+</script>
+
+</body>
+</html>
