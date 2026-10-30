@@ -1,3 +1,4 @@
+
 :root {
   color-scheme: dark;
   --bg: #101521;
@@ -311,6 +312,149 @@ html[dir="ltr"] body {
   text-align: left;
 }
 
+/* =========================
+   Admin Demo Dashboard
+========================= */
+
+.admin-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.admin-heading h2 {
+  margin-bottom: 6px;
+}
+
+.demo-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 190, 90, 0.35);
+  border-radius: 12px;
+  background: rgba(255, 190, 90, 0.1);
+  color: #ffd28a;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.demo-warning {
+  padding: 16px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 190, 90, 0.35);
+  border-radius: 14px;
+  background: rgba(255, 190, 90, 0.08);
+  color: #ffd28a;
+  line-height: 1.8;
+}
+
+#adminPanel > h3 {
+  margin-top: 28px;
+  margin-bottom: 16px;
+}
+
+.admin-grid {
+  margin-top: 20px;
+}
+
+.admin-grid > .form-card {
+  min-width: 0;
+}
+
+.demo-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.demo-actions button {
+  min-width: 90px;
+}
+
+button.demo-danger {
+  background: rgba(255, 105, 105, 0.14);
+  color: #ff9999;
+  border: 1px solid rgba(255, 105, 105, 0.3);
+}
+
+button.demo-danger:hover {
+  background: rgba(255, 105, 105, 0.25);
+}
+
+.demo-account {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.demo-account h3 {
+  margin-bottom: 6px;
+}
+
+.demo-account p {
+  margin-block: 0;
+  overflow-wrap: anywhere;
+}
+
+.demo-account-controls {
+  width: min(180px, 100%);
+}
+
+.demo-account-controls select {
+  margin: 0;
+}
+
+.demo-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.demo-group button {
+  padding: 8px 13px;
+}
+
+.demo-divider {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin-block: 30px;
+}
+
+#demoRequestsList:empty,
+#demoAccountsList:empty,
+#demoGroupsList:empty {
+  display: none;
+}
+
+#demoRequestsList .item,
+#demoAccountsList .item,
+#demoGroupsList .item {
+  box-shadow: none;
+}
+
+#demoAddGroupForm {
+  margin-bottom: 18px;
+}
+
+#demoAddGroupForm button {
+  width: 100%;
+}
+
+#assignForm {
+  margin-top: 16px;
+}
+
+/* =========================
+   Responsive
+========================= */
+
 @media (max-width: 700px) {
   .wrap {
     width: min(100% - 20px, 1120px);
@@ -345,5 +489,33 @@ html[dir="ltr"] body {
   table {
     display: block;
     overflow-x: auto;
+  }
+
+  .admin-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .demo-label {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .demo-account {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .demo-account-controls {
+    width: 100%;
+  }
+
+  .demo-actions button {
+    flex: 1;
+  }
+
+  .demo-group {
+    align-items: stretch;
   }
 }
