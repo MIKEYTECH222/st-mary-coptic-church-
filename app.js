@@ -861,6 +861,22 @@ $("loginForm").addEventListener("submit", async event => {
   await refreshSession();
 });
 
+// تسجيل الدخول باستخدام Google
+$("googleLoginBtn")?.addEventListener("click", async () => {
+  message("googleMessage", "جاري فتح تسجيل الدخول باستخدام Google...");
+
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: location.origin + location.pathname
+    }
+  });
+
+  if (error) {
+    message("googleMessage", "فشل تسجيل الدخول: " + error.message);
+  }
+});
+
 // تسجيل الخروج
 $("logoutBtn").addEventListener("click", async () => {
   const { error } = await supabase.auth.signOut();
