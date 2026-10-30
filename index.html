@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -46,7 +47,6 @@
       <p class="muted">الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.</p>
 
       <div id="authForms" class="grid">
-
         <form id="signupForm" class="form-card">
           <h3>إنشاء حساب</h3>
 
@@ -75,10 +75,8 @@
           <button class="primary" type="submit">دخول</button>
           <p id="loginMessage" class="status" role="status"></p>
         </form>
-
       </div>
 
-      <!-- Google Login -->
       <div class="form-card">
         <button id="googleLoginBtn" class="primary" type="button">
           تسجيل الدخول باستخدام Google
@@ -137,7 +135,6 @@
       <p class="muted">اختار عضوًا من المجموعات المسندة إليك، ثم اكتب النقاط وسبب الإضافة أو الخصم.</p>
 
       <div class="grid">
-
         <form id="lessonCreateForm" class="form-card">
           <h3>نشر درس مكتوب</h3>
 
@@ -190,7 +187,6 @@
           <button class="primary" type="submit">إنشاء الاختبار</button>
           <p id="quizCreateMessage" class="status" role="status"></p>
         </form>
-
       </div>
 
       <form id="questionCreateForm" class="form-card">
@@ -209,17 +205,14 @@
             <label for="option0">الاختيار الأول</label>
             <input id="option0" required maxlength="500">
           </div>
-
           <div>
             <label for="option1">الاختيار الثاني</label>
             <input id="option1" required maxlength="500">
           </div>
-
           <div>
             <label for="option2">الاختيار الثالث</label>
             <input id="option2" required maxlength="500">
           </div>
-
           <div>
             <label for="option3">الاختيار الرابع</label>
             <input id="option3" required maxlength="500">
@@ -281,12 +274,60 @@
         <button class="primary" type="submit">تنفيذ العملية</button>
         <p id="pointsMessage" class="status" role="status"></p>
       </form>
-
     </section>
 
     <section id="adminPanel" class="panel glass hidden">
-      <h2>إدارة الخدام والمجموعات</h2>
-      <p class="muted">الأدمن يستطيع تعيين الخادم على أكثر من مجموعة. لازم تكون المجموعة موجودة بالفعل.</p>
+      <div class="admin-heading">
+        <div>
+          <h2>لوحة تحكم الأدمن</h2>
+          <p class="muted">إدارة ومتابعة خدمة الشباب.</p>
+        </div>
+        <span class="demo-label">وضع العرض التجريبي — التغييرات غير محفوظة</span>
+      </div>
+
+      <div class="demo-warning">
+        هذه البيانات تجريبية للعرض فقط. القبول والرفض وتغيير الأدوار والمجموعات لا تعدّل قاعدة البيانات.
+      </div>
+
+      <h3>نظرة عامة</h3>
+      <div class="stats">
+        <div class="stat glass">الحسابات<strong id="demoMembersCount">0</strong></div>
+        <div class="stat glass">طلبات معلقة<strong id="demoRequestsCount">0</strong></div>
+        <div class="stat glass">الخدام<strong id="demoServantsCount">0</strong></div>
+        <div class="stat glass">المجموعات<strong id="demoGroupsCount">0</strong></div>
+      </div>
+
+      <div class="grid admin-grid">
+        <section class="form-card">
+          <h3>طلبات الانضمام</h3>
+          <p class="muted">طلبات وهمية لتجربة شكل لوحة الموافقات.</p>
+          <div id="demoRequestsList" class="list"></div>
+        </section>
+
+        <section class="form-card">
+          <h3>إدارة المجموعات</h3>
+          <form id="demoAddGroupForm">
+            <label for="demoNewGroup">اسم المجموعة الجديدة</label>
+            <input id="demoNewGroup" maxlength="80" placeholder="مثال: ابتدائي">
+            <button class="primary" type="submit">إضافة مجموعة</button>
+            <p id="demoGroupMessage" class="status" role="status"></p>
+          </form>
+          <div id="demoGroupsList" class="list"></div>
+        </section>
+      </div>
+
+      <section class="form-card">
+        <h3>الحسابات والأدوار</h3>
+        <p class="muted">غيّر الدور لمعاينة شكل إدارة الصلاحيات. التغيير محلي فقط.</p>
+        <div id="demoAccountsList" class="list"></div>
+      </section>
+
+      <hr class="demo-divider">
+
+      <h3>تعيين الخدام للمجموعات الفعلية</h3>
+      <p class="muted">
+        هذا الجزء يستخدم قاعدة البيانات الحالية، ويحتاج صلاحيات Supabase المناسبة.
+      </p>
 
       <form id="assignForm" class="form-card">
         <label for="servantSelect">حساب الخادم</label>
@@ -311,7 +352,6 @@
       <h2>ملاحظة</h2>
       <p class="muted">الاختبارات وتصحيح الإجابات لم يتم تفعيلهما في هذه النسخة.</p>
     </section>
-
   </main>
 </div>
 
@@ -326,5 +366,6 @@
 </nav>
 
 <script type="module" src="./app.js"></script>
+<script src="./admin-demo.js" defer></script>
 </body>
 </html>
