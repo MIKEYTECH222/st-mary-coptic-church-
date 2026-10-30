@@ -1083,7 +1083,7 @@ $("questionCreateForm").addEventListener("submit", async event => {
       quiz_id: Number(quizId),
       question_text: $("questionText").value.trim(),
       options,
-      sort_order: Date.now() % 100000
+      position: Date.now() % 100000
     })
     .select("id")
     .single();
