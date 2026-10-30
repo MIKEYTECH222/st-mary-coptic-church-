@@ -1,195 +1,201 @@
 
-const $ = (id) => document.getElementById(id);
+(() => {
+  "use strict";
 
-let demoRequests = [
-  { id: 1, name: "مينا عادل", email: "mina@example.com" },
-  { id: 2, name: "مارينا سامح", email: "marina@example.com" },
-  { id: 3, name: "كيرلس فادي", email: "kirillos@example.com" },
-  { id: 4, name: "بيتر مجدي", email: "peter@example.com" }
-];
+  const $ = (id) => document.getElementById(id);
 
-let demoAccounts = [
-  { name: "مينا عادل", role: "member", status: "معتمد" },
-  { name: "مارينا سامح", role: "servant", status: "معتمد" },
-  { name: "كيرلس فادي", role: "member", status: "قيد المراجعة" },
-  { name: "بيتر مجدي", role: "servant", status: "معتمد" },
-  { name: "نورهان مينا", role: "admin", status: "معتمد" }
-];
+  // بيانات وهمية للعرض فقط — لا يتم إرسالها إلى Supabase.
+  const state = {
+    requests: [
+      { id: 1, name: "مينا عادل", email: "mina.demo@example.com", date: "2026-10-28" },
+      { id: 2, name: "مارينا سامح", email: "marina.demo@example.com", date: "2026-10-28" },
+      { id: 3, name: "كيرلس بيشوي", email: "kirillos.demo@example.com", date: "2026-10-29" }
+    ],
+    accounts: [
+      { id: 1, name: "مينا عادل", email: "mina.demo@example.com", role: "member" },
+      { id: 2, name: "مارينا سامح", email: "marina.demo@example.com", role: "servant" },
+      { id: 3, name: "كيرلس بيشوي", email: "kirillos.demo@example.com", role: "member" },
+      { id: 4, name: "بيشوي فادي", email: "bishoy.demo@example.com", role: "admin" }
+    ],
+    groups: ["إعدادي", "ثانوي", "جامعة", "خريجين"],
+    nextId: 5
+  };
 
-let demoGroups = [
-  "إعدادي بنين",
-  "إعدادي بنات",
-  "ثانوي",
-  "جامعة",
-  "خريجين",
-  "شباب",
-  "اجتماع عام",
-  "أنشطة"
-];
+  let initialized = false;
 
-function renderDemoRequests() {
-  const container = $("demoRequests");
-  if (!container) return;
-
-  container.replaceChildren();
-
-  demoRequests.forEach(request => {
-    const card = document.createElement("article");
-    card.className = "item";
-
-    const title = document.createElement("h3");
-    title.textContent = request.name;
-
-    const email = document.createElement("p");
-    email.textContent = request.email;
-
-    const actions = document.createElement("div");
-    actions.className = "demo-actions";
-
-    ["موافقة", "رفض"].forEach((label, index) => {
-      const button = document.createElement("button");
-      button.textContent = label;
-      button.className = index === 0 ? "primary" : "danger-button";
-
-      button.addEventListener("click", () => {
-        demoRequests = demoRequests.filter(x => x.id !== request.id);
-        renderDemoRequests();
-        updateDemoStats();
-      });
-
-      actions.appendChild(button);
-    });
-
-    card.append(title, email, actions);
-    container.appendChild(card);
-  });
-
-  if (!demoRequests.length) {
-    container.textContent = "لا توجد طلبات معلقة في العرض التجريبي.";
-  }
-}
-
-function renderDemoGroups() {
-  const container = $("demoGroupsList");
-  if (!container) return;
-
-  container.replaceChildren();
-
-  demoGroups.forEach((group, index) => {
-    const row = document.createElement("div");
-    row.className = "demo-row";
-
-    const name = document.createElement("span");
-    name.textContent = group;
-
-    const remove = document.createElement("button");
-    remove.textContent = "إزالة";
-    remove.className = "danger-button";
-
-    remove.addEventListener("click", () => {
-      demoGroups.splice(index, 1);
-      renderDemoGroups();
-      updateDemoStats();
-    });
-
-    row.append(name, remove);
-    container.appendChild(row);
-  });
-}
-
-function renderDemoAccounts() {
-  const container = $("demoAccounts");
-  if (!container) return;
-
-  container.replaceChildren();
-
-  demoAccounts.forEach(account => {
-    const row = document.createElement("tr");
-
-    const name = document.createElement("td");
-    name.textContent = account.name;
-
-    const roleCell = document.createElement("td");
-    const select = document.createElement("select");
-
-    const roles = [
-      ["member", "عضو"],
-      ["servant", "خادم"],
-      ["admin", "مسؤول"]
-    ];
-
-    roles.forEach(([value, label]) => {
-      select.add(new Option(label, value));
-    });
-
-    select.value = account.role;
-
-    select.addEventListener("change", () => {
-      account.role = select.value;
-    });
-
-    roleCell.appendChild(select);
-
-    const status = document.createElement("td");
-    status.textContent = account.status;
-
-    row.append(name, roleCell, status);
-    container.appendChild(row);
-  });
-}
-
-function updateDemoStats() {
-  if ($("demoTotal")) {
-    $("demoTotal").textContent = demoAccounts.length;
+  function make(tag, className, text) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (text !== undefined) element.textContent = text;
+    return element;
   }
 
-  if ($("demoPending")) {
-    $("demoPending").textContent = demoRequests.length;
+  function renderStats() {
+    $("demoMembersCount").textContent = state.accounts.length;
+    $("demoRequestsCount").textContent = state.requests.length;
+    $("demoServantsCount").textContent =
+      state.accounts.filter((account) => account.role === "servant").length;
+    $("demoGroupsCount").textContent = state.groups.length;
   }
 
-  if ($("demoServants")) {
-    $("demoServants").textContent =
-      demoAccounts.filter(x => x.role === "servant").length;
-  }
+  function renderRequests() {
+    const target = $("demoRequestsList");
+    target.replaceChildren();
 
-  if ($("demoGroups")) {
-    $("demoGroups").textContent = demoGroups.length;
-  }
-}
-
-function initAdminDemo() {
-  const groupForm = $("demoGroupForm");
-
-  if (!groupForm || groupForm.dataset.initialized === "true") {
-    return;
-  }
-
-  groupForm.dataset.initialized = "true";
-
-  groupForm.addEventListener("submit", event => {
-    event.preventDefault();
-
-    const input = $("demoGroupName");
-    const name = input.value.trim();
-
-    if (!name) return;
-
-    if (demoGroups.includes(name)) {
-      alert("المجموعة موجودة بالفعل.");
+    if (!state.requests.length) {
+      target.append(make("p", "muted", "لا توجد طلبات معلقة في العرض التجريبي."));
       return;
     }
 
-    demoGroups.push(name);
-    input.value = "";
+    state.requests.forEach((request) => {
+      const card = make("article", "item");
+      card.append(make("h3", "", request.name));
+      card.append(make("p", "", request.email));
+      card.append(make("small", "muted", "تاريخ الطلب: " + request.date));
 
-    renderDemoGroups();
-    updateDemoStats();
+      const actions = make("div", "demo-actions");
+      const approve = make("button", "primary", "قبول");
+      const reject = make("button", "demo-danger", "رفض");
+
+      approve.type = "button";
+      reject.type = "button";
+
+      approve.addEventListener("click", () => {
+        state.accounts.push({
+          id: state.nextId++,
+          name: request.name,
+          email: request.email,
+          role: "member"
+        });
+
+        state.requests = state.requests.filter((item) => item.id !== request.id);
+        renderAll();
+      });
+
+      reject.addEventListener("click", () => {
+        state.requests = state.requests.filter((item) => item.id !== request.id);
+        renderAll();
+      });
+
+      actions.append(approve, reject);
+      card.append(actions);
+      target.append(card);
+    });
+  }
+
+  function renderAccounts() {
+    const target = $("demoAccountsList");
+    target.replaceChildren();
+
+    state.accounts.forEach((account) => {
+      const card = make("article", "item demo-account");
+      const info = make("div");
+      info.append(make("h3", "", account.name));
+      info.append(make("p", "", account.email));
+
+      const controls = make("div", "demo-account-controls");
+      const select = make("select");
+      select.setAttribute("aria-label", "دور " + account.name);
+
+      [
+        ["member", "عضو"],
+        ["servant", "خادم"],
+        ["admin", "أدمن"]
+      ].forEach(([value, label]) => {
+        const option = new Option(label, value);
+        select.add(option);
+      });
+
+      select.value = account.role;
+      select.addEventListener("change", () => {
+        account.role = select.value;
+        renderStats();
+      });
+
+      controls.append(select);
+      card.append(info, controls);
+      target.append(card);
+    });
+  }
+
+  function renderGroups() {
+    const target = $("demoGroupsList");
+    target.replaceChildren();
+
+    state.groups.forEach((group, index) => {
+      const card = make("article", "item demo-group");
+      card.append(make("strong", "", group));
+
+      const remove = make("button", "demo-danger", "حذف");
+      remove.type = "button";
+      remove.addEventListener("click", () => {
+        state.groups.splice(index, 1);
+        renderAll();
+      });
+
+      card.append(remove);
+      target.append(card);
+    });
+
+    if (!state.groups.length) {
+      target.append(make("p", "muted", "لم تتم إضافة مجموعات بعد."));
+    }
+  }
+
+  function renderAll() {
+    renderStats();
+    renderRequests();
+    renderAccounts();
+    renderGroups();
+  }
+
+  function init() {
+    if (initialized) return;
+
+    const panel = $("adminPanel");
+    if (!panel) return;
+
+    const addGroupForm = $("demoAddGroupForm");
+    if (addGroupForm) {
+      addGroupForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const input = $("demoNewGroup");
+        const name = input.value.trim();
+
+        if (!name) return;
+
+        if (state.groups.some((group) => group.toLowerCase() === name.toLowerCase())) {
+          $("demoGroupMessage").textContent = "المجموعة موجودة بالفعل.";
+          return;
+        }
+
+        state.groups.push(name);
+        input.value = "";
+        $("demoGroupMessage").textContent = "تمت الإضافة في العرض التجريبي.";
+        renderAll();
+      });
+    }
+
+    initialized = true;
+    renderAll();
+  }
+
+  // لوحة الأدمن تظهر بعد تحميل بيانات الحساب؛ ننتظر ظهورها.
+  const observer = new MutationObserver(() => {
+    const panel = $("adminPanel");
+    if (panel && !panel.classList.contains("hidden")) init();
   });
 
-  renderDemoRequests();
-  renderDemoGroups();
-  renderDemoAccounts();
-  updateDemoStats();
-}
+  document.addEventListener("DOMContentLoaded", () => {
+    const panel = $("adminPanel");
+    if (!panel) return;
 
-window.initAdminDemo = initAdminDemo;
+    observer.observe(panel, {
+      attributes: true,
+      attributeFilter: ["class"]
+    });
+
+    if (!panel.classList.contains("hidden")) init();
+  });
+})();
