@@ -46,8 +46,10 @@
       <p class="muted">الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.</p>
 
       <div id="authForms" class="grid">
+
         <form id="signupForm" class="form-card">
           <h3>إنشاء حساب</h3>
+
           <label for="signupName">الاسم الكامل</label>
           <input id="signupName" required maxlength="100" autocomplete="name">
 
@@ -63,6 +65,7 @@
 
         <form id="loginForm" class="form-card">
           <h3>تسجيل الدخول</h3>
+
           <label for="loginEmail">البريد الإلكتروني</label>
           <input id="loginEmail" type="email" required autocomplete="email">
 
@@ -72,6 +75,15 @@
           <button class="primary" type="submit">دخول</button>
           <p id="loginMessage" class="status" role="status"></p>
         </form>
+
+      </div>
+
+      <!-- Google Login -->
+      <div class="form-card">
+        <button id="googleLoginBtn" class="primary" type="button">
+          تسجيل الدخول باستخدام Google
+        </button>
+        <p id="googleMessage" class="status" role="status"></p>
       </div>
 
       <p id="accountMessage" class="status" role="status"></p>
@@ -79,6 +91,7 @@
   </main>
 
   <main id="dashboard" class="hidden">
+
     <section class="panel glass">
       <h1 style="font-size:36px">أهلاً بيك في خدمة الشباب</h1>
       <p class="muted">مساحتك الشخصية حسب صلاحيات حسابك.</p>
@@ -94,11 +107,13 @@
 
     <section id="profilePanel" class="panel glass">
       <h2>البروفايل والنقاط</h2>
+
       <div class="stats">
         <div class="stat glass">الاسم<strong id="dashName">—</strong></div>
         <div class="stat glass">رصيد النقاط<strong id="dashPoints">0</strong></div>
         <div class="stat glass">حالة الحساب<strong id="dashStatus">—</strong></div>
       </div>
+
       <p id="dashRole" class="muted"></p>
     </section>
 
@@ -122,10 +137,14 @@
       <p class="muted">اختار عضوًا من المجموعات المسندة إليك، ثم اكتب النقاط وسبب الإضافة أو الخصم.</p>
 
       <div class="grid">
+
         <form id="lessonCreateForm" class="form-card">
           <h3>نشر درس مكتوب</h3>
+
           <label for="lessonGroup">المجموعة</label>
-          <select id="lessonGroup" required><option value="">جاري تحميل المجموعات...</option></select>
+          <select id="lessonGroup" required>
+            <option value="">جاري تحميل المجموعات...</option>
+          </select>
 
           <label for="lessonTitle">عنوان الدرس</label>
           <input id="lessonTitle" required maxlength="180">
@@ -145,8 +164,11 @@
 
         <form id="quizCreateForm" class="form-card">
           <h3>إنشاء اختبار اختيار من متعدد</h3>
+
           <label for="quizGroup">المجموعة</label>
-          <select id="quizGroup" required><option value="">جاري تحميل المجموعات...</option></select>
+          <select id="quizGroup" required>
+            <option value="">جاري تحميل المجموعات...</option>
+          </select>
 
           <label for="quizType">نوع الاختبار</label>
           <select id="quizType">
@@ -155,7 +177,9 @@
           </select>
 
           <label for="quizLesson">الدرس (للأسئلة المرتبطة بدرس)</label>
-          <select id="quizLesson"><option value="">اختار الدرس</option></select>
+          <select id="quizLesson">
+            <option value="">اختار الدرس</option>
+          </select>
 
           <label for="quizTitle">عنوان الاختبار</label>
           <input id="quizTitle" required maxlength="180">
@@ -166,21 +190,40 @@
           <button class="primary" type="submit">إنشاء الاختبار</button>
           <p id="quizCreateMessage" class="status" role="status"></p>
         </form>
+
       </div>
 
       <form id="questionCreateForm" class="form-card">
         <h3>إضافة سؤال لاختبار موجود</h3>
+
         <label for="questionQuiz">الاختبار</label>
-        <select id="questionQuiz" required><option value="">جاري تحميل الاختبارات...</option></select>
+        <select id="questionQuiz" required>
+          <option value="">جاري تحميل الاختبارات...</option>
+        </select>
 
         <label for="questionText">السؤال</label>
         <textarea id="questionText" required maxlength="1000"></textarea>
 
         <div class="grid">
-          <div><label for="option0">الاختيار الأول</label><input id="option0" required maxlength="500"></div>
-          <div><label for="option1">الاختيار الثاني</label><input id="option1" required maxlength="500"></div>
-          <div><label for="option2">الاختيار الثالث</label><input id="option2" required maxlength="500"></div>
-          <div><label for="option3">الاختيار الرابع</label><input id="option3" required maxlength="500"></div>
+          <div>
+            <label for="option0">الاختيار الأول</label>
+            <input id="option0" required maxlength="500">
+          </div>
+
+          <div>
+            <label for="option1">الاختيار الثاني</label>
+            <input id="option1" required maxlength="500">
+          </div>
+
+          <div>
+            <label for="option2">الاختيار الثالث</label>
+            <input id="option2" required maxlength="500">
+          </div>
+
+          <div>
+            <label for="option3">الاختيار الرابع</label>
+            <input id="option3" required maxlength="500">
+          </div>
         </div>
 
         <label for="correctOption">الإجابة الصحيحة</label>
@@ -197,8 +240,11 @@
 
       <div class="form-card">
         <h3>كشف الحضور والغياب</h3>
+
         <label for="attendanceGroup">المجموعة</label>
-        <select id="attendanceGroup" required><option value="">اختار المجموعة</option></select>
+        <select id="attendanceGroup" required>
+          <option value="">اختار المجموعة</option>
+        </select>
 
         <label for="attendanceTitle">اسم اللقاء</label>
         <input id="attendanceTitle" value="لقاء الخدمة" required maxlength="180">
@@ -208,7 +254,9 @@
 
         <button id="loadAttendanceBtn" class="primary" type="button">تحميل كشف الأسماء</button>
         <p id="attendanceMessage" class="status" role="status"></p>
+
         <div id="attendanceRoster" class="list"></div>
+
         <button id="saveAttendanceBtn" class="primary" type="button">حفظ الحضور والغياب</button>
       </div>
 
@@ -220,7 +268,9 @@
 
       <form id="pointsForm" class="form-card">
         <label for="pointsMember">العضو</label>
-        <select id="pointsMember" required><option value="">جاري تحميل الأعضاء...</option></select>
+        <select id="pointsMember" required>
+          <option value="">جاري تحميل الأعضاء...</option>
+        </select>
 
         <label for="pointsAmount">عدد النقاط (السالب للخصم)</label>
         <input id="pointsAmount" type="number" min="-100" max="100" step="1" required>
@@ -231,6 +281,7 @@
         <button class="primary" type="submit">تنفيذ العملية</button>
         <p id="pointsMessage" class="status" role="status"></p>
       </form>
+
     </section>
 
     <section id="adminPanel" class="panel glass hidden">
@@ -239,10 +290,14 @@
 
       <form id="assignForm" class="form-card">
         <label for="servantSelect">حساب الخادم</label>
-        <select id="servantSelect" required><option value="">جاري تحميل الخدام...</option></select>
+        <select id="servantSelect" required>
+          <option value="">جاري تحميل الخدام...</option>
+        </select>
 
         <label for="groupSelect">المجموعة</label>
-        <select id="groupSelect" required><option value="">جاري تحميل المجموعات...</option></select>
+        <select id="groupSelect" required>
+          <option value="">جاري تحميل المجموعات...</option>
+        </select>
 
         <button class="primary" type="submit">تعيين الخادم للمجموعة</button>
         <p id="assignMessage" class="status" role="status"></p>
@@ -256,6 +311,7 @@
       <h2>ملاحظة</h2>
       <p class="muted">الاختبارات وتصحيح الإجابات لم يتم تفعيلهما في هذه النسخة.</p>
     </section>
+
   </main>
 </div>
 
