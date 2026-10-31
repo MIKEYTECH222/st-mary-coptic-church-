@@ -753,3 +753,16 @@ button.demo-danger:hover {
   object-fit: contain;
   border-radius: 10px;
 }
+#quizPointsReward {
+  border: 1px solid var(--primary);
+  font-weight: bold;
+  font-size: 18px;
+  max-width: 100%;
+}
+
+#quizCreateForm small {
+  display: block;
+  line-height: 1.8;
+  margin-top: -6px;
+  margin-bottom: 14px;
+}
