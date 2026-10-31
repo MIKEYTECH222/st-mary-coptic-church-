@@ -519,3 +519,191 @@ button.demo-danger:hover {
     align-items: stretch;
   }
 }
+
+/* ================================
+   Premium Quiz Design
+================================ */
+
+.quiz-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  margin-top: 24px;
+  padding: 0;
+}
+
+/* صندوق كل سؤال */
+.quiz-question-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(135, 149, 255, 0.2);
+  border-radius: 22px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(135, 149, 255, 0.09),
+      rgba(25, 33, 49, 0.96) 55%
+    );
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.16);
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.quiz-question-card:hover {
+  border-color: rgba(135, 149, 255, 0.55);
+  transform: translateY(-2px);
+}
+
+/* عنوان السؤال */
+.quiz-question-card legend {
+  display: block;
+  float: none;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 0 16px;
+  margin-bottom: 12px;
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+
+/* الاختيارات */
+.quiz-question-card .option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 55px;
+  padding: 13px 16px;
+  margin: 10px 0 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(16, 21, 33, 0.65);
+  color: var(--text);
+  cursor: pointer;
+  line-height: 1.8;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* مؤشر الاختيار */
+.quiz-question-card .option input[type="radio"] {
+  appearance: none;
+  flex: 0 0 19px;
+  width: 19px;
+  height: 19px;
+  margin: 0;
+  border: 2px solid var(--muted);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* عند تحديد الإجابة */
+.quiz-question-card .option:has(input:checked) {
+  border-color: var(--primary);
+  background: rgba(135, 149, 255, 0.15);
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(135, 149, 255, 0.08);
+}
+
+.quiz-question-card .option input[type="radio"]:checked {
+  border: 6px solid var(--primary);
+  background: #fff;
+}
+
+/* تأثير المرور */
+.quiz-question-card .option:hover {
+  border-color: var(--primary);
+  background: rgba(135, 149, 255, 0.09);
+  transform: translateX(-3px);
+}
+
+/* تنبيه الامتحان */
+.quiz-exam-notice {
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 190, 90, 0.35);
+  border-radius: 14px;
+  background: rgba(255, 190, 90, 0.08);
+  color: #ffd28a;
+  line-height: 1.9;
+}
+
+/* زر تسليم الامتحان */
+.quiz-form button[type="submit"] {
+  width: 100%;
+  min-height: 55px;
+  margin-top: 8px;
+  border-radius: 15px;
+  font-size: 16px;
+  font-weight: 800;
+  box-shadow: 0 8px 24px rgba(135, 149, 255, 0.17);
+}
+
+/* مراجعة إجابات الطلاب */
+.quiz-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.quiz-review-attempt {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.quiz-review-question {
+  padding: 16px;
+  margin-top: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-2);
+  line-height: 1.9;
+}
+
+.quiz-review-question p {
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.quiz-review-toggle {
+  margin-top: 12px;
+  border-radius: 12px;
+}
+
+/* الموبايل */
+@media (max-width: 600px) {
+  .quiz-form {
+    gap: 15px;
+  }
+
+  .quiz-question-card {
+    padding: 17px;
+    border-radius: 17px;
+  }
+
+  .quiz-question-card legend {
+    font-size: 16px;
+  }
+
+  .quiz-question-card .option {
+    min-height: 52px;
+    padding: 12px;
+    gap: 10px;
+    font-size: 14px;
+  }
+}
