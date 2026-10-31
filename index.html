@@ -193,6 +193,22 @@
 
           <label for="quizDescription">وصف (اختياري)</label>
           <textarea id="quizDescription" maxlength="1000"></textarea>
+          <label for="quizPointsReward">مكافأة الامتحان (نقاط)</label>
+
+<input
+  id="quizPointsReward"
+  type="number"
+  min="0"
+  max="1000"
+  step="1"
+  value="0"
+  required
+>
+
+<small class="muted">
+  الطالب يحصل على نسبة من المكافأة حسب درجته النهائية.
+  مثال: 80% من 20 نقطة = 16 نقطة.
+</small>
 
           <button class="primary" type="submit">إنشاء الاختبار</button>
           <p id="quizCreateMessage" class="status" role="status"></p>
