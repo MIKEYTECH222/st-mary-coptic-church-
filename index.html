@@ -1,15 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101521">
-<link rel="icon" type="image/png" href="./Untitled-1.png">
-<link rel="apple-touch-icon" href="./Untitled-1.png">
+
   <title>شبابنا | خدمة الشباب</title>
 
-  <!-- Website Logo -->
   <link rel="icon" type="image/png" href="./Untitled-1.png">
   <link rel="apple-touch-icon" href="./Untitled-1.png">
 
@@ -20,17 +17,19 @@
 <div class="wrap">
 
   <nav class="glass">
- <a class="brand" href="#home">
-  <img src="./Untitled-1.png" alt="شعار الموقع">
-</a>
-   <div class="nav-actions">
-  <a class="button" href="./bible.html">📖 الكتاب المقدس</a>
-  <button id="langBtn" type="button">EN</button>
-  <button id="logoutBtn" type="button" class="hidden">تسجيل الخروج</button>
-</div>
+    <a class="brand" href="#home">
+      <img src="./Untitled-1.png" alt="شعار الموقع">
+    </a>
+
+    <div class="nav-actions">
+      <a class="button" href="./bible.html">📖 الكتاب المقدس</a>
+      <button id="langBtn" type="button">EN</button>
+      <button id="logoutBtn" type="button" class="hidden">تسجيل الخروج</button>
+    </div>
   </nav>
 
   <main id="publicPage">
+
     <section class="hero glass" id="home">
       <p>✦ مكان واحد يجمعنا</p>
       <h1>إيمان يجمعنا،<br>ومحبة تكبر بينا.</h1>
@@ -57,6 +56,7 @@
       <p class="muted">الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.</p>
 
       <div id="authForms" class="grid">
+
         <form id="signupForm" class="form-card">
           <h3>إنشاء حساب</h3>
 
@@ -85,6 +85,7 @@
           <button class="primary" type="submit">دخول</button>
           <p id="loginMessage" class="status" role="status"></p>
         </form>
+
       </div>
 
       <div class="form-card">
@@ -96,6 +97,7 @@
 
       <p id="accountMessage" class="status" role="status"></p>
     </section>
+
   </main>
 
   <main id="dashboard" class="hidden">
@@ -142,9 +144,12 @@
 
     <section id="servantPanel" class="panel glass hidden">
       <h2>إدارة نقاط الأعضاء</h2>
-      <p class="muted">اختار عضوًا من المجموعات المسندة إليك، ثم اكتب النقاط وسبب الإضافة أو الخصم.</p>
+      <p class="muted">
+        اختار عضوًا من المجموعات المسندة إليك، ثم اكتب النقاط وسبب الإضافة أو الخصم.
+      </p>
 
       <div class="grid">
+
         <form id="lessonCreateForm" class="form-card">
           <h3>نشر درس مكتوب</h3>
 
@@ -193,26 +198,27 @@
 
           <label for="quizDescription">وصف (اختياري)</label>
           <textarea id="quizDescription" maxlength="1000"></textarea>
+
           <label for="quizPointsReward">مكافأة الامتحان (نقاط)</label>
+          <input
+            id="quizPointsReward"
+            type="number"
+            min="0"
+            max="1000"
+            step="1"
+            value="0"
+            required
+          >
 
-<input
-  id="quizPointsReward"
-  type="number"
-  min="0"
-  max="1000"
-  step="1"
-  value="0"
-  required
->
-
-<small class="muted">
-  الطالب يحصل على نسبة من المكافأة حسب درجته النهائية.
-  مثال: 80% من 20 نقطة = 16 نقطة.
-</small>
+          <small class="muted">
+            الطالب يحصل على نسبة من المكافأة حسب درجته النهائية.
+            مثال: 80% من 20 نقطة = 16 نقطة.
+          </small>
 
           <button class="primary" type="submit">إنشاء الاختبار</button>
           <p id="quizCreateMessage" class="status" role="status"></p>
         </form>
+
       </div>
 
       <form id="questionCreateForm" class="form-card">
@@ -231,14 +237,17 @@
             <label for="option0">الاختيار الأول</label>
             <input id="option0" required maxlength="500">
           </div>
+
           <div>
             <label for="option1">الاختيار الثاني</label>
             <input id="option1" required maxlength="500">
           </div>
+
           <div>
             <label for="option2">الاختيار الثالث</label>
             <input id="option2" required maxlength="500">
           </div>
+
           <div>
             <label for="option3">الاختيار الرابع</label>
             <input id="option3" required maxlength="500">
@@ -281,7 +290,9 @@
 
       <div class="form-card">
         <h3>تنبيهات الغياب</h3>
-        <p class="muted">تظهر هنا تنبيهات الأعضاء الذين سجل عليهم 3 غيابات أو أكثر.</p>
+        <p class="muted">
+          تظهر هنا تنبيهات الأعضاء الذين سجل عليهم 3 غيابات أو أكثر.
+        </p>
         <div id="servantNotifications" class="list"></div>
       </div>
 
@@ -300,14 +311,17 @@
         <button class="primary" type="submit">تنفيذ العملية</button>
         <p id="pointsMessage" class="status" role="status"></p>
       </form>
+
     </section>
 
     <section id="adminPanel" class="panel glass hidden">
+
       <div class="admin-heading">
         <div>
           <h2>لوحة تحكم الأدمن</h2>
           <p class="muted">إدارة ومتابعة خدمة الشباب.</p>
         </div>
+
         <span class="demo-label">وضع العرض التجريبي — التغييرات غير محفوظة</span>
       </div>
 
@@ -316,6 +330,7 @@
       </div>
 
       <h3>نظرة عامة</h3>
+
       <div class="stats">
         <div class="stat glass">الحسابات<strong id="demoMembersCount">0</strong></div>
         <div class="stat glass">طلبات معلقة<strong id="demoRequestsCount">0</strong></div>
@@ -324,6 +339,7 @@
       </div>
 
       <div class="grid admin-grid">
+
         <section class="form-card">
           <h3>طلبات الانضمام</h3>
           <p class="muted">طلبات وهمية لتجربة شكل لوحة الموافقات.</p>
@@ -332,14 +348,17 @@
 
         <section class="form-card">
           <h3>إدارة المجموعات</h3>
+
           <form id="demoAddGroupForm">
             <label for="demoNewGroup">اسم المجموعة الجديدة</label>
             <input id="demoNewGroup" maxlength="80" placeholder="مثال: ابتدائي">
             <button class="primary" type="submit">إضافة مجموعة</button>
             <p id="demoGroupMessage" class="status" role="status"></p>
           </form>
+
           <div id="demoGroupsList" class="list"></div>
         </section>
+
       </div>
 
       <section class="form-card">
@@ -372,12 +391,16 @@
 
       <h3>التعيينات الحالية</h3>
       <div id="assignmentsList" class="list"></div>
+
     </section>
 
     <section class="panel glass">
       <h2>ملاحظة</h2>
-      <p class="muted">الاختبارات وتصحيح الإجابات لم يتم تفعيلهما في هذه النسخة.</p>
+      <p class="muted">
+        الاختبارات وتصحيح الإجابات متاحة من لوحة الخدمة حسب صلاحيات الحساب.
+      </p>
     </section>
+
   </main>
 </div>
 
@@ -392,5 +415,6 @@
 </nav>
 
 <script type="module" src="./app.js"></script>
-<script type="module" src="./admin-demo.js"></script></body>
+<script type="module" src="./admin-demo.js"></script>
+</body>
 </html>
