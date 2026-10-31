@@ -1,3 +1,4 @@
+
 import { supabase } from "./supabase.js";
 
 const $ = id => document.getElementById(id);
@@ -67,6 +68,8 @@ function formatDate(value) {
 
 async function loadEvents(targetId) {
   const target = $(targetId);
+  if (!target) return;
+
   target.replaceChildren();
 
   const { data, error } = await supabase
@@ -98,6 +101,8 @@ async function loadEvents(targetId) {
 
 async function loadLessons(targetId) {
   const target = $(targetId);
+  if (!target) return;
+
   target.replaceChildren();
 
   const { data, error } = await supabase
@@ -151,6 +156,8 @@ async function loadLessons(targetId) {
 
 async function loadAssignedMembers() {
   const select = $("pointsMember");
+  if (!select || !currentProfile || !currentUser) return;
+
   select.replaceChildren(new Option("اختار العضو", ""));
 
   let groupIds = [];
@@ -213,8 +220,33 @@ async function loadAssignedMembers() {
   }
 }
 
+// ======================================
+// الاختبارات ومحاولات الأعضاء
+// ======================================
+
+async function getQuizAttempt(quizId, memberId) {
+  return await supabase
+    .from("quiz_attempts")
+    .select("id,score,max_score,submitted_at")
+    .eq("quiz_id", quizId)
+    .eq("member_id", memberId)
+    .maybeSingle();
+}
+
+function showCompletedQuiz(article, attempt) {
+  const completed = document.createElement("p");
+  completed.className = "status success";
+
+  completed.textContent =
+    `تم تسليم الامتحان بالفعل. نتيجتك: ${attempt.score} من ${attempt.max_score}`;
+
+  article.appendChild(completed);
+}
+
 async function loadQuizzes() {
   const target = $("quizzesList");
+  if (!target || !currentUser || !currentProfile) return;
+
   target.replaceChildren();
 
   const { data, error } = await supabase.from("quizzes")
@@ -228,8 +260,8 @@ async function loadQuizzes() {
 
   const visible = (data || []).filter(q =>
     q.is_published ||
-    q.created_by === currentUser?.id ||
-    currentProfile?.role === "admin"
+    q.created_by === currentUser.id ||
+    currentProfile.role === "admin"
   );
 
   if (!visible.length) {
@@ -242,7 +274,7 @@ async function loadQuizzes() {
     article.className = "item";
 
     const title = document.createElement("h3");
-    title.textContent = quiz.title;
+    title.textContent = quiz.title || "اختبار";
     article.appendChild(title);
 
     const desc = document.createElement("p");
@@ -252,20 +284,24 @@ async function loadQuizzes() {
     article.appendChild(desc);
 
     const canManage =
-      quiz.created_by === currentUser?.id ||
-      currentProfile?.role === "admin";
+      quiz.created_by === currentUser.id ||
+      currentProfile.role === "admin";
 
     if (canManage) {
       const publish = document.createElement("button");
+      publish.type = "button";
       publish.textContent = quiz.is_published ? "إلغاء النشر" : "نشر الاختبار";
 
       publish.addEventListener("click", async () => {
+        publish.disabled = true;
+
         const { error } = await supabase.rpc("set_quiz_published", {
           p_quiz_id: quiz.id,
           p_published: !quiz.is_published
         });
 
         if (error) {
+          publish.disabled = false;
           message("questionCreateMessage",
             "تعذر تغيير حالة النشر: " + error.message);
           return;
@@ -277,104 +313,188 @@ async function loadQuizzes() {
       article.appendChild(publish);
     }
 
-    if (quiz.is_published &&
-        currentProfile?.approval_status === "approved") {
-      const start = document.createElement("button");
-      start.textContent = "حل الاختبار";
+    if (
+      quiz.is_published &&
+      currentProfile.approval_status === "approved"
+    ) {
+      // التحقق من محاولة العضو السابقة
+      const { data: previousAttempt, error: attemptError } =
+        await getQuizAttempt(quiz.id, currentUser.id);
 
-      start.addEventListener("click", async () => {
-        const { data: questions, error } = await supabase
-          .from("quiz_questions")
-          .select("id,question_text,options,position")
-          .eq("quiz_id", quiz.id)
-        .order("position");
+      if (attemptError) {
+        const warning = document.createElement("p");
+        warning.className = "status error";
+        warning.textContent =
+          "تعذر التحقق من حالة الامتحان. أعد تحميل الصفحة أو تواصل مع المسؤول.";
 
-        if (error) {
-          article.append(document.createTextNode(
-            " تعذر تحميل الأسئلة: " + error.message));
-          return;
-        }
+        article.appendChild(warning);
+      } else if (previousAttempt) {
+        // العضو سلّم الامتحان بالفعل
+        showCompletedQuiz(article, previousAttempt);
+      } else {
+        const start = document.createElement("button");
+        start.type = "button";
+        start.textContent = "حل الاختبار";
 
-        if (!questions?.length) {
-          article.append(document.createTextNode(" لا توجد أسئلة."));
-          return;
-        }
+        start.addEventListener("click", async () => {
+          start.disabled = true;
 
-        article.querySelectorAll(".quiz-form").forEach(n => n.remove());
+          // إعادة التحقق عند الضغط
+          const { data: latestAttempt, error: latestAttemptError } =
+            await getQuizAttempt(quiz.id, currentUser.id);
 
-        const form = document.createElement("form");
-        form.className = "quiz-form";
-
-        questions.forEach((q, index) => {
-          const field = document.createElement("fieldset");
-          field.className = "form-card";
-
-          const legend = document.createElement("legend");
-          legend.textContent = (index + 1) + ". " + q.question_text;
-          field.appendChild(legend);
-
-          (q.options || []).forEach((opt, optIndex) => {
-            const label = document.createElement("label");
-            const radio = document.createElement("input");
-
-            radio.type = "radio";
-            radio.name = "q_" + q.id;
-            radio.value = String(optIndex);
-            radio.required = true;
-            radio.style.display = "inline-block";
-            radio.style.width = "auto";
-
-            label.append(radio, document.createTextNode(" " + opt));
-            field.appendChild(label);
-          });
-
-          form.appendChild(field);
-        });
-
-        const submit = document.createElement("button");
-        submit.className = "primary";
-        submit.textContent = "إرسال الإجابات وتصحيحها";
-        form.appendChild(submit);
-
-        const result = document.createElement("p");
-        result.className = "status";
-        form.appendChild(result);
-
-        form.addEventListener("submit", async ev => {
-          ev.preventDefault();
-
-          const answers = {};
-
-          questions.forEach(q => {
-            const chosen = form.querySelector(
-              'input[name="q_' + q.id + '"]:checked'
-            );
-            if (chosen) answers[q.id] = Number(chosen.value);
-          });
-
-          submit.disabled = true;
-
-          const { data, error } = await supabase.rpc("submit_quiz", {
-            p_quiz_id: quiz.id,
-            p_answers: answers
-          });
-
-          submit.disabled = false;
-
-          if (error) {
-            result.textContent = "تعذر تصحيح الاختبار: " + error.message;
+          if (latestAttemptError) {
+            start.disabled = false;
+            message("questionCreateMessage",
+              "تعذر التحقق من المحاولة السابقة: " +
+              latestAttemptError.message);
             return;
           }
 
-          const score = Array.isArray(data) ? data[0] : data;
-        result.textContent =
-  "نتيجتك: " + score.final_score + " من " + score.total_questions;;
+          if (latestAttempt) {
+            start.remove();
+            showCompletedQuiz(article, latestAttempt);
+            return;
+          }
+
+          const { data: questions, error: questionsError } = await supabase
+            .from("quiz_questions")
+            .select("id,question_text,options,position")
+            .eq("quiz_id", quiz.id)
+            .order("position");
+
+          if (questionsError) {
+            start.disabled = false;
+            message("questionCreateMessage",
+              "تعذر تحميل الأسئلة: " + questionsError.message);
+            return;
+          }
+
+          if (!questions?.length) {
+            start.disabled = false;
+            message("questionCreateMessage",
+              "الامتحان لا يحتوي على أسئلة.");
+            return;
+          }
+
+          // إنشاء نموذج الأسئلة
+          const form = document.createElement("form");
+          form.className = "quiz-form";
+
+          questions.forEach((q, index) => {
+            const field = document.createElement("fieldset");
+            field.className = "form-card quiz-question-card";
+
+            const legend = document.createElement("legend");
+            legend.textContent =
+              `السؤال ${index + 1}: ${q.question_text}`;
+
+            field.appendChild(legend);
+
+            (q.options || []).forEach((opt, optIndex) => {
+              const label = document.createElement("label");
+              label.className = "option";
+
+              const radio = document.createElement("input");
+              radio.type = "radio";
+              radio.name = "q_" + q.id;
+              radio.value = String(optIndex);
+              radio.required = true;
+              radio.style.width = "auto";
+
+              label.append(
+                radio,
+                document.createTextNode(" " + opt)
+              );
+
+              field.appendChild(label);
+            });
+
+            form.appendChild(field);
+          });
+
+          const submit = document.createElement("button");
+          submit.type = "submit";
+          submit.className = "primary";
+          submit.textContent = "إرسال الإجابات النهائية";
+
+          form.appendChild(submit);
+
+          const result = document.createElement("p");
+          result.className = "status";
+          form.appendChild(result);
+
+          // إرسال الإجابات
+          form.addEventListener("submit", async ev => {
+            ev.preventDefault();
+
+            const answers = {};
+
+            questions.forEach(q => {
+              const chosen = form.querySelector(
+                'input[name="q_' + q.id + '"]:checked'
+              );
+
+              if (chosen) {
+                answers[q.id] = Number(chosen.value);
+              }
+            });
+
+            if (Object.keys(answers).length !== questions.length) {
+              result.textContent =
+                "جاوب على كل الأسئلة قبل التسليم.";
+              return;
+            }
+
+            submit.disabled = true;
+            submit.textContent = "جاري تسليم الامتحان...";
+
+            const { data: submissionData, error: submissionError } =
+              await supabase.rpc("submit_quiz", {
+                p_quiz_id: quiz.id,
+                p_answers: answers
+              });
+
+            if (submissionError) {
+              submit.disabled = false;
+              submit.textContent = "إرسال الإجابات النهائية";
+
+              result.className = "status error";
+              result.textContent = submissionError.message;
+              return;
+            }
+
+            const score = Array.isArray(submissionData)
+              ? submissionData[0]
+              : submissionData;
+
+            // تجميد الإجابات بعد نجاح الحفظ
+            form.querySelectorAll("input").forEach(input => {
+              input.disabled = true;
+            });
+
+            submit.disabled = true;
+            submit.textContent = "تم تسليم الامتحان";
+
+            result.className = "status success";
+            result.textContent =
+              `تم التسليم بنجاح! نتيجتك: ${score.final_score} من ${score.total_questions}`;
+
+            // إعادة تحميل قائمة الاختبارات لإظهار حالة التسليم
+            await loadQuizzes();
+          });
+
+          article.appendChild(form);
+          start.remove();
+
+          form.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
         });
 
-        article.appendChild(form);
-      });
-
-      article.appendChild(start);
+        article.appendChild(start);
+      }
     }
 
     target.appendChild(article);
@@ -402,7 +522,12 @@ async function loadServantGroups() {
 
     if (!ids.length) {
       ["lessonGroup", "quizGroup", "attendanceGroup"].forEach(id => {
-        $(id).replaceChildren(new Option("لا توجد مجموعات معينة لك", ""));
+        const sel = $(id);
+        if (sel) {
+          sel.replaceChildren(
+            new Option("لا توجد مجموعات معينة لك", "")
+          );
+        }
       });
       return;
     }
@@ -420,6 +545,8 @@ async function loadServantGroups() {
 
   for (const id of ["lessonGroup", "quizGroup", "attendanceGroup"]) {
     const sel = $(id);
+    if (!sel) continue;
+
     sel.replaceChildren(new Option("اختار المجموعة", ""));
     (data || []).forEach(g => sel.add(new Option(g.name, g.id)));
   }
@@ -430,6 +557,7 @@ async function loadQuizDropdowns() {
     supabase.from("quizzes")
       .select("id,title,quiz_type")
       .order("created_at", { ascending: false }),
+
     supabase.from("lessons")
       .select("id,title")
       .order("id", { ascending: false })
@@ -437,15 +565,18 @@ async function loadQuizDropdowns() {
 
   if (!quizzesResult.error) {
     const sel = $("questionQuiz");
-    sel.replaceChildren(new Option("اختار الاختبار", ""));
 
-    (quizzesResult.data || []).forEach(q => {
-      sel.add(new Option(
-        q.title + " (" +
-        (q.quiz_type === "lesson" ? "أسئلة درس" : "امتحان") + ")",
-        q.id
-      ));
-    });
+    if (sel) {
+      sel.replaceChildren(new Option("اختار الاختبار", ""));
+
+      (quizzesResult.data || []).forEach(q => {
+        sel.add(new Option(
+          q.title + " (" +
+          (q.quiz_type === "lesson" ? "أسئلة درس" : "امتحان") + ")",
+          q.id
+        ));
+      });
+    }
   } else {
     message("questionCreateMessage",
       "تعذر تحميل الاختبارات: " + quizzesResult.error.message);
@@ -453,11 +584,14 @@ async function loadQuizDropdowns() {
 
   if (!lessonsResult.error) {
     const sel = $("quizLesson");
-    sel.replaceChildren(new Option("اختار الدرس", ""));
 
-    (lessonsResult.data || []).forEach(l => {
-      sel.add(new Option(l.title, l.id));
-    });
+    if (sel) {
+      sel.replaceChildren(new Option("اختار الدرس", ""));
+
+      (lessonsResult.data || []).forEach(l => {
+        sel.add(new Option(l.title, l.id));
+      });
+    }
   }
 }
 
@@ -602,11 +736,14 @@ async function saveAttendanceRoster() {
 
   message("attendanceMessage",
     "تم حفظ كشف الحضور. راجع إعدادات النقاط التلقائية في قاعدة البيانات.");
+
   await loadServantNotifications();
 }
 
 async function loadServantNotifications() {
   const target = $("servantNotifications");
+  if (!target) return;
+
   target.replaceChildren();
 
   const { data, error } = await supabase.from("site_notifications")
@@ -659,6 +796,8 @@ async function loadAdminData() {
   const servantsSelect = $("servantSelect");
   const groupsSelect = $("groupSelect");
 
+  if (!servantsSelect || !groupsSelect) return;
+
   servantsSelect.replaceChildren(new Option("اختار الخادم", ""));
   groupsSelect.replaceChildren(new Option("اختار المجموعة", ""));
 
@@ -700,6 +839,8 @@ async function loadAdminData() {
 
 async function loadAssignments() {
   const target = $("assignmentsList");
+  if (!target) return;
+
   target.replaceChildren();
 
   const { data, error } = await supabase
@@ -1080,7 +1221,7 @@ $("questionCreateForm").addEventListener("submit", async event => {
   const { data: question, error } = await supabase
     .from("quiz_questions")
     .insert({
-    quiz_id: quizId,
+      quiz_id: quizId,
       question_text: $("questionText").value.trim(),
       options,
       position: Date.now() % 100000
@@ -1139,7 +1280,9 @@ supabase.auth.onAuthStateChange(() => {
 });
 
 // تشغيل الموقع عند فتح الصفحة
-$("attendanceDate").value = new Date().toLocaleDateString("en-CA");
+if ($("attendanceDate")) {
+  $("attendanceDate").value = new Date().toLocaleDateString("en-CA");
+}
 
 await Promise.all([
   loadEvents("eventsList"),
