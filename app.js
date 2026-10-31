@@ -1,4 +1,3 @@
-
 import { supabase } from "./supabase.js";
 
 const $ = id => document.getElementById(id);
@@ -7,7 +6,6 @@ let currentUser = null;
 let currentProfile = null;
 let lang = "ar";
 
-// تثبيت الوضع الداكن
 document.documentElement.style.colorScheme = "dark";
 
 function message(id, text) {
@@ -154,6 +152,10 @@ async function loadLessons(targetId) {
   });
 }
 
+// ======================================
+// تحميل أعضاء المجموعات
+// ======================================
+
 async function loadAssignedMembers() {
   const select = $("pointsMember");
   if (!select || !currentProfile || !currentUser) return;
@@ -227,7 +229,7 @@ async function loadAssignedMembers() {
 async function getQuizAttempt(quizId, memberId) {
   return await supabase
     .from("quiz_attempts")
-    .select("id,score,max_score,submitted_at")
+    .select("id,score,max_score,submitted_at,points_awarded")
     .eq("quiz_id", quizId)
     .eq("member_id", memberId)
     .maybeSingle();
@@ -238,7 +240,7 @@ function showCompletedQuiz(article, attempt) {
   completed.className = "status success";
 
   completed.textContent =
-    `تم تسليم الامتحان بالفعل. نتيجتك: ${attempt.score} من ${attempt.max_score}`;
+    `تم تسليم الامتحان بالفعل. نتيجتك: ${attempt.score} من ${attempt.max_score} • النقاط المكتسبة: ${attempt.points_awarded ?? 0}`;
 
   article.appendChild(completed);
 }
@@ -250,7 +252,7 @@ async function loadQuizzes() {
   target.replaceChildren();
 
   const { data, error } = await supabase.from("quizzes")
-    .select("id,title,description,quiz_type,group_id,is_published,created_by")
+    .select("id,title,description,quiz_type,group_id,is_published,created_by,points_reward")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -280,7 +282,13 @@ async function loadQuizzes() {
     const desc = document.createElement("p");
     desc.textContent =
       (quiz.quiz_type === "lesson" ? "أسئلة بعد الدرس" : "امتحان مستقل") +
-      " • " + (quiz.description || "");
+      " • " + (quiz.description || "") +
+      (
+        Number(quiz.points_reward || 0) > 0
+          ? " • المكافأة: " + quiz.points_reward + " نقطة"
+          : ""
+      );
+
     article.appendChild(desc);
 
     const canManage =
@@ -317,7 +325,6 @@ async function loadQuizzes() {
       quiz.is_published &&
       currentProfile.approval_status === "approved"
     ) {
-      // التحقق من محاولة العضو السابقة
       const { data: previousAttempt, error: attemptError } =
         await getQuizAttempt(quiz.id, currentUser.id);
 
@@ -329,7 +336,6 @@ async function loadQuizzes() {
 
         article.appendChild(warning);
       } else if (previousAttempt) {
-        // العضو سلّم الامتحان بالفعل
         showCompletedQuiz(article, previousAttempt);
       } else {
         const start = document.createElement("button");
@@ -339,7 +345,6 @@ async function loadQuizzes() {
         start.addEventListener("click", async () => {
           start.disabled = true;
 
-          // إعادة التحقق عند الضغط
           const { data: latestAttempt, error: latestAttemptError } =
             await getQuizAttempt(quiz.id, currentUser.id);
 
@@ -377,7 +382,6 @@ async function loadQuizzes() {
             return;
           }
 
-          // إنشاء نموذج الأسئلة
           const form = document.createElement("form");
           form.className = "quiz-form";
 
@@ -424,7 +428,6 @@ async function loadQuizzes() {
           result.className = "status";
           form.appendChild(result);
 
-          // إرسال الإجابات
           form.addEventListener("submit", async ev => {
             ev.preventDefault();
 
@@ -468,7 +471,6 @@ async function loadQuizzes() {
               ? submissionData[0]
               : submissionData;
 
-            // تجميد الإجابات بعد نجاح الحفظ
             form.querySelectorAll("input").forEach(input => {
               input.disabled = true;
             });
@@ -476,11 +478,30 @@ async function loadQuizzes() {
             submit.disabled = true;
             submit.textContent = "تم تسليم الامتحان";
 
+            // قراءة النقاط المحفوظة فعليًا بواسطة قاعدة البيانات
+            const { data: savedAttempt, error: savedAttemptError } =
+              await getQuizAttempt(quiz.id, currentUser.id);
+
+            let pointsAwarded = 0;
+
+            if (!savedAttemptError && savedAttempt) {
+              pointsAwarded = Number(savedAttempt.points_awarded || 0);
+            } else {
+              // احتياطي للعرض إذا تعذرت قراءة المحاولة
+              pointsAwarded = score.total_questions > 0
+                ? Math.floor(
+                    Number(quiz.points_reward || 0) *
+                    Number(score.final_score || 0) /
+                    Number(score.total_questions)
+                  )
+                : 0;
+            }
+
             result.className = "status success";
             result.textContent =
-              `تم التسليم بنجاح! نتيجتك: ${score.final_score} من ${score.total_questions}`;
+              `تم التسليم بنجاح! نتيجتك: ${score.final_score} من ${score.total_questions} • حصلت على ${pointsAwarded} نقطة.`;
 
-            // إعادة تحميل قائمة الاختبارات لإظهار حالة التسليم
+            await refreshSession();
             await loadQuizzes();
           });
 
@@ -500,6 +521,10 @@ async function loadQuizzes() {
     target.appendChild(article);
   }
 }
+
+// ======================================
+// مجموعات الخدام
+// ======================================
 
 async function loadServantGroups() {
   const idsResult = currentProfile.role === "admin"
@@ -594,6 +619,10 @@ async function loadQuizDropdowns() {
     }
   }
 }
+
+// ======================================
+// الحضور والغياب
+// ======================================
 
 async function loadAttendanceRoster() {
   const groupId = $("attendanceGroup").value;
@@ -792,6 +821,10 @@ async function loadServantNotifications() {
   });
 }
 
+// ======================================
+// إدارة الخدام والمجموعات
+// ======================================
+
 async function loadAdminData() {
   const servantsSelect = $("servantSelect");
   const groupsSelect = $("groupSelect");
@@ -866,6 +899,10 @@ async function loadAssignments() {
     );
   });
 }
+
+// ======================================
+// تحديث الجلسة والملف الشخصي
+// ======================================
 
 async function refreshSession() {
   const { data, error } = await supabase.auth.getSession();
@@ -949,7 +986,10 @@ async function refreshSession() {
   }
 }
 
+// ======================================
 // إنشاء حساب جديد
+// ======================================
+
 $("signupForm").addEventListener("submit", async event => {
   event.preventDefault();
   message("signupMessage", "جاري إنشاء الحساب...");
@@ -980,7 +1020,10 @@ $("signupForm").addEventListener("submit", async event => {
   );
 });
 
+// ======================================
 // تسجيل الدخول
+// ======================================
+
 $("loginForm").addEventListener("submit", async event => {
   event.preventDefault();
   message("loginMessage", "جاري تسجيل الدخول...");
@@ -1018,7 +1061,10 @@ $("googleLoginBtn")?.addEventListener("click", async () => {
   }
 });
 
+// ======================================
 // تسجيل الخروج
+// ======================================
+
 $("logoutBtn").addEventListener("click", async () => {
   const { error } = await supabase.auth.signOut();
 
@@ -1032,7 +1078,10 @@ $("logoutBtn").addEventListener("click", async () => {
   showDashboard(false);
 });
 
-// إدارة النقاط
+// ======================================
+// إدارة النقاط يدويًا
+// ======================================
+
 $("pointsForm").addEventListener("submit", async event => {
   event.preventDefault();
   message("pointsMessage", "جاري تنفيذ العملية...");
@@ -1072,7 +1121,10 @@ $("pointsForm").addEventListener("submit", async event => {
   await refreshSession();
 });
 
+// ======================================
 // تعيين الخدام للمجموعات
+// ======================================
+
 $("assignForm").addEventListener("submit", async event => {
   event.preventDefault();
   message("assignMessage", "جاري تعيين الخادم...");
@@ -1111,7 +1163,10 @@ $("assignForm").addEventListener("submit", async event => {
   await loadAssignments();
 });
 
+// ======================================
 // نشر درس
+// ======================================
+
 $("lessonCreateForm").addEventListener("submit", async event => {
   event.preventDefault();
   message("lessonCreateMessage", "جاري نشر الدرس...");
@@ -1157,20 +1212,50 @@ $("lessonCreateForm").addEventListener("submit", async event => {
   ]);
 });
 
-// اختيار نوع الاختبار
+// ======================================
+// نوع الاختبار
+// ======================================
+
 $("quizType").addEventListener("change", () => {
   $("quizLesson").required = $("quizType").value === "lesson";
   $("quizLesson").disabled = $("quizType").value !== "lesson";
 });
 
-// إنشاء اختبار
+// ======================================
+// إنشاء اختبار مع مكافأة
+// ======================================
+
 $("quizCreateForm").addEventListener("submit", async event => {
   event.preventDefault();
   message("quizCreateMessage", "جاري إنشاء الاختبار...");
 
+  if (!currentUser || !currentProfile ||
+      !["admin", "servant"].includes(currentProfile.role) ||
+      currentProfile.approval_status !== "approved") {
+    message("quizCreateMessage", "ليس لديك صلاحية إنشاء امتحان.");
+    return;
+  }
+
   const type = $("quizType").value;
   const lessonId = $("quizLesson").value || null;
   const groupId = $("quizGroup").value;
+
+  const rewardPoints = Number.parseInt(
+    $("quizPointsReward").value || "0",
+    10
+  );
+
+  if (
+    !Number.isInteger(rewardPoints) ||
+    rewardPoints < 0 ||
+    rewardPoints > 1000
+  ) {
+    message(
+      "quizCreateMessage",
+      "مكافأة الامتحان يجب أن تكون من 0 إلى 1000 نقطة."
+    );
+    return;
+  }
 
   if (type === "lesson" && !lessonId) {
     message("quizCreateMessage", "اختار الدرس المرتبط بالأسئلة.");
@@ -1183,6 +1268,7 @@ $("quizCreateForm").addEventListener("submit", async event => {
     group_id: groupId,
     lesson_id: type === "lesson" ? Number(lessonId) : null,
     quiz_type: type,
+    points_reward: rewardPoints,
     created_by: currentUser.id,
     is_published: false
   }).select("id").single();
@@ -1192,8 +1278,10 @@ $("quizCreateForm").addEventListener("submit", async event => {
     return;
   }
 
-  message("quizCreateMessage",
-    "تم إنشاء الاختبار. أضف أسئلته من النموذج التالي. الاختبار غير منشور للشباب بعد.");
+  message(
+    "quizCreateMessage",
+    "تم إنشاء الاختبار. أضف أسئلته من النموذج التالي. الاختبار غير منشور للشباب بعد."
+  );
 
   $("quizCreateForm").reset();
 
@@ -1202,7 +1290,10 @@ $("quizCreateForm").addEventListener("submit", async event => {
   await loadQuizzes();
 });
 
+// ======================================
 // إضافة سؤال
+// ======================================
+
 $("questionCreateForm").addEventListener("submit", async event => {
   event.preventDefault();
   message("questionCreateMessage", "جاري إضافة السؤال...");
@@ -1218,11 +1309,18 @@ $("questionCreateForm").addEventListener("submit", async event => {
     return;
   }
 
+  const questionText = $("questionText").value.trim();
+
+  if (!questionText) {
+    message("questionCreateMessage", "اكتب نص السؤال.");
+    return;
+  }
+
   const { data: question, error } = await supabase
     .from("quiz_questions")
     .insert({
       quiz_id: quizId,
-      question_text: $("questionText").value.trim(),
+      question_text: questionText,
       options,
       position: Date.now() % 100000
     })
@@ -1255,11 +1353,17 @@ $("questionCreateForm").addEventListener("submit", async event => {
   await loadQuizzes();
 });
 
+// ======================================
 // الحضور والغياب
+// ======================================
+
 $("loadAttendanceBtn").addEventListener("click", loadAttendanceRoster);
 $("saveAttendanceBtn").addEventListener("click", saveAttendanceRoster);
 
-// تغيير اتجاه ولغة الصفحة
+// ======================================
+// تغيير اللغة
+// ======================================
+
 $("langBtn").addEventListener("click", () => {
   lang = lang === "ar" ? "en" : "ar";
 
