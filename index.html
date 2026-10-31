@@ -110,7 +110,8 @@
         <a href="#profilePanel">البروفايل</a>
         <a href="#myEvents">الفعاليات</a>
         <a href="#myLessons">الدروس</a>
-        <a href="#servantPanel">إدارة النقاط</a>
+        <a href="#myQuizzes">الامتحانات</a>
+        <a href="#servantPanel">إدارة الخدمة</a>
         <a href="#adminPanel">إدارة المجموعات</a>
       </div>
     </section>
@@ -144,6 +145,18 @@
 
     <section id="servantPanel" class="panel glass hidden">
       <h2>إدارة نقاط الأعضاء</h2>
+
+      <div class="form-card">
+        <h3>مراجعة الامتحانات ومتابعة الطلاب</h3>
+        <p class="muted">
+          اعرض إجابات كل طالب، وأعد تصحيح الأسئلة،
+          وتابع مدة الخروج والعودة أسفل كل سؤال.
+        </p>
+        <a class="button primary" href="./exam-review.html">
+          فتح صفحة مراجعة الامتحانات
+        </a>
+      </div>
+
       <p class="muted">
         اختار عضوًا من المجموعات المسندة إليك، ثم اكتب النقاط وسبب الإضافة أو الخصم.
       </p>
@@ -280,12 +293,17 @@
         <label for="attendanceDate">التاريخ</label>
         <input id="attendanceDate" type="date" required>
 
-        <button id="loadAttendanceBtn" class="primary" type="button">تحميل كشف الأسماء</button>
+        <button id="loadAttendanceBtn" class="primary" type="button">
+          تحميل كشف الأسماء
+        </button>
+
         <p id="attendanceMessage" class="status" role="status"></p>
 
         <div id="attendanceRoster" class="list"></div>
 
-        <button id="saveAttendanceBtn" class="primary" type="button">حفظ الحضور والغياب</button>
+        <button id="saveAttendanceBtn" class="primary" type="button">
+          حفظ الحضور والغياب
+        </button>
       </div>
 
       <div class="form-card">
