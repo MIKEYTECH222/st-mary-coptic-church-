@@ -8,7 +8,14 @@ let lang = "ar";
 
 let activeQuizPresenceCleanup = null;
 
+const ACTIVE_DRAFT_KEY = "youth_active_exam_draft";
+
 document.documentElement.style.colorScheme = "dark";
+
+
+// ======================================
+// الرسائل
+// ======================================
 
 function message(id, text) {
   const element = $(id);
@@ -27,7 +34,6 @@ function showDashboard(show) {
 
   if (show) {
     location.hash = "dashboard";
-    window.scrollTo({ top: 0, behavior: "smooth" });
   } else {
     location.hash = "account";
   }
@@ -61,14 +67,135 @@ function addItem(targetId, title, description, extra = "") {
 
 function formatDate(value) {
   if (!value) return "";
+
   const date = new Date(value);
+
   if (Number.isNaN(date.getTime())) return "";
+
   return date.toLocaleString("ar-EG");
 }
 
 
 // ======================================
-// متابعة خروج وعودة الطالب أثناء الامتحان
+// حفظ الامتحان المفتوح
+// ======================================
+
+function getQuizDraftKey(quizId) {
+  return (
+    "youth_exam_draft_" +
+    currentUser.id +
+    "_" +
+    quizId
+  );
+}
+
+function getActiveDraftId() {
+  try {
+    return sessionStorage.getItem(ACTIVE_DRAFT_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function getQuizDraft(quizId) {
+  if (!currentUser) return null;
+
+  try {
+    const raw = sessionStorage.getItem(
+      getQuizDraftKey(quizId)
+    );
+
+    if (!raw) return null;
+
+    const draft = JSON.parse(raw);
+
+    if (
+      !draft ||
+      draft.quizId !== quizId ||
+      draft.userId !== currentUser.id
+    ) {
+      return null;
+    }
+
+    return draft;
+
+  } catch (error) {
+    console.warn("Cannot read exam draft:", error);
+    return null;
+  }
+}
+
+
+// حفظ إجابات الطالب تلقائيًا
+
+function saveQuizDraft(quizId, answers) {
+  if (!currentUser) return;
+
+  try {
+    const draft = {
+      quizId,
+      userId: currentUser.id,
+      answers,
+      savedAt: new Date().toISOString()
+    };
+
+    sessionStorage.setItem(
+      getQuizDraftKey(quizId),
+      JSON.stringify(draft)
+    );
+
+    sessionStorage.setItem(
+      ACTIVE_DRAFT_KEY,
+      quizId
+    );
+
+  } catch (error) {
+    console.error("Cannot save exam draft:", error);
+  }
+}
+
+
+// حذف المسودة بعد التسليم الناجح
+
+function clearQuizDraft(quizId) {
+  if (!currentUser) return;
+
+  try {
+    sessionStorage.removeItem(
+      getQuizDraftKey(quizId)
+    );
+
+    if (getActiveDraftId() === quizId) {
+      sessionStorage.removeItem(ACTIVE_DRAFT_KEY);
+    }
+
+  } catch (error) {
+    console.warn("Cannot clear exam draft:", error);
+  }
+}
+
+
+// تجميع الإجابات الحالية من النموذج
+
+function collectQuizAnswers(form, questions) {
+  const answers = {};
+
+  questions.forEach(question => {
+    const chosen = form.querySelector(
+      'input[name="q_' + question.id + '"]:checked'
+    );
+
+    if (chosen) {
+      answers[question.id] = Number(chosen.value);
+    }
+  });
+
+  return answers;
+}
+
+
+// ======================================
+// متابعة خروج وعودة الطالب
 // ======================================
 
 async function sendQuizPresence(quizId, eventType) {
@@ -84,22 +211,35 @@ async function sendQuizPresence(quizId, eventType) {
     if (error) {
       console.warn("Quiz presence:", error.message);
     }
+
   } catch (error) {
     console.warn("Quiz presence unavailable:", error);
   }
 }
 
-async function startQuizPresenceTracking(quizId) {
+
+async function startQuizPresenceTracking(
+  quizId,
+  isResume = false
+) {
   if (activeQuizPresenceCleanup) {
     activeQuizPresenceCleanup();
   }
 
-  await sendQuizPresence(quizId, "start");
+  // لو الطالب بيرجع لامتحان مفتوح نسجل عودته
+  // ولو بيبدأ امتحان جديد نسجل البداية
 
-  let hidden = document.visibilityState === "hidden";
+  await sendQuizPresence(
+    quizId,
+    isResume ? "return" : "start"
+  );
+
+  let hidden =
+    document.visibilityState === "hidden";
 
   const onVisibilityChange = () => {
-    const nextHidden = document.visibilityState === "hidden";
+    const nextHidden =
+      document.visibilityState === "hidden";
 
     if (nextHidden && !hidden) {
       sendQuizPresence(quizId, "leave");
@@ -242,11 +382,13 @@ async function loadLessons(targetId) {
 
     if (lesson.content_url) {
       const link = document.createElement("a");
+
       link.className = "button primary";
       link.href = lesson.content_url;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
       link.textContent = "فتح الدرس ↗";
+
       article.appendChild(link);
     }
 
@@ -299,11 +441,13 @@ async function loadAssignedMembers() {
     return;
   }
 
-  const { data: assignments, error: assignmentError } =
-    await supabase
-      .from("servant_group_assignments")
-      .select("group_id")
-      .eq("servant_id", currentUser.id);
+  const {
+    data: assignments,
+    error: assignmentError
+  } = await supabase
+    .from("servant_group_assignments")
+    .select("group_id")
+    .eq("servant_id", currentUser.id);
 
   if (assignmentError) {
     message(
@@ -338,7 +482,7 @@ async function loadAssignedMembers() {
   if (membersError) {
     message(
       "pointsMessage",
-      "تعذر تحميل أعضاء مجموعاتك. راجع سياسات RLS لجدول profiles: " +
+      "تعذر تحميل أعضاء مجموعاتك: " +
       membersError.message
     );
     return;
@@ -363,7 +507,7 @@ async function loadAssignedMembers() {
 
 
 // ======================================
-// الاختبارات ومحاولات الأعضاء
+// محاولات الامتحانات
 // ======================================
 
 async function getQuizAttempt(quizId, memberId) {
@@ -375,8 +519,10 @@ async function getQuizAttempt(quizId, memberId) {
     .maybeSingle();
 }
 
+
 function showCompletedQuiz(article, attempt) {
   const completed = document.createElement("p");
+
   completed.className = "status success";
 
   completed.textContent =
@@ -384,6 +530,322 @@ function showCompletedQuiz(article, attempt) {
 
   article.appendChild(completed);
 }
+
+
+// ======================================
+// فتح الامتحان أو استكماله
+// ======================================
+
+async function openQuiz(
+  quiz,
+  article,
+  startButton,
+  forceResume = false
+) {
+  startButton.disabled = true;
+
+  const { data: latestAttempt, error: latestAttemptError } =
+    await getQuizAttempt(quiz.id, currentUser.id);
+
+  if (latestAttemptError) {
+    startButton.disabled = false;
+
+    message(
+      "questionCreateMessage",
+      "تعذر التحقق من المحاولة السابقة: " +
+      latestAttemptError.message
+    );
+
+    return;
+  }
+
+  if (latestAttempt) {
+    startButton.remove();
+    showCompletedQuiz(article, latestAttempt);
+
+    clearQuizDraft(quiz.id);
+
+    return;
+  }
+
+  const {
+    data: questions,
+    error: questionsError
+  } = await supabase
+    .from("quiz_questions")
+    .select("id,question_text,options,position")
+    .eq("quiz_id", quiz.id)
+    .order("position");
+
+  if (questionsError) {
+    startButton.disabled = false;
+
+    message(
+      "questionCreateMessage",
+      "تعذر تحميل الأسئلة: " + questionsError.message
+    );
+
+    return;
+  }
+
+  if (!questions?.length) {
+    startButton.disabled = false;
+
+    message(
+      "questionCreateMessage",
+      "الامتحان لا يحتوي على أسئلة."
+    );
+
+    return;
+  }
+
+  // قراءة إجابات الطالب المحفوظة
+
+  const savedDraft = getQuizDraft(quiz.id);
+
+  const savedAnswers = savedDraft?.answers || {};
+
+  const isResume =
+    forceResume || Boolean(savedDraft);
+
+  // بدء المتابعة أو تسجيل العودة
+
+  await startQuizPresenceTracking(
+    quiz.id,
+    isResume
+  );
+
+  // إنشاء نموذج الامتحان
+
+  const form = document.createElement("form");
+
+  form.className = "quiz-form";
+
+  // إنشاء مسودة حتى لو الطالب لم يجاوب بعد
+
+  saveQuizDraft(
+    quiz.id,
+    savedAnswers
+  );
+
+  questions.forEach((q, index) => {
+    const field = document.createElement("fieldset");
+
+    field.className =
+      "form-card quiz-question-card";
+
+    const legend = document.createElement("legend");
+
+    legend.textContent =
+      `السؤال ${index + 1}: ${q.question_text}`;
+
+    field.appendChild(legend);
+
+    (q.options || []).forEach((opt, optIndex) => {
+      const label = document.createElement("label");
+
+      label.className = "option";
+
+      const radio = document.createElement("input");
+
+      radio.type = "radio";
+      radio.name = "q_" + q.id;
+      radio.value = String(optIndex);
+      radio.style.width = "auto";
+
+      // استعادة إجابة الطالب السابقة
+
+      if (
+        savedAnswers[q.id] !== undefined &&
+        Number(savedAnswers[q.id]) === optIndex
+      ) {
+        radio.checked = true;
+      }
+
+      label.append(
+        radio,
+        document.createTextNode(" " + opt)
+      );
+
+      field.appendChild(label);
+    });
+
+    form.appendChild(field);
+  });
+
+
+  // --------------------------------------
+  // حفظ الإجابات مع كل تغيير
+  // --------------------------------------
+
+  form.addEventListener("change", () => {
+    const answers = collectQuizAnswers(
+      form,
+      questions
+    );
+
+    saveQuizDraft(
+      quiz.id,
+      answers
+    );
+  });
+
+
+  const submit = document.createElement("button");
+
+  submit.type = "submit";
+  submit.className = "primary";
+  submit.textContent = "إرسال الإجابات النهائية";
+
+  form.appendChild(submit);
+
+
+  const result = document.createElement("p");
+
+  result.className = "status";
+
+  form.appendChild(result);
+
+
+  // --------------------------------------
+  // تسليم الامتحان
+  // --------------------------------------
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const answers = collectQuizAnswers(
+      form,
+      questions
+    );
+
+    if (Object.keys(answers).length !== questions.length) {
+      result.textContent =
+        "جاوب على كل الأسئلة قبل التسليم.";
+
+      return;
+    }
+
+    // حفظ آخر نسخة قبل التسليم
+
+    saveQuizDraft(
+      quiz.id,
+      answers
+    );
+
+    submit.disabled = true;
+
+    submit.textContent =
+      "جاري تسليم الامتحان...";
+
+    const {
+      data: submissionData,
+      error: submissionError
+    } = await supabase.rpc(
+      "submit_quiz",
+      {
+        p_quiz_id: quiz.id,
+        p_answers: answers
+      }
+    );
+
+    if (submissionError) {
+      submit.disabled = false;
+
+      submit.textContent =
+        "إرسال الإجابات النهائية";
+
+      result.className = "status error";
+
+      result.textContent =
+        submissionError.message;
+
+      return;
+    }
+
+    const score = Array.isArray(submissionData)
+      ? submissionData[0]
+      : submissionData;
+
+    // تسجيل انتهاء الامتحان
+
+    await sendQuizPresence(
+      quiz.id,
+      "finish"
+    );
+
+    if (activeQuizPresenceCleanup) {
+      activeQuizPresenceCleanup();
+    }
+
+    // حذف المسودة فقط بعد نجاح التسليم
+
+    clearQuizDraft(quiz.id);
+
+    form.querySelectorAll("input").forEach(input => {
+      input.disabled = true;
+    });
+
+    submit.disabled = true;
+
+    submit.textContent =
+      "تم تسليم الامتحان";
+
+
+    // قراءة النقاط الفعلية من قاعدة البيانات
+
+    const {
+      data: savedAttempt,
+      error: savedAttemptError
+    } = await getQuizAttempt(
+      quiz.id,
+      currentUser.id
+    );
+
+    let pointsAwarded = 0;
+
+    if (!savedAttemptError && savedAttempt) {
+      pointsAwarded =
+        Number(savedAttempt.points_awarded || 0);
+
+    } else {
+      pointsAwarded =
+        score.total_questions > 0
+          ? Math.floor(
+              Number(quiz.points_reward || 0) *
+              Number(score.final_score || 0) /
+              Number(score.total_questions)
+            )
+          : 0;
+    }
+
+    result.className = "status success";
+
+    result.textContent =
+      `تم التسليم بنجاح! نتيجتك: ${score.final_score} من ${score.total_questions} • حصلت على ${pointsAwarded} نقطة.`;
+
+    await refreshSession();
+
+    await loadQuizzes();
+  });
+
+
+  // إظهار النموذج
+
+  article.appendChild(form);
+
+  startButton.remove();
+
+  form.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+
+// ======================================
+// تحميل الامتحانات
+// ======================================
 
 async function loadQuizzes() {
   const target = $("quizzesList");
@@ -407,12 +869,13 @@ async function loadQuizzes() {
       "تعذر تحميل الاختبارات",
       error.message
     );
+
     return;
   }
 
-  const visible = (data || []).filter(q =>
-    q.is_published ||
-    q.created_by === currentUser.id ||
+  const visible = (data || []).filter(quiz =>
+    quiz.is_published ||
+    quiz.created_by === currentUser.id ||
     currentProfile.role === "admin"
   );
 
@@ -422,15 +885,27 @@ async function loadQuizzes() {
       "لا توجد أسئلة أو امتحانات منشورة حالياً",
       ""
     );
+
     return;
   }
 
+  // تحديد الامتحان المفتوح حاليًا
+
+  const activeDraftId = getActiveDraftId();
+
+  let resumeButton = null;
+
+
   for (const quiz of visible) {
     const article = document.createElement("article");
+
     article.className = "item";
 
     const title = document.createElement("h3");
-    title.textContent = quiz.title || "اختبار";
+
+    title.textContent =
+      quiz.title || "اختبار";
+
     article.appendChild(title);
 
     const desc = document.createElement("p");
@@ -439,15 +914,23 @@ async function loadQuizzes() {
       (quiz.quiz_type === "lesson"
         ? "أسئلة بعد الدرس"
         : "امتحان مستقل") +
+
       " • " +
+
       (quiz.description || "") +
+
       (
         Number(quiz.points_reward || 0) > 0
-          ? " • المكافأة: " + quiz.points_reward + " نقطة"
+          ? " • المكافأة: " +
+            quiz.points_reward +
+            " نقطة"
           : ""
       );
 
     article.appendChild(desc);
+
+
+    // إدارة النشر
 
     const canManage =
       quiz.created_by === currentUser.id ||
@@ -491,6 +974,9 @@ async function loadQuizzes() {
       article.appendChild(publish);
     }
 
+
+    // الاختبارات المنشورة
+
     if (
       quiz.is_published &&
       currentProfile.approval_status === "approved"
@@ -515,254 +1001,66 @@ async function loadQuizzes() {
 
       } else if (previousAttempt) {
 
-        showCompletedQuiz(article, previousAttempt);
+        showCompletedQuiz(
+          article,
+          previousAttempt
+        );
+
+        clearQuizDraft(quiz.id);
 
       } else {
 
         const start = document.createElement("button");
 
         start.type = "button";
-        start.textContent = "حل الاختبار";
+
+        const draft = getQuizDraft(quiz.id);
+
+        start.textContent = draft
+          ? "استكمال الامتحان"
+          : "حل الاختبار";
 
         start.addEventListener("click", async () => {
-          start.disabled = true;
-
-          const {
-            data: latestAttempt,
-            error: latestAttemptError
-          } = await getQuizAttempt(
-            quiz.id,
-            currentUser.id
+          await openQuiz(
+            quiz,
+            article,
+            start,
+            Boolean(draft)
           );
-
-          if (latestAttemptError) {
-            start.disabled = false;
-
-            message(
-              "questionCreateMessage",
-              "تعذر التحقق من المحاولة السابقة: " +
-              latestAttemptError.message
-            );
-
-            return;
-          }
-
-          if (latestAttempt) {
-            start.remove();
-            showCompletedQuiz(article, latestAttempt);
-            return;
-          }
-
-          const {
-            data: questions,
-            error: questionsError
-          } = await supabase
-            .from("quiz_questions")
-            .select("id,question_text,options,position")
-            .eq("quiz_id", quiz.id)
-            .order("position");
-
-          if (questionsError) {
-            start.disabled = false;
-
-            message(
-              "questionCreateMessage",
-              "تعذر تحميل الأسئلة: " + questionsError.message
-            );
-
-            return;
-          }
-
-          if (!questions?.length) {
-            start.disabled = false;
-
-            message(
-              "questionCreateMessage",
-              "الامتحان لا يحتوي على أسئلة."
-            );
-
-            return;
-          }
-
-          // بدء مراقبة الطالب
-
-          await startQuizPresenceTracking(quiz.id);
-
-          const form = document.createElement("form");
-
-          form.className = "quiz-form";
-
-          questions.forEach((q, index) => {
-            const field = document.createElement("fieldset");
-
-            field.className =
-              "form-card quiz-question-card";
-
-            const legend = document.createElement("legend");
-
-            legend.textContent =
-              `السؤال ${index + 1}: ${q.question_text}`;
-
-            field.appendChild(legend);
-
-            (q.options || []).forEach((opt, optIndex) => {
-              const label = document.createElement("label");
-
-              label.className = "option";
-
-              const radio = document.createElement("input");
-
-              radio.type = "radio";
-              radio.name = "q_" + q.id;
-              radio.value = String(optIndex);
-              radio.required = true;
-              radio.style.width = "auto";
-
-              label.append(
-                radio,
-                document.createTextNode(" " + opt)
-              );
-
-              field.appendChild(label);
-            });
-
-            form.appendChild(field);
-          });
-
-          const submit = document.createElement("button");
-
-          submit.type = "submit";
-          submit.className = "primary";
-          submit.textContent = "إرسال الإجابات النهائية";
-
-          form.appendChild(submit);
-
-          const result = document.createElement("p");
-
-          result.className = "status";
-
-          form.appendChild(result);
-
-          form.addEventListener("submit", async ev => {
-            ev.preventDefault();
-
-            const answers = {};
-
-            questions.forEach(q => {
-              const chosen = form.querySelector(
-                'input[name="q_' + q.id + '"]:checked'
-              );
-
-              if (chosen) {
-                answers[q.id] = Number(chosen.value);
-              }
-            });
-
-            if (
-              Object.keys(answers).length !== questions.length
-            ) {
-              result.textContent =
-                "جاوب على كل الأسئلة قبل التسليم.";
-
-              return;
-            }
-
-            submit.disabled = true;
-            submit.textContent = "جاري تسليم الامتحان...";
-
-            const {
-              data: submissionData,
-              error: submissionError
-            } = await supabase.rpc(
-              "submit_quiz",
-              {
-                p_quiz_id: quiz.id,
-                p_answers: answers
-              }
-            );
-
-            if (submissionError) {
-              submit.disabled = false;
-
-              submit.textContent =
-                "إرسال الإجابات النهائية";
-
-              result.className = "status error";
-              result.textContent = submissionError.message;
-
-              return;
-            }
-
-            const score = Array.isArray(submissionData)
-              ? submissionData[0]
-              : submissionData;
-
-            // تسجيل نهاية الامتحان وإيقاف المتابعة
-
-            await sendQuizPresence(quiz.id, "finish");
-
-            if (activeQuizPresenceCleanup) {
-              activeQuizPresenceCleanup();
-            }
-
-            form.querySelectorAll("input").forEach(input => {
-              input.disabled = true;
-            });
-
-            submit.disabled = true;
-            submit.textContent = "تم تسليم الامتحان";
-
-            // قراءة النقاط المحفوظة فعليًا بواسطة قاعدة البيانات
-
-            const {
-              data: savedAttempt,
-              error: savedAttemptError
-            } = await getQuizAttempt(
-              quiz.id,
-              currentUser.id
-            );
-
-            let pointsAwarded = 0;
-
-            if (!savedAttemptError && savedAttempt) {
-              pointsAwarded = Number(
-                savedAttempt.points_awarded || 0
-              );
-
-            } else {
-              pointsAwarded = score.total_questions > 0
-                ? Math.floor(
-                    Number(quiz.points_reward || 0) *
-                    Number(score.final_score || 0) /
-                    Number(score.total_questions)
-                  )
-                : 0;
-            }
-
-            result.className = "status success";
-
-            result.textContent =
-              `تم التسليم بنجاح! نتيجتك: ${score.final_score} من ${score.total_questions} • حصلت على ${pointsAwarded} نقطة.`;
-
-            await refreshSession();
-            await loadQuizzes();
-          });
-
-          article.appendChild(form);
-
-          start.remove();
-
-          form.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
         });
 
         article.appendChild(start);
+
+        // لو الطالب رجع للموقع وفيه امتحان مفتوح
+        // نفتح نفس الامتحان تلقائيًا
+
+        if (
+          !resumeButton &&
+          activeDraftId === quiz.id &&
+          draft
+        ) {
+          resumeButton = {
+            quiz,
+            article,
+            start
+          };
+        }
       }
     }
 
     target.appendChild(article);
+  }
+
+
+  // استكمال الامتحان المفتوح تلقائيًا
+
+  if (resumeButton) {
+    await openQuiz(
+      resumeButton.quiz,
+      resumeButton.article,
+      resumeButton.start,
+      true
+    );
   }
 }
 
@@ -772,18 +1070,20 @@ async function loadQuizzes() {
 // ======================================
 
 async function loadServantGroups() {
-  const idsResult = currentProfile.role === "admin"
-    ? null
-    : await supabase
-        .from("servant_group_assignments")
-        .select("group_id")
-        .eq("servant_id", currentUser.id);
+  const idsResult =
+    currentProfile.role === "admin"
+      ? null
+      : await supabase
+          .from("servant_group_assignments")
+          .select("group_id")
+          .eq("servant_id", currentUser.id);
 
   if (idsResult?.error) {
     message(
       "lessonCreateMessage",
       "تعذر تحميل المجموعات: " + idsResult.error.message
     );
+
     return;
   }
 
@@ -827,6 +1127,7 @@ async function loadServantGroups() {
       "lessonCreateMessage",
       "تعذر تحميل المجموعات: " + error.message
     );
+
     return;
   }
 
@@ -844,14 +1145,16 @@ async function loadServantGroups() {
     );
 
     (data || []).forEach(group => {
-      select.add(new Option(group.name, group.id));
+      select.add(
+        new Option(group.name, group.id)
+      );
     });
   }
 }
 
 
 // ======================================
-// تحميل قوائم الاختبارات والدروس
+// قوائم الاختبارات والدروس
 // ======================================
 
 async function loadQuizDropdowns() {
@@ -880,18 +1183,18 @@ async function loadQuizDropdowns() {
         new Option("اختار الاختبار", "")
       );
 
-      (quizzesResult.data || []).forEach(q => {
+      (quizzesResult.data || []).forEach(quiz => {
         select.add(
           new Option(
-            q.title +
+            quiz.title +
             " (" +
             (
-              q.quiz_type === "lesson"
+              quiz.quiz_type === "lesson"
                 ? "أسئلة درس"
                 : "امتحان"
             ) +
             ")",
-            q.id
+            quiz.id
           )
         );
       });
@@ -900,7 +1203,8 @@ async function loadQuizDropdowns() {
   } else {
     message(
       "questionCreateMessage",
-      "تعذر تحميل الاختبارات: " + quizzesResult.error.message
+      "تعذر تحميل الاختبارات: " +
+      quizzesResult.error.message
     );
   }
 
@@ -914,7 +1218,10 @@ async function loadQuizDropdowns() {
 
       (lessonsResult.data || []).forEach(lesson => {
         select.add(
-          new Option(lesson.title, lesson.id)
+          new Option(
+            lesson.title,
+            lesson.id
+          )
         );
       });
     }
@@ -923,7 +1230,7 @@ async function loadQuizDropdowns() {
 
 
 // ======================================
-// كشف الحضور والغياب
+// الحضور والغياب
 // ======================================
 
 async function loadAttendanceRoster() {
@@ -931,7 +1238,8 @@ async function loadAttendanceRoster() {
   const date = $("attendanceDate").value;
 
   const title =
-    $("attendanceTitle").value.trim() || "لقاء الخدمة";
+    $("attendanceTitle").value.trim() ||
+    "لقاء الخدمة";
 
   const target = $("attendanceRoster");
 
@@ -942,6 +1250,7 @@ async function loadAttendanceRoster() {
       "attendanceMessage",
       "اختار المجموعة والتاريخ."
     );
+
     return;
   }
 
@@ -963,8 +1272,10 @@ async function loadAttendanceRoster() {
   if (membersError) {
     message(
       "attendanceMessage",
-      "تعذر تحميل الأعضاء: " + membersError.message
+      "تعذر تحميل الأعضاء: " +
+      membersError.message
     );
+
     return;
   }
 
@@ -982,8 +1293,10 @@ async function loadAttendanceRoster() {
   if (sessionError) {
     message(
       "attendanceMessage",
-      "تعذر قراءة اللقاء: " + sessionError.message
+      "تعذر قراءة اللقاء: " +
+      sessionError.message
     );
+
     return;
   }
 
@@ -998,8 +1311,10 @@ async function loadAttendanceRoster() {
     if (error) {
       message(
         "attendanceMessage",
-        "تعذر تحميل الحضور السابق: " + error.message
+        "تعذر تحميل الحضور السابق: " +
+        error.message
       );
+
       return;
     }
 
@@ -1028,7 +1343,10 @@ async function loadAttendanceRoster() {
     select.dataset.memberId = member.id;
 
     select.add(
-      new Option("حاضر (+20 نقطة)", "present")
+      new Option(
+        "حاضر (+20 نقطة)",
+        "present"
+      )
     );
 
     select.add(
@@ -1036,7 +1354,10 @@ async function loadAttendanceRoster() {
     );
 
     select.add(
-      new Option("لم يتم التسجيل", "unmarked")
+      new Option(
+        "لم يتم التسجيل",
+        "unmarked"
+      )
     );
 
     select.value =
@@ -1062,13 +1383,15 @@ async function saveAttendanceRoster() {
   const date = $("attendanceDate").value;
 
   const title =
-    $("attendanceTitle").value.trim() || "لقاء الخدمة";
+    $("attendanceTitle").value.trim() ||
+    "لقاء الخدمة";
 
   if (!groupId || !date) {
     message(
       "attendanceMessage",
       "اختار المجموعة والتاريخ."
     );
+
     return;
   }
 
@@ -1091,8 +1414,10 @@ async function saveAttendanceRoster() {
   if (sessionError) {
     message(
       "attendanceMessage",
-      "فشل إنشاء اللقاء: " + sessionError.message
+      "فشل إنشاء اللقاء: " +
+      sessionError.message
     );
+
     return;
   }
 
@@ -1118,8 +1443,10 @@ async function saveAttendanceRoster() {
     if (error) {
       message(
         "attendanceMessage",
-        "فشل حفظ الحضور: " + error.message
+        "فشل حفظ الحضور: " +
+        error.message
       );
+
       return;
     }
   }
@@ -1155,6 +1482,7 @@ async function loadServantNotifications() {
       "تعذر تحميل التنبيهات",
       error.message
     );
+
     return;
   }
 
@@ -1164,6 +1492,7 @@ async function loadServantNotifications() {
       "لا توجد تنبيهات غياب حالياً",
       ""
     );
+
     return;
   }
 
@@ -1197,7 +1526,8 @@ async function loadServantNotifications() {
         if (error) {
           message(
             "attendanceMessage",
-            "تعذر تحديث التنبيه: " + error.message
+            "تعذر تحديث التنبيه: " +
+            error.message
           );
 
         } else {
@@ -1255,7 +1585,8 @@ async function loadAdminData() {
   if (servantsResult.error) {
     message(
       "assignMessage",
-      "تعذر تحميل الخدام: " + servantsResult.error.message
+      "تعذر تحميل الخدام: " +
+      servantsResult.error.message
     );
 
   } else {
@@ -1272,13 +1603,17 @@ async function loadAdminData() {
   if (groupsResult.error) {
     message(
       "assignMessage",
-      "تعذر تحميل المجموعات: " + groupsResult.error.message
+      "تعذر تحميل المجموعات: " +
+      groupsResult.error.message
     );
 
   } else {
     (groupsResult.data || []).forEach(group => {
       groupsSelect.add(
-        new Option(group.name, group.id)
+        new Option(
+          group.name,
+          group.id
+        )
       );
     });
   }
@@ -1307,6 +1642,7 @@ async function loadAssignments() {
       "تعذر تحميل التعيينات",
       error.message
     );
+
     return;
   }
 
@@ -1316,6 +1652,7 @@ async function loadAssignments() {
       "لا توجد تعيينات بعد",
       ""
     );
+
     return;
   }
 
@@ -1334,7 +1671,8 @@ async function loadAssignments() {
 // ======================================
 
 async function refreshSession() {
-  const { data, error } = await supabase.auth.getSession();
+  const { data, error } =
+    await supabase.auth.getSession();
 
   if (error || !data.session) {
     currentUser = null;
@@ -1439,89 +1777,96 @@ async function refreshSession() {
 
 
 // ======================================
-// إنشاء حساب جديد
+// إنشاء حساب
 // ======================================
 
-$("signupForm").addEventListener("submit", async event => {
-  event.preventDefault();
+$("signupForm").addEventListener(
+  "submit",
+  async event => {
+    event.preventDefault();
 
-  message(
-    "signupMessage",
-    "جاري إنشاء الحساب..."
-  );
+    message(
+      "signupMessage",
+      "جاري إنشاء الحساب..."
+    );
 
-  const fullName =
-    $("signupName").value.trim();
+    const fullName =
+      $("signupName").value.trim();
 
-  const email =
-    $("signupEmail").value.trim();
+    const email =
+      $("signupEmail").value.trim();
 
-  const password =
-    $("signupPassword").value;
+    const password =
+      $("signupPassword").value;
 
-  const { data, error } =
-    await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName
-        },
-        emailRedirectTo:
-          location.origin + location.pathname
-      }
-    });
+    const { data, error } =
+      await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName
+          },
 
-  if (error) {
-    message("signupMessage", error.message);
-    return;
+          emailRedirectTo:
+            location.origin + location.pathname
+        }
+      });
+
+    if (error) {
+      message("signupMessage", error.message);
+      return;
+    }
+
+    message(
+      "signupMessage",
+      data.session
+        ? "تم إنشاء الحساب. حسابك في انتظار موافقة المسؤول."
+        : "راجع بريدك الإلكتروني لتأكيد الحساب، ثم انتظر موافقة المسؤول."
+    );
   }
-
-  message(
-    "signupMessage",
-    data.session
-      ? "تم إنشاء الحساب. حسابك في انتظار موافقة المسؤول."
-      : "راجع بريدك الإلكتروني لتأكيد الحساب، ثم انتظر موافقة المسؤول."
-  );
-});
+);
 
 
 // ======================================
 // تسجيل الدخول
 // ======================================
 
-$("loginForm").addEventListener("submit", async event => {
-  event.preventDefault();
+$("loginForm").addEventListener(
+  "submit",
+  async event => {
+    event.preventDefault();
 
-  message(
-    "loginMessage",
-    "جاري تسجيل الدخول..."
-  );
+    message(
+      "loginMessage",
+      "جاري تسجيل الدخول..."
+    );
 
-  const email =
-    $("loginEmail").value.trim();
+    const email =
+      $("loginEmail").value.trim();
 
-  const password =
-    $("loginPassword").value;
+    const password =
+      $("loginPassword").value;
 
-  const { error } =
-    await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    const { error } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-  if (error) {
-    message("loginMessage", error.message);
-    return;
+    if (error) {
+      message("loginMessage", error.message);
+      return;
+    }
+
+    message(
+      "loginMessage",
+      "تم تسجيل الدخول."
+    );
+
+    await refreshSession();
   }
-
-  message(
-    "loginMessage",
-    "تم تسجيل الدخول."
-  );
-
-  await refreshSession();
-});
+);
 
 
 // ======================================
@@ -1531,7 +1876,6 @@ $("loginForm").addEventListener("submit", async event => {
 $("googleLoginBtn")?.addEventListener(
   "click",
   async () => {
-
     message(
       "googleMessage",
       "جاري فتح تسجيل الدخول باستخدام Google..."
@@ -1552,7 +1896,6 @@ $("googleLoginBtn")?.addEventListener(
         "فشل تسجيل الدخول: " + error.message
       );
     }
-
   }
 );
 
@@ -1564,7 +1907,6 @@ $("googleLoginBtn")?.addEventListener(
 $("logoutBtn").addEventListener(
   "click",
   async () => {
-
     const { error } =
       await supabase.auth.signOut();
 
@@ -1581,7 +1923,6 @@ $("logoutBtn").addEventListener(
     currentProfile = null;
 
     showDashboard(false);
-
   }
 );
 
@@ -1593,7 +1934,6 @@ $("logoutBtn").addEventListener(
 $("pointsForm").addEventListener(
   "submit",
   async event => {
-
     event.preventDefault();
 
     message(
@@ -1606,7 +1946,6 @@ $("pointsForm").addEventListener(
       !["admin", "servant"].includes(currentProfile.role) ||
       currentProfile.approval_status !== "approved"
     ) {
-
       message(
         "pointsMessage",
         "ليس لديك صلاحية إضافة النقاط."
@@ -1633,7 +1972,6 @@ $("pointsForm").addEventListener(
       !reason ||
       reason.length > 200
     ) {
-
       message(
         "pointsMessage",
         "راجع العضو وعدد النقاط والسبب."
@@ -1653,7 +1991,6 @@ $("pointsForm").addEventListener(
       );
 
     if (error) {
-
       message(
         "pointsMessage",
         "فشلت العملية: " + error.message
@@ -1670,7 +2007,6 @@ $("pointsForm").addEventListener(
     $("pointsForm").reset();
 
     await refreshSession();
-
   }
 );
 
@@ -1682,7 +2018,6 @@ $("pointsForm").addEventListener(
 $("assignForm").addEventListener(
   "submit",
   async event => {
-
     event.preventDefault();
 
     message(
@@ -1695,7 +2030,6 @@ $("assignForm").addEventListener(
       currentProfile.role !== "admin" ||
       currentProfile.approval_status !== "approved"
     ) {
-
       message(
         "assignMessage",
         "هذه العملية للأدمن المعتمد فقط."
@@ -1711,7 +2045,6 @@ $("assignForm").addEventListener(
       $("groupSelect").value;
 
     if (!servantId || !groupId) {
-
       message(
         "assignMessage",
         "اختار الخادم والمجموعة."
@@ -1732,7 +2065,6 @@ $("assignForm").addEventListener(
         });
 
     if (error) {
-
       message(
         "assignMessage",
         "فشل التعيين: " + error.message
@@ -1747,7 +2079,6 @@ $("assignForm").addEventListener(
     );
 
     await loadAssignments();
-
   }
 );
 
@@ -1759,7 +2090,6 @@ $("assignForm").addEventListener(
 $("lessonCreateForm").addEventListener(
   "submit",
   async event => {
-
     event.preventDefault();
 
     message(
@@ -1772,7 +2102,6 @@ $("lessonCreateForm").addEventListener(
       !currentProfile ||
       currentProfile.approval_status !== "approved"
     ) {
-
       message(
         "lessonCreateMessage",
         "يلزم حساب خادم معتمد."
@@ -1794,7 +2123,6 @@ $("lessonCreateForm").addEventListener(
       $("lessonUrl").value.trim();
 
     if (!groupId || !title || !body) {
-
       message(
         "lessonCreateMessage",
         "اختار المجموعة واكتب العنوان ومحتوى الدرس."
@@ -1808,16 +2136,20 @@ $("lessonCreateForm").addEventListener(
         .from("lessons")
         .insert({
           title,
+
           description:
             $("lessonDescription").value.trim(),
+
           body,
+
           content_url: url || null,
+
           group_id: groupId,
+
           created_by: currentUser.id
         });
 
     if (error) {
-
       message(
         "lessonCreateMessage",
         "فشل نشر الدرس: " + error.message
@@ -1838,7 +2170,6 @@ $("lessonCreateForm").addEventListener(
       loadLessons("lessonsList"),
       loadQuizDropdowns()
     ]);
-
   }
 );
 
@@ -1850,25 +2181,22 @@ $("lessonCreateForm").addEventListener(
 $("quizType").addEventListener(
   "change",
   () => {
-
     $("quizLesson").required =
       $("quizType").value === "lesson";
 
     $("quizLesson").disabled =
       $("quizType").value !== "lesson";
-
   }
 );
 
 
 // ======================================
-// إنشاء اختبار مع مكافأة
+// إنشاء اختبار
 // ======================================
 
 $("quizCreateForm").addEventListener(
   "submit",
   async event => {
-
     event.preventDefault();
 
     message(
@@ -1882,7 +2210,6 @@ $("quizCreateForm").addEventListener(
       !["admin", "servant"].includes(currentProfile.role) ||
       currentProfile.approval_status !== "approved"
     ) {
-
       message(
         "quizCreateMessage",
         "ليس لديك صلاحية إنشاء امتحان."
@@ -1911,7 +2238,6 @@ $("quizCreateForm").addEventListener(
       rewardPoints < 0 ||
       rewardPoints > 1000
     ) {
-
       message(
         "quizCreateMessage",
         "مكافأة الامتحان يجب أن تكون من 0 إلى 1000 نقطة."
@@ -1921,7 +2247,6 @@ $("quizCreateForm").addEventListener(
     }
 
     if (type === "lesson" && !lessonId) {
-
       message(
         "quizCreateMessage",
         "اختار الدرس المرتبط بالأسئلة."
@@ -1934,8 +2259,7 @@ $("quizCreateForm").addEventListener(
       await supabase
         .from("quizzes")
         .insert({
-          title:
-            $("quizTitle").value.trim(),
+          title: $("quizTitle").value.trim(),
 
           description:
             $("quizDescription").value.trim(),
@@ -1954,13 +2278,11 @@ $("quizCreateForm").addEventListener(
           created_by: currentUser.id,
 
           is_published: false
-
         })
         .select("id")
         .single();
 
     if (error) {
-
       message(
         "quizCreateMessage",
         "فشل إنشاء الاختبار: " + error.message
@@ -1982,7 +2304,6 @@ $("quizCreateForm").addEventListener(
       String(data.id);
 
     await loadQuizzes();
-
   }
 );
 
@@ -1994,7 +2315,6 @@ $("quizCreateForm").addEventListener(
 $("questionCreateForm").addEventListener(
   "submit",
   async event => {
-
     event.preventDefault();
 
     message(
@@ -2010,7 +2330,6 @@ $("questionCreateForm").addEventListener(
     );
 
     if (!quizId || !options.every(Boolean)) {
-
       message(
         "questionCreateMessage",
         "اختار الاختبار واكتب الاختيارات الأربعة."
@@ -2023,7 +2342,6 @@ $("questionCreateForm").addEventListener(
       $("questionText").value.trim();
 
     if (!questionText) {
-
       message(
         "questionCreateMessage",
         "اكتب نص السؤال."
@@ -2047,7 +2365,6 @@ $("questionCreateForm").addEventListener(
       .single();
 
     if (error) {
-
       message(
         "questionCreateMessage",
         "فشل إضافة السؤال: " + error.message
@@ -2061,15 +2378,16 @@ $("questionCreateForm").addEventListener(
         .from("quiz_answer_keys")
         .insert({
           question_id: question.id,
+
           correct_option:
             Number($("correctOption").value)
         });
 
     if (keyError) {
-
       message(
         "questionCreateMessage",
-        "تم إنشاء السؤال لكن فشل حفظ مفتاح الإجابة: " + keyError.message
+        "تم إنشاء السؤال لكن فشل حفظ مفتاح الإجابة: " +
+        keyError.message
       );
 
       return;
@@ -2083,7 +2401,6 @@ $("questionCreateForm").addEventListener(
     $("questionCreateForm").reset();
 
     await loadQuizzes();
-
   }
 );
 
@@ -2110,7 +2427,6 @@ $("saveAttendanceBtn").addEventListener(
 $("langBtn").addEventListener(
   "click",
   () => {
-
     lang =
       lang === "ar"
         ? "en"
@@ -2135,7 +2451,6 @@ $("langBtn").addEventListener(
         ? "Some dashboard content is still in Arabic."
         : "تم الرجوع للواجهة العربية."
     );
-
   }
 );
 
@@ -2145,19 +2460,20 @@ $("langBtn").addEventListener(
 // ======================================
 
 supabase.auth.onAuthStateChange(() => {
-  setTimeout(() => refreshSession(), 0);
+  setTimeout(
+    () => refreshSession(),
+    0
+  );
 });
 
 
 // ======================================
-// تشغيل الموقع عند فتح الصفحة
+// تشغيل الموقع
 // ======================================
 
 if ($("attendanceDate")) {
-
   $("attendanceDate").value =
     new Date().toLocaleDateString("en-CA");
-
 }
 
 await Promise.all([
