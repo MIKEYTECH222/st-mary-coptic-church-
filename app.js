@@ -367,8 +367,8 @@ async function loadQuizzes() {
           }
 
           const score = Array.isArray(data) ? data[0] : data;
-          result.textContent =
-            "نتيجتك: " + score.score + " من " + score.max_score;
+        result.textContent =
+  "نتيجتك: " + score.final_score + " من " + score.total_questions;;
         });
 
         article.appendChild(form);
