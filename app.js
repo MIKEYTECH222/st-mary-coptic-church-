@@ -285,9 +285,9 @@ async function loadQuizzes() {
       start.addEventListener("click", async () => {
         const { data: questions, error } = await supabase
           .from("quiz_questions")
-          .select("id,question_text,options,points,sort_order")
+          .select("id,question_text,options,position")
           .eq("quiz_id", quiz.id)
-          .order("sort_order");
+        .order("position");
 
         if (error) {
           article.append(document.createTextNode(
@@ -1080,7 +1080,7 @@ $("questionCreateForm").addEventListener("submit", async event => {
   const { data: question, error } = await supabase
     .from("quiz_questions")
     .insert({
-      quiz_id: Number(quizId),
+    quiz_id: quizId,
       question_text: $("questionText").value.trim(),
       options,
       position: Date.now() % 100000
