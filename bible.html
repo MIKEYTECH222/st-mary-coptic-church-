@@ -23,7 +23,8 @@
 <section id="servantInboxCard" class="card hidden"><h2>أسئلة الفصل المعيّن لك</h2><p class="muted">تظهر هنا أسئلة أعضاء الفصول المعيّنة لك فقط.</p><div id="servantInbox"><p class="muted">جاري التحميل…</p></div></section>
 <section class="card"><h2>مصدر النص</h2><p>ترجمة فان دايك العربية (1865)، مصدر البيانات: <a href="https://github.com/midvash/bible-data" target="_blank" rel="noopener">مشروع Bible Data المفتوح</a>. يحتاج عرض الآيات لأول مرة إلى اتصال بالإنترنت.</p></section>
 </main><footer>شبابنا · الكتاب المقدس والدراسة</footer>
-<script>
+<script type="module">
+import { supabase } from "./supabase.js";
 "use strict";
 const $=id=>document.getElementById(id), favKey="shababna_bible_favorites_v1";
 let data=null,selected=null;
