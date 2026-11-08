@@ -122,6 +122,12 @@
       <p>الوصول إلى المواد التعليمية.</p>
       <a href="lessons.html">فتح الدروس</a>
     </div>
+
+    <div class="card">
+      <h3>📩 صندوق الأسئلة</h3>
+      <p>استقبال أسئلة المخدومين والرد عليها ومتابعة الردود السابقة.</p>
+      <a href="questions.html">فتح صندوق الأسئلة</a>
+    </div>
   </section>
 
   <p id="status">جاري التحقق من صلاحيات الحساب...</p>
@@ -174,7 +180,6 @@
     document.getElementById("groupName").textContent =
       profile.group_id || "لم يتم تعيين مجموعة";
 
-    // سيتم ربط عدد الأعضاء بعد تجهيز جدول المجموعات.
     document.getElementById("memberCount").textContent = "--";
 
     status.textContent = "تم التحقق من الحساب بنجاح.";
