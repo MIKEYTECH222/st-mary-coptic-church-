@@ -3,165 +3,201 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101522">
-  <title>صندوق الأسئلة | شبابنا</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صندوق الأسئلة | خدمة الشباب</title>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      font-family: Tahoma, Arial, sans-serif;
-      background: #101522;
+      font-family: Arial, sans-serif;
+      background: #080b16;
       color: #f4f5f8;
-      line-height: 1.8;
     }
 
     header {
-      background: #191f30;
-      border-bottom: 1px solid #30394d;
-      padding: 16px 20px;
+      background: #151c2d;
+      padding: 18px 22px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
+      border-bottom: 1px solid #30394d;
+    }
+
+    header h2 {
+      margin: 0;
     }
 
     main {
       max-width: 1000px;
-      margin: 25px auto;
-      padding: 16px;
+      margin: 30px auto;
+      padding: 18px;
     }
 
     .welcome, .panel, .question-card {
-      background: #1b2334;
+      background: #171f31;
       border: 1px solid #30394d;
       border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 16px;
+      padding: 22px;
+      margin-bottom: 18px;
     }
 
     .welcome {
       background: linear-gradient(135deg, #263b68, #394d83);
     }
 
-    h1, h2, h3 { margin-top: 0; }
-    h2 { color: #b7c9ff; }
-
-    .muted {
-      color: #aab4c9;
-      font-size: 14px;
+    .welcome h1 {
+      margin-top: 0;
     }
 
-    .actions, .filters {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin: 12px 0;
-    }
-
-    button, a.button {
+    button, a {
       display: inline-block;
+      padding: 11px 16px;
       border: 0;
       border-radius: 9px;
-      padding: 10px 16px;
-      background: #4263a5;
-      color: white;
-      font: inherit;
-      font-weight: bold;
       text-decoration: none;
       cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
     }
 
-    button.secondary, a.secondary {
-      background: #303b53;
+    button {
+      background: #4665a5;
+      color: white;
     }
 
-    button:disabled {
-      opacity: .55;
-      cursor: not-allowed;
-    }
-
-    .filter-button.active {
-      background: #d5a83d;
-      color: #171717;
-    }
-
-    .question-card {
-      background: #151d2c;
-      padding: 17px;
-    }
-
-    .question-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .tag {
-      display: inline-block;
-      border-radius: 20px;
-      padding: 3px 11px;
-      font-size: 12px;
+    a {
       background: #344d83;
       color: white;
     }
 
-    .tag.pending { background: #806327; }
-    .tag.answered { background: #236c50; }
+    button:hover, a:hover {
+      opacity: .85;
+    }
+
+    .logout {
+      background: #b84242;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin: 15px 0;
+    }
+
+    .filters button {
+      background: #30394d;
+    }
+
+    .filters button.active {
+      background: #526fba;
+    }
+
+    .question-card {
+      background: #202a40;
+      margin-top: 15px;
+    }
 
     .question-text {
       white-space: pre-wrap;
+      line-height: 1.9;
       overflow-wrap: anywhere;
-      background: #202b40;
-      border-radius: 10px;
-      padding: 14px;
-      margin: 12px 0;
+      margin: 15px 0;
     }
 
-    label {
-      display: block;
-      margin: 12px 0 5px;
+    .meta {
+      color: #aab7d1;
+      font-size: 13px;
+    }
+
+    .answer-label {
+      color: #9db8ff;
       font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .answer-text {
+      white-space: pre-wrap;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+      background: #141c2c;
+      padding: 13px;
+      border-radius: 10px;
+      margin-top: 8px;
     }
 
     textarea {
       display: block;
       width: 100%;
-      min-height: 125px;
+      min-height: 110px;
       resize: vertical;
-      padding: 12px;
+      margin: 12px 0;
+      padding: 13px;
       border-radius: 10px;
-      border: 1px solid #46536b;
+      border: 1px solid #46536d;
       background: #101827;
       color: white;
-      font: inherit;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
     }
 
-    .message {
-      min-height: 24px;
-      margin-top: 8px;
-      color: #b7c9ff;
-      overflow-wrap: anywhere;
+    textarea:focus {
+      outline: 2px solid #526fba;
+    }
+
+    .save-btn {
+      background: #23865b;
+    }
+
+    .status {
+      color: #c5cce0;
+      line-height: 1.8;
+      margin-top: 18px;
     }
 
     .empty {
       text-align: center;
-      padding: 35px 12px;
-      color: #aab4c9;
+      color: #aab7d1;
+      padding: 30px 10px;
     }
 
-    .hidden { display: none !important; }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-top: 8px;
+    }
 
-    @media (max-width: 600px) {
-      header { padding: 14px; }
-      .welcome, .panel, .question-card { padding: 14px; }
-      main { padding: 10px; }
+    .pending {
+      background: #654c20;
+      color: #ffdf91;
+    }
+
+    .answered {
+      background: #1d563f;
+      color: #a5f1c8;
+    }
+
+    @media(max-width: 550px) {
+      header {
+        padding: 14px;
+      }
+
+      main {
+        padding: 12px;
+      }
+
+      .welcome, .panel, .question-card {
+        padding: 16px;
+      }
     }
   </style>
 </head>
@@ -169,50 +205,37 @@
 <body>
 
 <header>
-  <div>
-    <strong>📩 صندوق الأسئلة</strong>
-    <div class="muted">أسئلة المخدومين والرد عليها</div>
-  </div>
+  <h2>📩 صندوق الأسئلة</h2>
 
-  <div class="actions">
-    <a id="backLink" class="button secondary" href="index.html">العودة</a>
-    <button id="refreshBtn" type="button">تحديث الأسئلة</button>
-    <button id="logoutBtn" type="button" class="secondary">خروج</button>
+  <div>
+    <a id="backLink" href="servant.html">العودة</a>
+    <button id="refreshBtn">تحديث</button>
+    <button id="logoutBtn" class="logout">خروج</button>
   </div>
 </header>
 
 <main>
 
   <section class="welcome">
-    <h1>أهلاً بيك يا <span id="staffName">...</span> 👋</h1>
+    <h1>أهلاً يا <span id="staffName">...</span> 👋</h1>
     <p id="roleText">جاري التحقق من الحساب...</p>
-    <p class="muted">
-      افتح السؤال، اقرأ الآيات والاستفسار، واكتب ردك ثم اضغط إرسال الرد.
-    </p>
+    <p>هنا تقدر تتابع أسئلة المخدومين وترد عليها.</p>
   </section>
 
   <section class="panel">
     <h2>الأسئلة الواردة</h2>
 
     <div class="filters">
-      <button class="filter-button active" data-filter="all" type="button">
-        كل الأسئلة
-      </button>
-      <button class="filter-button secondary" data-filter="pending" type="button">
-        لم يتم الرد
-      </button>
-      <button class="filter-button secondary" data-filter="answered" type="button">
-        تم الرد
-      </button>
+      <button class="active" data-filter="all">كل الأسئلة</button>
+      <button data-filter="pending">بدون رد</button>
+      <button data-filter="answered">تم الرد</button>
     </div>
 
-    <p id="countText" class="muted"></p>
+    <p id="countText">جاري تحميل الأسئلة...</p>
 
-    <div id="questionsList">
-      <div class="empty">جاري تحميل الأسئلة...</div>
-    </div>
+    <div id="questionsList"></div>
 
-    <p id="pageMessage" class="message" role="status"></p>
+    <p id="pageMessage" class="status"></p>
   </section>
 
 </main>
@@ -220,45 +243,48 @@
 <script type="module">
   import { supabase } from "./supabase.js";
 
-  // العناصر المستخدمة في الصفحة
-  const $ = id => document.getElementById(id);
+  const staffName = document.getElementById("staffName");
+  const roleText = document.getElementById("roleText");
+  const questionsList = document.getElementById("questionsList");
+  const countText = document.getElementById("countText");
+  const pageMessage = document.getElementById("pageMessage");
+  const backLink = document.getElementById("backLink");
 
-  // بيانات الحساب الحالي
   let currentUser = null;
   let currentProfile = null;
-
-  // جميع الأسئلة المحملة من قاعدة البيانات
   let allQuestions = [];
+  let activeFilter = "all";
 
-  // الفلتر الحالي: الكل / لم يتم الرد / تم الرد
-  let currentFilter = "all";
+  function showMessage(message) {
+    pageMessage.textContent = message || "";
+  }
 
-  // حماية النصوص عند عرضها داخل عناصر الصفحة
-  // نستخدم textContent بدل إدخال نص المستخدم كـ HTML.
-  function makeText(tag, className, value) {
+  function makeElement(tag, className, text) {
     const element = document.createElement(tag);
-    if (className) element.className = className;
-    element.textContent = value ?? "";
+
+    if (className) {
+      element.className = className;
+    }
+
+    if (text !== undefined) {
+      element.textContent = text;
+    }
+
     return element;
   }
 
-  function setMessage(message) {
-    $("pageMessage").textContent = message || "";
-  }
-
-  // التحقق من تسجيل الدخول وتحميل بيانات المستخدم
   async function checkUser() {
+    showMessage("جاري التحقق من الحساب...");
+
     const { data: authData, error: authError } =
       await supabase.auth.getUser();
 
-    if (authError) throw authError;
-
-    currentUser = authData.user;
-
-    if (!currentUser) {
+    if (authError || !authData.user) {
       location.href = "account.html";
       return false;
     }
+
+    currentUser = authData.user;
 
     const { data: profile, error } = await supabase
       .from("profiles")
@@ -266,289 +292,279 @@
       .eq("id", currentUser.id)
       .maybeSingle();
 
-    if (error) throw error;
+    if (error) {
+      showMessage("حدث خطأ أثناء تحميل الحساب: " + error.message);
+      return false;
+    }
 
     if (!profile || profile.approval_status !== "approved") {
-      alert("الحساب غير معتمد أو لا توجد بيانات للحساب.");
+      await supabase.auth.signOut();
       location.href = "account.html";
       return false;
     }
 
     if (!["servant", "admin"].includes(profile.role)) {
-      alert("هذه الصفحة مخصصة للخدام والأدمن فقط.");
-      location.href = "dashboard.html";
+      showMessage("هذه الصفحة مخصصة للخدام والإدارة فقط.");
+      setTimeout(() => {
+        location.href = "dashboard.html";
+      }, 2000);
       return false;
     }
 
     currentProfile = profile;
 
-    $("staffName").textContent = profile.full_name || "خادم";
+    staffName.textContent = profile.full_name || "خادم";
 
-    $("roleText").textContent =
-      profile.role === "admin"
-        ? "أنت تستخدم صندوق الأسئلة بصلاحيات الأدمن."
-        : "أنت تستخدم صندوق الأسئلة بصلاحيات الخادم.";
-
-    $("backLink").href =
-      profile.role === "admin" ? "admin.html" : "servant.html";
+    if (profile.role === "admin") {
+      roleText.textContent = "أنت داخل صندوق الأسئلة بصلاحيات الأدمن.";
+      backLink.href = "admin.html";
+    } else {
+      roleText.textContent = "أنت داخل صندوق الأسئلة الخاص بالأسئلة الموجهة إليك.";
+      backLink.href = "servant.html";
+    }
 
     return true;
   }
 
-  // جلب الأسئلة الموجهة للحساب الحالي
   async function loadQuestions() {
-    $("questionsList").replaceChildren(
-      makeText("p", "empty", "جاري تحميل الأسئلة...")
-    );
+    questionsList.replaceChildren();
+    countText.textContent = "جاري تحميل الأسئلة...";
+    showMessage("");
 
-    setMessage("");
-
-    // كل خادم يرى الأسئلة التي servant_id فيها يساوي حسابه.
-    const assignedQuery = supabase
+    let assignedQuery = supabase
       .from("servant_questions")
-      .select("id, member_id, group_id, servant_id, question, answer, created_at")
+      .select("id, member_id, group_id, servant_id, question, answer, created_at, answered_at")
       .eq("servant_id", currentUser.id)
       .order("created_at", { ascending: false });
 
-    let assignedResult = await assignedQuery;
+    const { data: assignedQuestions, error: assignedError } =
+      await assignedQuery;
 
-    if (assignedResult.error) {
-      throw assignedResult.error;
+    if (assignedError) {
+      countText.textContent = "تعذر تحميل الأسئلة.";
+      showMessage("خطأ: " + assignedError.message);
+      return;
     }
 
-    allQuestions = assignedResult.data || [];
+    let generalQuestions = [];
 
-    // الأدمن يرى أيضًا الأسئلة المرسلة للإدارة العامة
-    // والتي servant_id فيها يساوي NULL.
+    // الأدمن يشوف كمان الأسئلة العامة الموجهة للإدارة.
     if (currentProfile.role === "admin") {
-      const { data: generalQuestions, error } = await supabase
+      const { data, error } = await supabase
         .from("servant_questions")
-        .select("id, member_id, group_id, servant_id, question, answer, created_at")
+        .select("id, member_id, group_id, servant_id, question, answer, created_at, answered_at")
         .is("servant_id", null)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        countText.textContent = "تعذر تحميل الأسئلة العامة.";
+        showMessage("خطأ: " + error.message);
+        return;
+      }
 
-      allQuestions = allQuestions.concat(generalQuestions || []);
+      generalQuestions = data || [];
     }
 
-    // ترتيب كل الأسئلة من الأحدث إلى الأقدم
-    allQuestions.sort((a, b) =>
-      new Date(b.created_at).getTime() -
-      new Date(a.created_at).getTime()
-    );
+    allQuestions = [
+      ...(assignedQuestions || []),
+      ...generalQuestions
+    ];
+
+    allQuestions.sort((a, b) => {
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
 
     renderQuestions();
   }
 
-  // عرض حالة السؤال
   function questionStatus(question) {
-    return question.answer
-      ? { text: "تم الرد", className: "answered" }
-      : { text: "بانتظار الرد", className: "pending" };
+    return question.answer && question.answer.trim()
+      ? "answered"
+      : "pending";
   }
 
-  // إنشاء صندوق سؤال واحد
+  function formatDate(dateValue) {
+    if (!dateValue) return "غير معروف";
+
+    return new Date(dateValue).toLocaleString("ar-EG", {
+      dateStyle: "medium",
+      timeStyle: "short"
+    });
+  }
+
   function createQuestionCard(question) {
-    const card = document.createElement("article");
-    card.className = "question-card";
+    const card = makeElement("article", "question-card");
 
-    const top = document.createElement("div");
-    top.className = "question-top";
-
-    const date = makeText(
-      "span",
-      "muted",
-      question.created_at
-        ? new Date(question.created_at).toLocaleString("ar-EG")
-        : "تاريخ غير متاح"
-    );
-
-    const status = questionStatus(question);
-    const statusTag = makeText(
-      "span",
-      "tag " + status.className,
-      status.text
-    );
-
-    top.append(date, statusTag);
-
-    // نوع السؤال: إلى حساب الخادم أم للإدارة العامة
-    const destination = makeText(
+    const date = makeElement(
       "p",
-      "muted",
-      question.servant_id
-        ? "الجهة: سؤال موجّه إلى حسابك"
-        : "الجهة: سؤال مرسل للإدارة العامة"
+      "meta",
+      "تاريخ السؤال: " + formatDate(question.created_at)
     );
 
-    const questionTitle = makeText("h3", "", "السؤال والآيات");
+    const member = makeElement(
+      "p",
+      "meta",
+      "رقم العضو: " + question.member_id
+    );
 
-    const questionText = makeText(
+    const questionTitle = makeElement("h3", "", "السؤال:");
+    const questionText = makeElement(
       "div",
       "question-text",
       question.question
     );
 
-    card.append(top, destination, questionTitle, questionText);
+    const isAnswered = questionStatus(question) === "answered";
 
-    // صندوق كتابة الرد أو تعديله
-    const label = makeText(
-      "label",
-      "",
-      question.answer ? "تعديل الرد الحالي" : "اكتب ردك على المخدوم"
+    const status = makeElement(
+      "span",
+      "badge " + (isAnswered ? "answered" : "pending"),
+      isAnswered ? "تم الرد" : "في انتظار الرد"
     );
 
-    const replyArea = document.createElement("textarea");
-    replyArea.maxLength = 10000;
-    replyArea.value = question.answer || "";
-    replyArea.placeholder = "اكتب ردًا واضحًا ومفيدًا...";
+    card.append(date, member, questionTitle, questionText, status);
 
-    const saveButton = makeText(
+    if (isAnswered) {
+      card.append(
+        makeElement("p", "answer-label", "الرد الحالي:"),
+        makeElement("div", "answer-text", question.answer)
+      );
+    }
+
+    const answerLabel = makeElement(
+      "p",
+      "answer-label",
+      isAnswered ? "تعديل الرد:" : "اكتب ردك:"
+    );
+
+    const answerInput = document.createElement("textarea");
+    answerInput.maxLength = 10000;
+    answerInput.placeholder = "اكتب ردك هنا...";
+    answerInput.value = question.answer || "";
+
+    const saveButton = makeElement(
       "button",
-      "",
-      question.answer ? "حفظ تعديل الرد" : "إرسال الرد"
+      "save-btn",
+      isAnswered ? "حفظ تعديل الرد" : "إرسال الرد"
     );
-    saveButton.type = "button";
-
-    const replyMessage = makeText("p", "message", "");
-    replyMessage.setAttribute("role", "status");
 
     saveButton.addEventListener("click", async () => {
-      const answer = replyArea.value.trim();
-
-      if (!answer) {
-        replyMessage.textContent = "اكتب الرد أولًا.";
-        return;
-      }
-
-      saveButton.disabled = true;
-      replyMessage.textContent = "جاري حفظ الرد...";
-
-      try {
-        let updateQuery = supabase
-          .from("servant_questions")
-          .update({ answer })
-          .eq("id", question.id);
-
-        // الخادم أو الأدمن المعيّن يرد على السؤال الموجه لحسابه.
-        // أما سؤال الإدارة العامة فيحدده servant_id = NULL.
-        if (question.servant_id) {
-          updateQuery = updateQuery.eq("servant_id", currentUser.id);
-        } else {
-          updateQuery = updateQuery.is("servant_id", null);
-        }
-
-        const { data, error } = await updateQuery
-          .select("id")
-          .maybeSingle();
-
-        if (error) throw error;
-
-        if (!data) {
-          throw new Error(
-            "لم يتم حفظ الرد. تأكد من صلاحيات الحساب وسياسات قاعدة البيانات."
-          );
-        }
-
-        replyMessage.textContent = "✅ تم حفظ الرد بنجاح.";
-        await loadQuestions();
-
-      } catch (error) {
-        replyMessage.textContent =
-          "تعذر حفظ الرد: " + (error.message || error);
-        saveButton.disabled = false;
-      }
+      await saveAnswer(question, answerInput, saveButton);
     });
 
-    card.append(label, replyArea, saveButton, replyMessage);
+    card.append(answerLabel, answerInput, saveButton);
 
     return card;
   }
 
-  // عرض الأسئلة حسب الفلتر المختار
+  async function saveAnswer(question, input, button) {
+    const answer = input.value.trim();
+
+    if (!answer) {
+      showMessage("اكتب الرد الأول قبل الحفظ.");
+      input.focus();
+      return;
+    }
+
+    if (answer.length > 10000) {
+      showMessage("الرد طويل جدًا. الحد الأقصى 10000 حرف.");
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "جاري الحفظ...";
+    showMessage("");
+
+    const updateData = {
+      answer: answer,
+      answered_at: new Date().toISOString()
+    };
+
+    let query = supabase
+      .from("servant_questions")
+      .update(updateData)
+      .eq("id", question.id);
+
+    // تأكيد أن الرد على السؤال الموجه للحساب الحالي.
+    if (question.servant_id === null) {
+      query = query.is("servant_id", null);
+    } else {
+      query = query.eq("servant_id", currentUser.id);
+    }
+
+    const { error } = await query;
+
+    if (error) {
+      showMessage("لم يتم حفظ الرد: " + error.message);
+      button.disabled = false;
+      button.textContent = "حاول مرة أخرى";
+      return;
+    }
+
+    showMessage("تم حفظ الرد بنجاح ✅");
+    await loadQuestions();
+  }
+
   function renderQuestions() {
-    const box = $("questionsList");
-    box.replaceChildren();
+    questionsList.replaceChildren();
 
     let filtered = allQuestions;
 
-    if (currentFilter === "pending") {
-      filtered = allQuestions.filter(q => !q.answer);
-    } else if (currentFilter === "answered") {
-      filtered = allQuestions.filter(q => !!q.answer);
+    if (activeFilter === "pending") {
+      filtered = allQuestions.filter(
+        question => questionStatus(question) === "pending"
+      );
     }
 
-    const pendingCount = allQuestions.filter(q => !q.answer).length;
-    const answeredCount = allQuestions.filter(q => !!q.answer).length;
+    if (activeFilter === "answered") {
+      filtered = allQuestions.filter(
+        question => questionStatus(question) === "answered"
+      );
+    }
 
-    $("countText").textContent =
-      `إجمالي الأسئلة: ${allQuestions.length} — ` +
-      `بانتظار الرد: ${pendingCount} — تم الرد: ${answeredCount}`;
+    countText.textContent =
+      "إجمالي الأسئلة: " + allQuestions.length +
+      " | المعروضة: " + filtered.length;
 
-    if (!filtered.length) {
-      box.appendChild(
-        makeText("p", "empty", "لا توجد أسئلة في هذا القسم حاليًا.")
+    if (filtered.length === 0) {
+      questionsList.append(
+        makeElement("div", "empty", "مفيش أسئلة في القسم ده حاليًا.")
       );
       return;
     }
 
     filtered.forEach(question => {
-      box.appendChild(createQuestionCard(question));
+      questionsList.append(createQuestionCard(question));
     });
   }
 
-  // تبديل الفلاتر
-  document.querySelectorAll("[data-filter]").forEach(button => {
+  document.querySelectorAll(".filters button").forEach(button => {
     button.addEventListener("click", () => {
-      currentFilter = button.dataset.filter;
-
-      document.querySelectorAll("[data-filter]").forEach(item => {
+      document.querySelectorAll(".filters button").forEach(item => {
         item.classList.remove("active");
-        item.classList.add("secondary");
       });
 
       button.classList.add("active");
-      button.classList.remove("secondary");
+      activeFilter = button.dataset.filter;
 
       renderQuestions();
     });
   });
 
-  // تحديث يدوي للأسئلة
-  $("refreshBtn").addEventListener("click", async () => {
-    $("refreshBtn").disabled = true;
-
-    try {
-      await loadQuestions();
-      setMessage("تم تحديث صندوق الأسئلة.");
-    } catch (error) {
-      setMessage("حدث خطأ أثناء التحديث: " + error.message);
-    } finally {
-      $("refreshBtn").disabled = false;
-    }
+  document.getElementById("refreshBtn").addEventListener("click", () => {
+    loadQuestions();
   });
 
-  // تسجيل الخروج
-  $("logoutBtn").addEventListener("click", async () => {
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
     await supabase.auth.signOut();
     location.href = "account.html";
   });
 
-  // تشغيل الصفحة
   async function startPage() {
-    try {
-      const allowed = await checkUser();
-      if (!allowed) return;
+    const allowed = await checkUser();
 
+    if (allowed) {
       await loadQuestions();
-
-    } catch (error) {
-      $("questionsList").replaceChildren(
-        makeText("p", "empty", "حدث خطأ أثناء تحميل الصفحة.")
-      );
-
-      setMessage(error.message || String(error));
     }
   }
 
