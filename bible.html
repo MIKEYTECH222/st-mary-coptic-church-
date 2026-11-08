@@ -1,178 +1,2282 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>الكتاب المقدس | شبابنا</title>
-<style>
-:root{--bg:#f4f6fb;--card:#fff;--text:#172033;--muted:#687386;--primary:#244a8f;--border:#e1e6ef;--soft:#edf2fb}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.8 Tahoma,Arial,sans-serif}header{background:linear-gradient(135deg,#142447,#244a8f);color:#fff;padding:22px 16px}.wrap{max-width:1000px;margin:auto;padding:0 16px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}h1{margin:0;font-size:1.7rem}header p{margin:4px 0 0;color:#e0e8f7}a{color:inherit}.back{border:1px solid #ffffff70;border-radius:10px;padding:7px 13px;text-decoration:none}main{padding:22px 0 45px}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 5px 20px #1424470a}h2{font-size:1.15rem;margin:0 0 12px}label{display:block;font-weight:bold;margin-bottom:5px}select,input,textarea,button{font:inherit}select,input,textarea{width:100%;padding:10px 12px;border:1px solid #cbd4e2;border-radius:10px;background:white;color:#172033}textarea{min-height:100px;resize:vertical}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:0;border-radius:10px;padding:9px 14px;cursor:pointer;background:var(--primary);color:white;font-weight:bold}button.secondary{background:var(--soft);color:var(--primary);border:1px solid #d5deef}button:disabled{opacity:.5;cursor:not-allowed}.muted{color:var(--muted);font-size:.92rem}.notice{background:#fff8e7;border:1px solid #f0d99c;padding:12px 14px;border-radius:12px;color:#654b12;margin-bottom:16px}.verse{padding:8px 10px;border-radius:10px;margin:3px 0;cursor:pointer;border:1px solid transparent}.verse:hover{background:#f5f7fc}.verse.selected{background:#fff4d5;border-color:#e5c56b}.num{display:inline-flex;align-items:center;justify-content:center;background:var(--soft);color:var(--primary);border-radius:50%;width:29px;height:29px;font-size:.82rem;margin-left:7px}.empty{text-align:center;color:var(--muted);padding:22px 8px}.hidden{display:none!important}.status{white-space:pre-wrap}.favorites-list{display:flex;flex-wrap:wrap;gap:8px}footer{text-align:center;color:var(--muted);padding:12px 16px 25px;font-size:.85rem}@media(max-width:680px){.grid{grid-template-columns:1fr}.card{padding:14px}}
-</style></head>
-<body>
-<header><div class="wrap top"><div><h1>الكتاب المقدس</h1><p>اقرأ، ابحث، وحدد الآية التي تريد أن تسأل عنها</p></div><a class="back" href="index.html">العودة للموقع</a></div></header>
-<main class="wrap">
-<div class="notice"><b>ملاحظة:</b> يتم تحميل نص ترجمة فان دايك العربية من مصدر بيانات مفتوح عند توفر الاتصال بالإنترنت. هذه النسخة تشمل الأسفار الـ66، ولا تشمل الأسفار القانونية الثانية.</div>
-<section class="card"><h2>اختيار السفر والإصحاح</h2><div class="grid">
-<div><label for="testament">العهد</label><select id="testament"><option value="old">العهد القديم</option><option value="new">العهد الجديد</option></select></div>
-<div><label for="book">السفر</label><select id="book"></select></div><div><label for="chapter">الإصحاح</label><select id="chapter" disabled></select></div></div>
-<div class="grid" style="margin-top:12px"><div style="grid-column:span 2"><label for="search">البحث في نص الكتاب</label><input id="search" type="search" placeholder="اكتب كلمة أو عبارة"></div><div><label for="fontSize">حجم الخط</label><select id="fontSize"><option value="18">صغير</option><option value="20" selected>متوسط</option><option value="24">كبير</option><option value="28">كبير جدًا</option></select></div></div>
-<div class="actions"><button id="searchBtn">بحث</button><button id="clearBtn" class="secondary">مسح البحث</button><button id="prev" class="secondary">الإصحاح السابق</button><button id="next" class="secondary">الإصحاح التالي</button></div><p id="status" class="muted" aria-live="polite"></p></section>
-<section class="card"><h2 id="chapterTitle">نص الإصحاح</h2>
-<p class="muted">اضغط على آية أو أكثر لتحديدها، ثم اضغط على اسأل.</p><div id="verses"><div class="empty">ملف النص غير متصل بعد.</div></div><div class="actions"><button id="favorite" class="secondary" disabled>حفظ الآية المفضلة</button><button id="ask" disabled>اسأل عن الآيات المحددة</button><button id="showFav" class="secondary">عرض المفضلة</button></div><p id="selectionStatus" class="status"></p></section>
-<section id="favCard" class="card hidden"><h2>آياتي المفضلة</h2><div id="favList"></div><p id="favEmpty" class="muted">لا توجد آيات محفوظة.</p></section>
-<section id="questionCard" class="card hidden"><h2>إرسال سؤال للخادم</h2><p id="reference" class="muted"></p><label for="question">اكتب سؤالك</label><textarea id="question" maxlength="3000" placeholder="ما الجزء الذي لم تفهمه؟"></textarea><div class="actions"><button id="send">إرسال السؤال</button><button id="cancel" class="secondary">إلغاء</button></div><p id="qStatus" class="status"></p><p class="muted">سيظهر السؤال لك وللخادم المعيّن لفصلك فقط.</p></section>
-<section id="myQuestionsCard" class="card hidden"><h2>أسئلتي وردود الخادم</h2><div id="myQuestions"><p class="muted">جاري التحميل…</p></div></section>
-<section id="servantInboxCard" class="card hidden"><h2>أسئلة الفصل المعيّن لك</h2><p class="muted">تظهر هنا أسئلة أعضاء الفصول المعيّنة لك فقط.</p><div id="servantInbox"><p class="muted">جاري التحميل…</p></div></section>
-<section class="card"><h2>مصدر النص</h2><p>ترجمة فان دايك العربية (1865)، مصدر البيانات: <a href="https://github.com/midvash/bible-data" target="_blank" rel="noopener">مشروع Bible Data المفتوح</a>. يحتاج عرض الآيات لأول مرة إلى اتصال بالإنترنت.</p></section>
-</main><footer>شبابنا · الكتاب المقدس والدراسة</footer>
-<script type="module">
-import { supabase } from "./supabase.js";
-"use strict";
-const $=id=>document.getElementById(id), favKey="shababna_bible_favorites_v1";
-let data=null,selected=null;
-const fallback={old:["التكوين","الخروج","اللاويين","العدد","التثنية","يشوع","القضاة","راعوث","صموئيل الأول","صموئيل الثاني","الملوك الأول","الملوك الثاني","أخبار الأيام الأول","أخبار الأيام الثاني","عزرا","نحميا","أستير","أيوب","المزامير","الأمثال","الجامعة","نشيد الأنشاد","إشعياء","إرميا","مراثي إرميا","حزقيال","دانيال","هوشع","يوئيل","عاموس","عوبديا","يونان","ميخا","ناحوم","حبقوق","صفنيا","حجي","زكريا","ملاخي"],new:["إنجيل متى","إنجيل مرقس","إنجيل لوقا","إنجيل يوحنا","أعمال الرسل","رومية","كورنثوس الأولى","كورنثوس الثانية","غلاطية","أفسس","فيلبي","كولوسي","تسالونيكي الأولى","تسالونيكي الثانية","تيموثاوس الأولى","تيموثاوس الثانية","تيطس","فليمون","العبرانيين","يعقوب","بطرس الأولى","بطرس الثانية","يوحنا الأولى","يوحنا الثانية","يوحنا الثالثة","يهوذا","رؤيا يوحنا اللاهوتي"]};
-function say(id,s){$(id).textContent=s||""}
-function favs(){try{return JSON.parse(localStorage.getItem(favKey)||"[]")}catch{return []}}
-function saveFavs(a){localStorage.setItem(favKey,JSON.stringify(a))}
-function book(){return data?.books?.find(b=>b.id===$("book").value)||null}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-let currentUser=null,currentProfile=null,assignedServants=[];
-function esc(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-async function initQuestions(){
-  try{
-    const {data:{user},error:userError}=await supabase.auth.getUser();
-    if(userError) throw userError;
-    currentUser=user;
-    if(!user){
-      say("qStatus","سجّل الدخول إلى الموقع أولًا، ثم ارجع إلى صفحة الكتاب المقدس لإرسال السؤال.");
-      $("ask").disabled=true;
-      return;
+  <title>الكتاب المقدس | شبابنا</title>
+
+  <!-- =====================================================
+       1. تنسيقات الصفحة
+       الألوان، البطاقات، الأزرار، الآيات، والتوافق مع الموبايل
+  ====================================================== -->
+
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #687386;
+      --primary: #244a8f;
+      --border: #e1e6ef;
+      --soft: #edf2fb;
+      --selected: #fff4d5;
+      --selected-border: #e5c56b;
+      --danger: #a83232;
     }
-    const {data:profile,error}=await supabase.from("profiles").select("id,full_name,role,approval_status,group_id").eq("id",user.id).single();
-    if(error) throw error;
-    currentProfile=profile;
-    if(profile.approval_status!=="approved"){
-      say("qStatus","حسابك لم يتم اعتماده بعد، لذلك لا يمكنك إرسال سؤال.");
-      $("ask").disabled=true;
-      return;
+
+    * {
+      box-sizing: border-box;
     }
-    if(profile.role==="member"){
-      $("myQuestionsCard").classList.remove("hidden");
-      const {data:assignments,error:aErr}=await supabase.from("servant_group_assignments").select("servant_id").eq("group_id",profile.group_id);
-      if(aErr) throw aErr;
-      const ids=(assignments||[]).map(x=>x.servant_id);
-      if(ids.length){
-        const {data:servants,error:sErr}=await supabase.from("profiles").select("id,full_name").in("id",ids).eq("role","servant").eq("approval_status","approved");
-        if(sErr) throw sErr;
-        assignedServants=servants||[];
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.8 Tahoma, Arial, sans-serif;
+    }
+
+    header {
+      background: linear-gradient(135deg, #142447, #244a8f);
+      color: white;
+      padding: 22px 16px;
+    }
+
+    .wrap {
+      max-width: 1000px;
+      margin: auto;
+      padding: 0 16px;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.7rem;
+    }
+
+    header p {
+      margin: 4px 0 0;
+      color: #e0e8f7;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .back {
+      border: 1px solid #ffffff70;
+      border-radius: 10px;
+      padding: 7px 13px;
+      text-decoration: none;
+    }
+
+    main {
+      padding: 22px 0 45px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 5px 20px #1424470a;
+    }
+
+    h2 {
+      font-size: 1.15rem;
+      margin: 0 0 12px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    select,
+    input,
+    textarea,
+    button {
+      font: inherit;
+    }
+
+    select,
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd4e2;
+      border-radius: 10px;
+      background: white;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 9px 14px;
+      cursor: pointer;
+      background: var(--primary);
+      color: white;
+      font-weight: bold;
+    }
+
+    button.secondary {
+      background: var(--soft);
+      color: var(--primary);
+      border: 1px solid #d5deef;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .notice {
+      background: #fff8e7;
+      border: 1px solid #f0d99c;
+      padding: 12px 14px;
+      border-radius: 12px;
+      color: #654b12;
+      margin-bottom: 16px;
+    }
+
+    /* شكل الآية */
+    .verse {
+      padding: 8px 10px;
+      border-radius: 10px;
+      margin: 3px 0;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background 0.15s ease;
+    }
+
+    .verse:hover {
+      background: #f5f7fc;
+    }
+
+    /* الآيات التي اختارها العضو */
+    .verse.selected {
+      background: var(--selected);
+      border-color: var(--selected-border);
+    }
+
+    .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--soft);
+      color: var(--primary);
+      border-radius: 50%;
+      width: 29px;
+      height: 29px;
+      font-size: 0.82rem;
+      margin-left: 7px;
+      flex-shrink: 0;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 22px 8px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .status {
+      white-space: pre-wrap;
+    }
+
+    .question-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin: 12px 0;
+      background: #fff;
+    }
+
+    .question-meta {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .reply-box {
+      background: #f0f5ff;
+      border: 1px solid #dce7fb;
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 12px;
+      white-space: pre-wrap;
+    }
+
+    .error-text {
+      color: var(--danger);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 12px 16px 25px;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 680px) {
+      .grid {
+        grid-template-columns: 1fr;
       }
-      const sel=document.createElement("select");sel.id="servantSelect";
-      sel.innerHTML='<option value="">اختر الخادم</option>'+assignedServants.map(x=>`<option value="${esc(x.id)}">${esc(x.full_name||"خادم")}</option>`).join("");
-      const label=document.createElement("label");label.htmlFor="servantSelect";label.textContent="الخادم المسؤول عن فصلك";
-      const reference=$("reference");
-      reference.insertAdjacentElement("afterend",label);label.insertAdjacentElement("afterend",sel);
-      if(!assignedServants.length) say("qStatus","لا يوجد خادم معتمد معيّن لفصلك حتى الآن. تواصل مع مسؤول الموقع.");
-      await loadMyQuestions();
-    }else if(profile.role==="servant"){
-      $("servantInboxCard").classList.remove("hidden");
-      await loadServantInbox();
-    }else if(profile.role==="admin"){
-      say("qStatus","حساب الإدارة يستطيع إدارة الموقع، لكن الأسئلة هنا تظهر للأعضاء والخادم المسؤول فقط.");
-    }else{
-      say("qStatus","هذا الحساب لا يملك صلاحية استخدام خدمة اسأل خادمك.");
+
+      .card {
+        padding: 14px;
+      }
     }
-  }catch(e){
-    say("qStatus","تعذر ربط خدمة الأسئلة: "+(e.message||e));
-    $("myQuestions").innerHTML='<p class="muted">تأكد من وجود جدول servant_questions وصلاحيات RLS، ومن أن supabase.js يصدّر supabase.</p>';
-  }
-}
-async function sendQuestion(){
-  if(!currentUser||!currentProfile){say("qStatus","سجّل الدخول أولًا.");return}
-  if(currentProfile.role!=="member"){say("qStatus","إرسال الأسئلة متاح للأعضاء فقط.");return}
-  const question=$("question").value.trim(),servantId=$("servantSelect")?.value;
-  if(!selected){say("qStatus","اختار آية من النص أولًا.");return}
-  if(!servantId){say("qStatus","اختار الخادم المسؤول عن فصلك.");return}
-  if(question.length<1){say("qStatus","اكتب سؤالك قبل الإرسال.");return}
-  const fullQuestion="الآية: "+selected.reference+" — "+selected.text+"\\n\\nالسؤال: "+question;
-  $("send").disabled=true;
-  try{
-    const {error}=await supabase.from("servant_questions").insert({member_id:currentUser.id,group_id:currentProfile.group_id,servant_id:servantId,question:fullQuestion,answer:null});
-    if(error) throw error;
-    $("question").value="";say("qStatus","تم إرسال سؤالك للخادم بنجاح.");
-    $("questionCard").classList.add("hidden");await loadMyQuestions();
-  }catch(e){say("qStatus","لم يتم إرسال السؤال: "+(e.message||e))}
-  finally{$("send").disabled=false}
-}
-async function loadMyQuestions(){
-  if(!currentUser)return;
-  const box=$("myQuestions");box.innerHTML='<p class="muted">جاري تحميل الأسئلة…</p>';
-  const {data,error}=await supabase.from("servant_questions").select("id,question,answer,created_at,answered_at,servant_id").eq("member_id",currentUser.id).order("created_at",{ascending:false});
-  if(error){box.textContent="تعذر تحميل الأسئلة: "+error.message;return}
-  if(!data?.length){box.innerHTML='<p class="empty">لم ترسل أي أسئلة حتى الآن.</p>';return}
-  box.replaceChildren();
-  for(const q of data){
-    const card=document.createElement("div");card.className="card";
-    const question=document.createElement("p");question.textContent=q.question;
-    const answer=document.createElement("p");answer.textContent=q.answer?"رد الخادم: "+q.answer:"لم يرد الخادم بعد.";
-    const date=document.createElement("p");date.className="muted";date.textContent=new Date(q.created_at).toLocaleString("ar-EG");
-    card.append(date,question,answer);box.append(card)
-  }
-}
-async function loadServantInbox(){
-  if(!currentUser)return;
-  const box=$("servantInbox");box.innerHTML='<p class="muted">جاري تحميل الأسئلة…</p>';
-  const {data,error}=await supabase.from("servant_questions").select("id,member_id,question,answer,created_at").eq("servant_id",currentUser.id).order("created_at",{ascending:false});
-  if(error){box.textContent="تعذر تحميل الأسئلة: "+error.message;return}
-  if(!data?.length){box.innerHTML='<p class="empty">لا توجد أسئلة حاليًا.</p>';return}
-  box.replaceChildren();
-  for(const q of data){
-    const card=document.createElement("div");card.className="card";
-    const date=document.createElement("p");date.className="muted";date.textContent=new Date(q.created_at).toLocaleString("ar-EG");
-    const question=document.createElement("p");question.textContent=q.question;
-    card.append(date,question);
-    if(q.answer){const answer=document.createElement("p");answer.textContent="ردك الحالي: "+q.answer;card.append(answer)}
-    else{
-      const label=document.createElement("label");label.textContent="اكتب ردك";const area=document.createElement("textarea");area.maxLength=10000;area.placeholder="اكتب ردًا واضحًا ومفيدًا…";
-      const btn=document.createElement("button");btn.textContent="إرسال الرد";
-      const status=document.createElement("p");status.className="status muted";
-      btn.onclick=async()=>{
-        const value=area.value.trim();if(!value){status.textContent="اكتب الرد أولًا.";return}
-        btn.disabled=true;
-        const {error:updateError}=await supabase.from("servant_questions").update({answer:value,answered_at:new Date().toISOString()}).eq("id",q.id).eq("servant_id",currentUser.id);
-        if(updateError){status.textContent="تعذر إرسال الرد: "+updateError.message;btn.disabled=false;return}
-        status.textContent="تم إرسال الرد.";await loadServantInbox();
+  </style>
+</head>
+
+<body>
+
+  <!-- =====================================================
+       2. رأس الصفحة
+       عنوان الصفحة ورابط العودة للموقع الرئيسي
+  ====================================================== -->
+
+  <header>
+    <div class="wrap top">
+      <div>
+        <h1>الكتاب المقدس</h1>
+        <p>اقرأ وابحث وحدد الآيات التي تريد الاستفسار عنها</p>
+      </div>
+
+      <a class="back" href="index.html">
+        العودة للموقع
+      </a>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- ===================================================
+         3. ملاحظة مصدر الترجمة
+    ==================================================== -->
+
+    <div class="notice">
+      <b>ملاحظة:</b>
+      يتم تحميل ترجمة فان دايك العربية من مصدر بيانات مفتوح عند توفر الإنترنت.
+      هذه النسخة تشمل الأسفار الـ66، ولا تشمل الأسفار القانونية الثانية.
+    </div>
+
+
+    <!-- ===================================================
+         4. اختيار العهد والسفر والإصحاح
+         والتحكم في حجم الخط والبحث
+    ==================================================== -->
+
+    <section class="card">
+
+      <h2>اختيار السفر والإصحاح</h2>
+
+      <div class="grid">
+
+        <div>
+          <label for="testament">العهد</label>
+          <select id="testament">
+            <option value="old">العهد القديم</option>
+            <option value="new">العهد الجديد</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="book">السفر</label>
+          <select id="book"></select>
+        </div>
+
+        <div>
+          <label for="chapter">الإصحاح</label>
+          <select id="chapter" disabled></select>
+        </div>
+
+      </div>
+
+      <div class="grid" style="margin-top:12px">
+
+        <div style="grid-column:span 2">
+          <label for="search">البحث في نص الكتاب</label>
+          <input
+            id="search"
+            type="search"
+            placeholder="اكتب كلمة أو عبارة"
+          >
+        </div>
+
+        <div>
+          <label for="fontSize">حجم الخط</label>
+          <select id="fontSize">
+            <option value="18">صغير</option>
+            <option value="20" selected>متوسط</option>
+            <option value="24">كبير</option>
+            <option value="28">كبير جدًا</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="actions">
+
+        <button id="searchBtn" type="button">
+          بحث
+        </button>
+
+        <button id="clearBtn" class="secondary" type="button">
+          مسح البحث
+        </button>
+
+        <button id="prev" class="secondary" type="button">
+          الإصحاح السابق
+        </button>
+
+        <button id="next" class="secondary" type="button">
+          الإصحاح التالي
+        </button>
+
+      </div>
+
+      <p id="status" class="muted" aria-live="polite"></p>
+
+    </section>
+
+
+    <!-- ===================================================
+         5. عرض آيات الإصحاح
+         يمكن اختيار أكثر من آية بالضغط عليها
+    ==================================================== -->
+
+    <section class="card">
+
+      <h2 id="chapterTitle">نص الإصحاح</h2>
+
+      <p class="muted">
+        اضغط على آية أو أكثر لتحديدها، ثم اضغط على اسأل.
+      </p>
+
+      <div id="verses">
+        <div class="empty">
+          جاري تحميل نص الكتاب المقدس...
+        </div>
+      </div>
+
+      <div class="actions">
+
+        <button
+          id="favorite"
+          class="secondary"
+          type="button"
+          disabled
+        >
+          حفظ الآية المفضلة
+        </button>
+
+        <button
+          id="ask"
+          type="button"
+          disabled
+        >
+          اسأل عن الآيات المحددة
+        </button>
+
+        <button
+          id="showFav"
+          class="secondary"
+          type="button"
+        >
+          عرض المفضلة
+        </button>
+
+      </div>
+
+      <p id="selectionStatus" class="status"></p>
+
+    </section>
+
+
+    <!-- ===================================================
+         6. قسم الآيات المفضلة
+         يتم حفظها محليًا في المتصفح
+    ==================================================== -->
+
+    <section id="favCard" class="card hidden">
+
+      <h2>آياتي المفضلة</h2>
+
+      <div id="favList"></div>
+
+      <p id="favEmpty" class="muted">
+        لا توجد آيات محفوظة.
+      </p>
+
+    </section>
+
+
+    <!-- ===================================================
+         7. نموذج إرسال السؤال
+         العضو يختار خادم المجموعة أو الإدارة العامة
+    ==================================================== -->
+
+    <section id="questionCard" class="card hidden">
+
+      <h2>إرسال سؤال</h2>
+
+      <!-- عرض الآيات المختارة قبل الإرسال -->
+      <p id="reference" class="muted"></p>
+
+      <!-- تحديد جهة إرسال السؤال -->
+      <label for="questionTarget">
+        عايز تسأل مين؟
+      </label>
+
+      <select id="questionTarget">
+        <option value="servant">خادم المجموعة</option>
+        <option value="admin">الإدارة العامة (أدمن)</option>
+      </select>
+
+      <!-- قائمة الأشخاص المعينين على مجموعة العضو -->
+      <div id="servantSelectWrap">
+
+        <label for="servantSelect">
+          اختار الخادم أو الأدمن المعيّن لمجموعتك
+        </label>
+
+        <select id="servantSelect">
+          <option value="">
+            جاري تحميل القائمة...
+          </option>
+        </select>
+
+      </div>
+
+      <!-- كتابة السؤال -->
+      <label for="question">
+        اكتب سؤالك
+      </label>
+
+      <textarea
+        id="question"
+        maxlength="3000"
+        placeholder="اكتب سؤالك عن الآيات المحددة..."
+      ></textarea>
+
+      <div class="actions">
+
+        <button id="send" type="button">
+          إرسال السؤال
+        </button>
+
+        <button id="cancel" class="secondary" type="button">
+          إلغاء
+        </button>
+
+      </div>
+
+      <p id="qStatus" class="status" aria-live="polite"></p>
+
+      <p class="muted">
+        يمكنك إرسال السؤال للخادم أو للإدارة العامة.
+      </p>
+
+    </section>
+
+
+    <!-- ===================================================
+         8. أسئلة العضو
+         تعرض الأسئلة التي أرسلها والردود عليها
+    ==================================================== -->
+
+    <section id="myQuestionsCard" class="card hidden">
+
+      <h2>أسئلتي وردود الخادم والإدارة</h2>
+
+      <div id="myQuestions">
+        <p class="muted">جاري تحميل الأسئلة...</p>
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         9. صندوق أسئلة الخادم
+         يعرض الأسئلة الموجهة للحساب الحالي
+    ==================================================== -->
+
+    <section id="servantInboxCard" class="card hidden">
+
+      <h2>أسئلة مجموعاتك</h2>
+
+      <p class="muted">
+        تظهر هنا الأسئلة الموجهة إليك من أعضاء المجموعات التي تم تعيينك عليها.
+      </p>
+
+      <div id="servantInbox">
+        <p class="muted">جاري تحميل الأسئلة...</p>
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         10. صندوق الإدارة العامة
+         يعرض الأسئلة التي اختار أصحابها إرسالها للإدارة
+    ==================================================== -->
+
+    <section id="adminInboxCard" class="card hidden">
+
+      <h2>أسئلة الأعضاء المرسلة للإدارة</h2>
+
+      <p class="muted">
+        تظهر هنا الأسئلة المرسلة إلى الإدارة العامة.
+      </p>
+
+      <div id="adminInbox">
+        <p class="muted">جاري تحميل أسئلة الإدارة...</p>
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         11. مصدر نص الكتاب المقدس
+    ==================================================== -->
+
+    <section class="card">
+
+      <h2>مصدر النص</h2>
+
+      <p>
+        ترجمة فان دايك العربية (1865)، مصدر البيانات:
+
+        <a
+          href="https://github.com/midvash/bible-data"
+          target="_blank"
+          rel="noopener"
+        >
+          مشروع Bible Data المفتوح
+        </a>.
+      </p>
+
+      <p class="muted">
+        يحتاج تحميل الآيات لأول مرة إلى اتصال بالإنترنت.
+      </p>
+
+    </section>
+
+  </main>
+
+  <footer>
+    شبابنا · الكتاب المقدس والدراسة
+  </footer>
+
+
+  <!-- =====================================================
+       12. JavaScript
+       كل وظائف الصفحة والاتصال بقاعدة البيانات
+  ====================================================== -->
+
+  <script type="module">
+
+    /*
+      استيراد Supabase.
+      الملف supabase.js يحتوي على إعدادات الاتصال بالمشروع.
+    */
+
+    import { supabase } from "./supabase.js";
+
+
+    /* =====================================================
+       13. المتغيرات الأساسية
+       ===================================================== */
+
+    const $ = id => document.getElementById(id);
+
+    // المفتاح المستخدم لحفظ الآيات المفضلة على الجهاز
+    const favKey = "shababna_bible_favorites_v1";
+
+    // بيانات الكتاب التي يتم تحميلها من مصدر النص
+    let data = null;
+
+    // مصفوفة الآيات المحددة حاليًا
+    let selectedVerses = [];
+
+    // بيانات المستخدم الحالي
+    let currentUser = null;
+    let currentProfile = null;
+
+    // الخدام والأدمنز المعينون على مجموعة العضو
+    let assignedServants = [];
+
+
+    /* =====================================================
+       14. تحويل الرسائل إلى نص آمن
+       ===================================================== */
+
+    function say(id, text) {
+      const element = $(id);
+
+      if (element) {
+        element.textContent = text || "";
+      }
+    }
+
+
+    /* =====================================================
+       15. نظام المفضلة
+       يتم حفظ الآيات في LocalStorage
+       ===================================================== */
+
+    function favs() {
+      try {
+        return JSON.parse(
+          localStorage.getItem(favKey) || "[]"
+        );
+      } catch {
+        return [];
+      }
+    }
+
+    function saveFavs(items) {
+      localStorage.setItem(
+        favKey,
+        JSON.stringify(items)
+      );
+    }
+
+
+    /* =====================================================
+       16. تحديد السفر الحالي
+       ===================================================== */
+
+    function book() {
+      return data?.books?.find(
+        item => item.id === $("book").value
+      ) || null;
+    }
+
+
+    /* =====================================================
+       17. أسماء الأسفار بالعربية
+       ===================================================== */
+
+    const arabicBookNames = {
+      Gen: "التكوين",
+      Exod: "الخروج",
+      Lev: "اللاويين",
+      Num: "العدد",
+      Deut: "التثنية",
+      Josh: "يشوع",
+      Judg: "القضاة",
+      Ruth: "راعوث",
+      "1Sam": "صموئيل الأول",
+      "2Sam": "صموئيل الثاني",
+      "1Kgs": "الملوك الأول",
+      "2Kgs": "الملوك الثاني",
+      "1Chr": "أخبار الأيام الأول",
+      "2Chr": "أخبار الأيام الثاني",
+      Ezra: "عزرا",
+      Neh: "نحميا",
+      Esth: "أستير",
+      Job: "أيوب",
+      Ps: "المزامير",
+      Prov: "الأمثال",
+      Eccl: "الجامعة",
+      Song: "نشيد الأنشاد",
+      Isa: "إشعياء",
+      Jer: "إرميا",
+      Lam: "مراثي إرميا",
+      Ezek: "حزقيال",
+      Dan: "دانيال",
+      Hos: "هوشع",
+      Joel: "يوئيل",
+      Amos: "عاموس",
+      Obad: "عوبديا",
+      Jonah: "يونان",
+      Mic: "ميخا",
+      Nah: "ناحوم",
+      Hab: "حبقوق",
+      Zeph: "صفنيا",
+      Hag: "حجي",
+      Zech: "زكريا",
+      Mal: "ملاخي",
+      Matt: "إنجيل متى",
+      Mark: "إنجيل مرقس",
+      Luke: "إنجيل لوقا",
+      John: "إنجيل يوحنا",
+      Acts: "أعمال الرسل",
+      Rom: "رومية",
+      "1Cor": "كورنثوس الأولى",
+      "2Cor": "كورنثوس الثانية",
+      Gal: "غلاطية",
+      Eph: "أفسس",
+      Phil: "فيلبي",
+      Col: "كولوسي",
+      "1Thess": "تسالونيكي الأولى",
+      "2Thess": "تسالونيكي الثانية",
+      "1Tim": "تيموثاوس الأولى",
+      "2Tim": "تيموثاوس الثانية",
+      Titus: "تيطس",
+      Phlm: "فليمون",
+      Heb: "العبرانيين",
+      Jas: "يعقوب",
+      "1Pet": "بطرس الأولى",
+      "2Pet": "بطرس الثانية",
+      "1John": "يوحنا الأولى",
+      "2John": "يوحنا الثانية",
+      "3John": "يوحنا الثالثة",
+      Jude: "يهوذا",
+      Rev: "رؤيا يوحنا اللاهوتي"
+    };
+
+
+    /* =====================================================
+       18. التحقق من جلسة تسجيل الدخول
+       ===================================================== */
+
+    async function refreshQuestionIdentity() {
+
+      /*
+        getUser يتحقق من المستخدم الحالي من خلال Supabase Auth.
+        لا نعتمد على اسم أو بيانات محفوظة في الواجهة.
+      */
+
+      const {
+        data: authData,
+        error: authError
+      } = await supabase.auth.getUser();
+
+      if (authError) {
+        throw authError;
+      }
+
+      currentUser = authData.user;
+
+      if (!currentUser) {
+        currentProfile = null;
+        return false;
+      }
+
+      /*
+        تحميل بيانات المستخدم ودوره وحالة اعتماده ومجموعته.
+      */
+
+      const {
+        data: profile,
+        error: profileError
+      } = await supabase
+        .from("profiles")
+        .select(
+          "id,full_name,role,approval_status,group_id"
+        )
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      currentProfile = profile;
+
+      return !!currentProfile;
+    }
+
+
+    /* =====================================================
+       19. تحميل الخدام والأدمنز المعينين لمجموعة العضو
+       ===================================================== */
+
+    async function loadAssignedRecipients() {
+
+      /*
+        نستدعي RPC بدل قراءة جدول التعيينات مباشرة.
+        الدالة ترجع الأشخاص المعينين لمجموعة العضو فقط.
+      */
+
+      const {
+        data: recipients,
+        error
+      } = await supabase.rpc(
+        "get_my_assigned_servants_for_question"
+      );
+
+      if (error) {
+        throw error;
+      }
+
+      assignedServants = recipients || [];
+
+      const select = $("servantSelect");
+
+      select.replaceChildren(
+        new Option("اختر الخادم أو الأدمن", "")
+      );
+
+      assignedServants.forEach(person => {
+
+        const roleLabel =
+          person.role === "admin"
+            ? "أدمن - خادم المجموعة"
+            : "خادم";
+
+        const name =
+          person.full_name || "بدون اسم";
+
+        select.add(
+          new Option(
+            name + " (" + roleLabel + ")",
+            person.id
+          )
+        );
+
+      });
+
+      if (!assignedServants.length) {
+
+        select.replaceChildren(
+          new Option(
+            "لا يوجد خادم معين لمجموعتك",
+            ""
+          )
+        );
+
+      }
+    }
+
+
+    /* =====================================================
+       20. تحديد جهة إرسال السؤال
+       ===================================================== */
+
+    function updateQuestionTarget() {
+
+      const target = $("questionTarget").value;
+
+      const isAdmin = target === "admin";
+
+      /*
+        عند اختيار الإدارة العامة نُخفي قائمة الأشخاص.
+        عند اختيار الخادم نظهر قائمة الخدام والأدمنز المعيّنين.
+      */
+
+      $("servantSelectWrap").classList.toggle(
+        "hidden",
+        isAdmin
+      );
+    }
+
+
+    /* =====================================================
+       21. تهيئة نظام الأسئلة حسب دور المستخدم
+       ===================================================== */
+
+    async function initQuestions() {
+
+      try {
+
+        const signedIn = await refreshQuestionIdentity();
+
+        if (!signedIn) {
+
+          say(
+            "qStatus",
+            "سجّل الدخول من الموقع أولًا، ثم ارجع إلى صفحة الكتاب المقدس."
+          );
+
+          return;
+        }
+
+        if (
+          currentProfile.approval_status !== "approved"
+        ) {
+
+          say(
+            "qStatus",
+            "حسابك لم يتم اعتماده بعد."
+          );
+
+          return;
+        }
+
+        const role = currentProfile.role;
+
+        if (role === "member") {
+
+          /*
+            العضو:
+            - يظهر له سجل أسئلته.
+            - يحمل قائمة الأشخاص المعينين لمجموعته.
+            - يستطيع إرسال الأسئلة.
+          */
+
+          $("myQuestionsCard").classList.remove("hidden");
+
+          await loadAssignedRecipients();
+
+          await loadMyQuestions();
+
+        } else if (role === "servant") {
+
+          /*
+            الخادم:
+            - يظهر له صندوق الأسئلة الموجهة إليه.
+          */
+
+          $("servantInboxCard").classList.remove("hidden");
+
+          await loadServantInbox();
+
+        } else if (role === "admin") {
+
+          /*
+            الأدمن:
+            - يظهر له صندوق أسئلة مجموعاته.
+            - يظهر له صندوق الإدارة العامة.
+          */
+
+          $("servantInboxCard").classList.remove("hidden");
+          $("adminInboxCard").classList.remove("hidden");
+
+          await Promise.all([
+            loadServantInbox(),
+            loadAdminInbox()
+          ]);
+
+        } else {
+
+          say(
+            "qStatus",
+            "هذا الحساب لا يملك صلاحية استخدام خدمة الأسئلة."
+          );
+
+        }
+
+      } catch (error) {
+
+        say(
+          "qStatus",
+          "تعذر تجهيز خدمة الأسئلة: " +
+          (error.message || error)
+        );
+
+        $("servantSelect").replaceChildren(
+          new Option("تعذر تحميل القائمة", "")
+        );
+
+      }
+    }
+
+
+    /* =====================================================
+       22. إرسال السؤال إلى الخادم أو الإدارة
+       ===================================================== */
+
+    async function sendQuestion() {
+
+      $("send").disabled = true;
+
+      try {
+
+        /*
+          نعيد التحقق من الجلسة قبل الإرسال.
+        */
+
+        const signedIn =
+          await refreshQuestionIdentity();
+
+        if (!signedIn) {
+
+          say(
+            "qStatus",
+            "جلسة الدخول غير موجودة أو انتهت. سجّل الدخول من جديد."
+          );
+
+          return;
+        }
+
+        if (
+          currentProfile.role !== "member" ||
+          currentProfile.approval_status !== "approved"
+        ) {
+
+          say(
+            "qStatus",
+            "إرسال الأسئلة متاح للأعضاء المعتمدين فقط."
+          );
+
+          return;
+        }
+
+        if (!currentProfile.group_id) {
+
+          say(
+            "qStatus",
+            "حسابك غير مرتبط بمجموعة حتى الآن."
+          );
+
+          return;
+        }
+
+        if (!selectedVerses.length) {
+
+          say(
+            "qStatus",
+            "اختار آية واحدة على الأقل."
+          );
+
+          return;
+        }
+
+        const question =
+          $("question").value.trim();
+
+        if (!question) {
+
+          say(
+            "qStatus",
+            "اكتب سؤالك قبل الإرسال."
+          );
+
+          return;
+        }
+
+        const target =
+          $("questionTarget").value;
+
+        let servantId = null;
+
+        if (target === "servant") {
+
+          servantId = $("servantSelect").value;
+
+          if (!servantId) {
+
+            say(
+              "qStatus",
+              "اختار الخادم أو الأدمن المعيّن لمجموعتك."
+            );
+
+            return;
+          }
+
+          /*
+            تأكيد أن الشخص موجود في قائمة التعيينات
+            التي تم تحميلها من قاعدة البيانات.
+          */
+
+          const isAssigned =
+            assignedServants.some(
+              person => person.id === servantId
+            );
+
+          if (!isAssigned) {
+
+            say(
+              "qStatus",
+              "الشخص المختار غير معين لمجموعتك."
+            );
+
+            return;
+          }
+
+        }
+
+        /*
+          تحويل الآيات المختارة إلى نص واحد.
+          servant_id = null عند الإرسال للإدارة العامة.
+        */
+
+        const versesText = selectedVerses
+          .map((verse, index) => {
+            return (
+              (index + 1) +
+              ") " +
+              verse.reference +
+              " — " +
+              verse.text
+            );
+          })
+          .join("\n");
+
+        const fullQuestion =
+          "الآيات المختارة:\n" +
+          versesText +
+          "\n\nالسؤال:\n" +
+          question;
+
+        /*
+          جدول servant_questions يضع حدًا أقصى قدره 3000 حرف
+          لحقل question.
+        */
+
+        if (fullQuestion.length > 3000) {
+
+          say(
+            "qStatus",
+            "السؤال مع الآيات أطول من 3000 حرف. قلّل عدد الآيات أو اختصر السؤال."
+          );
+
+          return;
+        }
+
+        const { error } = await supabase
+          .from("servant_questions")
+          .insert({
+            member_id: currentUser.id,
+            group_id: currentProfile.group_id,
+            servant_id: servantId,
+            question: fullQuestion,
+            answer: null
+          });
+
+        if (error) {
+          throw error;
+        }
+
+        $("question").value = "";
+
+        $("questionCard").classList.add("hidden");
+
+        say(
+          "qStatus",
+          target === "admin"
+            ? "تم إرسال سؤالك للإدارة العامة بنجاح."
+            : "تم إرسال سؤالك للشخص المسؤول عن مجموعتك بنجاح."
+        );
+
+        await loadMyQuestions();
+
+      } catch (error) {
+
+        say(
+          "qStatus",
+          "لم يتم إرسال السؤال: " +
+          (error.message || error)
+        );
+
+      } finally {
+
+        $("send").disabled = false;
+
+      }
+    }
+
+
+    /* =====================================================
+       23. عرض أسئلة العضو والردود
+       ===================================================== */
+
+    async function loadMyQuestions() {
+
+      if (!currentUser) return;
+
+      const box = $("myQuestions");
+
+      box.innerHTML =
+        '<p class="muted">جاري تحميل الأسئلة...</p>';
+
+      const {
+        data: questions,
+        error
+      } = await supabase
+        .from("servant_questions")
+        .select(
+          "id,question,answer,created_at,servant_id"
+        )
+        .eq("member_id", currentUser.id)
+        .order("created_at", {
+          ascending: false
+        });
+
+      if (error) {
+
+        box.textContent =
+          "تعذر تحميل الأسئلة: " + error.message;
+
+        return;
+      }
+
+      if (!questions?.length) {
+
+        box.innerHTML =
+          '<p class="empty">لم ترسل أي أسئلة حتى الآن.</p>';
+
+        return;
+      }
+
+      box.replaceChildren();
+
+      questions.forEach(q => {
+
+        const card =
+          document.createElement("div");
+
+        card.className = "question-card";
+
+        const date =
+          document.createElement("p");
+
+        date.className = "question-meta";
+
+        date.textContent =
+          new Date(q.created_at).toLocaleString("ar-EG");
+
+        const destination =
+          document.createElement("p");
+
+        destination.className = "question-meta";
+
+        destination.textContent =
+          q.servant_id
+            ? "الجهة: خادم أو أدمن مجموعتك"
+            : "الجهة: الإدارة العامة";
+
+        const question =
+          document.createElement("p");
+
+        question.textContent = q.question;
+
+        card.append(
+          date,
+          destination,
+          question
+        );
+
+        if (q.answer) {
+
+          const reply =
+            document.createElement("div");
+
+          reply.className = "reply-box";
+
+          reply.textContent =
+            "الرد:\n" + q.answer;
+
+          card.appendChild(reply);
+
+        } else {
+
+          const pending =
+            document.createElement("p");
+
+          pending.className = "muted";
+
+          pending.textContent =
+            "لم يصل رد حتى الآن.";
+
+          card.appendChild(pending);
+
+        }
+
+        box.appendChild(card);
+
+      });
+    }
+
+
+    /* =====================================================
+       24. مكوّن مشترك لكتابة الرد
+       ===================================================== */
+
+    function createReplyControls(question, saveCallback) {
+
+      const label =
+        document.createElement("label");
+
+      label.textContent =
+        question.answer
+          ? "تعديل الرد"
+          : "اكتب ردك";
+
+      const area =
+        document.createElement("textarea");
+
+      area.maxLength = 10000;
+
+      area.value = question.answer || "";
+
+      area.placeholder =
+        "اكتب ردًا واضحًا ومفيدًا...";
+
+      const button =
+        document.createElement("button");
+
+      button.type = "button";
+
+      button.textContent =
+        question.answer
+          ? "حفظ تعديل الرد"
+          : "إرسال الرد";
+
+      const status =
+        document.createElement("p");
+
+      status.className = "status muted";
+
+      button.addEventListener("click", async () => {
+
+        const value = area.value.trim();
+
+        if (!value) {
+
+          status.textContent =
+            "اكتب الرد أولًا.";
+
+          return;
+        }
+
+        button.disabled = true;
+
+        await saveCallback(value, status, button);
+
+      });
+
+      return {
+        label,
+        area,
+        button,
+        status
       };
-      card.append(label,area,btn,status)
     }
-    box.append(card)
-  }
-}
-function fillBooks(){let t=$("testament").value,bs=data?data.books.filter(b=>b.testament===t):fallback[t].map((name,i)=>({id:t+i,name,chapters:[]}));$("book").replaceChildren();bs.forEach(b=>{let o=document.createElement("option");o.value=b.id;o.textContent=b.name;$("book").append(o)});fillChapters()}
-function fillChapters(){let b=book();$("chapter").replaceChildren();for(let i=1;i<=(b?.chapters?.length||1);i++){let o=document.createElement("option");o.value=i;o.textContent=i;$("chapter").append(o)}$("chapter").disabled=!data;render()}
-function render(){selected=null;$("favorite").disabled=$("ask").disabled=true;let b=book(),ch=b?.chapters?.[+$("chapter").value-1];$("verses").replaceChildren();if(!data||!ch){$("chapterTitle").textContent="نص الإصحاح";$("verses").innerHTML='<div class="empty">أضف ملف bible-ar.json لعرض النص الكامل.</div>';return} $("chapterTitle").textContent=b.name+" — الإصحاح "+$("chapter").value;ch.forEach((txt,i)=>{let el=document.createElement("div");el.className="verse";let n=document.createElement("span");n.className="num";n.textContent=i+1;el.append(n,document.createTextNode(txt));el.onclick=()=>{selected={text:txt,index:i,reference:b.name+" "+$("chapter").value+":"+(i+1)};document.querySelectorAll(".verse").forEach(x=>x.classList.remove("selected"));el.classList.add("selected");$("favorite").disabled=$("ask").disabled=false;say("selectionStatus","الآية المحددة: "+selected.reference)};$("verses").append(el)});$("verses").style.fontSize=$("fontSize").value+"px"}
-function search(){let q=$("search").value.trim();if(!q)return say("status","اكتب كلمة للبحث.");if(!data)return say("status","البحث يتطلب ملف النص الكامل bible-ar.json.");let found=[];data.books.forEach(b=>b.chapters.forEach((c,ci)=>c.forEach((v,vi)=>{if(v.includes(q))found.push({book:b.name,chapter:ci+1,verse:vi+1,text:v})})));$("verses").replaceChildren();$("chapterTitle").textContent="نتائج البحث: "+found.length;found.forEach(v=>{let el=document.createElement("div");el.className="verse";el.textContent=v.book+" "+v.chapter+":"+v.verse+" — "+v.text;el.onclick=()=>{selected={text:v.text,reference:v.book+" "+v.chapter+":"+v.verse,index:v.verse-1};$("favorite").disabled=$("ask").disabled=false;say("selectionStatus","الآية المحددة: "+selected.reference)};$("verses").append(el)});say("status","عدد النتائج: "+found.length)}
-function renderFavs(){let a=favs();$("favList").replaceChildren();$("favEmpty").classList.toggle("hidden",a.length>0);a.forEach((v,i)=>{let row=document.createElement("p");row.textContent=v.reference+" — "+v.text+" ";let del=document.createElement("button");del.className="secondary";del.textContent="حذف";del.onclick=()=>{let x=favs();x.splice(i,1);saveFavs(x);renderFavs()};row.append(del);$("favList").append(row)})}
-$("testament").onchange=fillBooks;$("book").onchange=fillChapters;$("chapter").onchange=render;$("searchBtn").onclick=search;$("clearBtn").onclick=()=>{$("search").value="";say("status","");render()};$("fontSize").onchange=()=> $("verses").style.fontSize=$("fontSize").value+"px";
-$("favorite").onclick=()=>{if(!selected)return;let a=favs();if(!a.some(x=>x.reference===selected.reference&&x.text===selected.text))a.push(selected);saveFavs(a);renderFavs();say("selectionStatus","تم حفظ الآية في المفضلة.")};
-$("showFav").onclick=()=>{$("favCard").classList.toggle("hidden");renderFavs()};$("ask").onclick=()=>{if(!selected)return;$("questionCard").classList.remove("hidden");$("reference").textContent=selected.reference+" — "+selected.text;$("question").focus()};$("cancel").onclick=()=> $("questionCard").classList.add("hidden");$("send").onclick=sendQuestion;
-function move(d){if(!data)return say("status","التنقل يتطلب ربط ملف النص.");let n=+$("chapter").value+d;if(n<1||n>+$("chapter").options.length)return say("status","لا يوجد إصحاح آخر في هذا الاتجاه.");$("chapter").value=n;render()}
-$("prev").onclick=()=>move(-1);$("next").onclick=()=>move(1);
-const arabicBookNames={Gen:"التكوين",Exod:"الخروج",Lev:"اللاويين",Num:"العدد",Deut:"التثنية",Josh:"يشوع",Judg:"القضاة",Ruth:"راعوث","1Sam":"صموئيل الأول","2Sam":"صموئيل الثاني","1Kgs":"الملوك الأول","2Kgs":"الملوك الثاني","1Chr":"أخبار الأيام الأول","2Chr":"أخبار الأيام الثاني",Ezra:"عزرا",Neh:"نحميا",Esth:"أستير",Job:"أيوب",Ps:"المزامير",Prov:"الأمثال",Eccl:"الجامعة",Song:"نشيد الأنشاد",Isa:"إشعياء",Jer:"إرميا",Lam:"مراثي إرميا",Ezek:"حزقيال",Dan:"دانيال",Hos:"هوشع",Joel:"يوئيل",Amos:"عاموس",Obad:"عوبديا",Jonah:"يونان",Mic:"ميخا",Nah:"ناحوم",Hab:"حبقوق",Zeph:"صفنيا",Hag:"حجي",Zech:"زكريا",Mal:"ملاخي",Matt:"إنجيل متى",Mark:"إنجيل مرقس",Luke:"إنجيل لوقا",John:"إنجيل يوحنا",Acts:"أعمال الرسل",Rom:"رومية","1Cor":"كورنثوس الأولى","2Cor":"كورنثوس الثانية",Gal:"غلاطية",Eph:"أفسس",Phil:"فيلبي",Col:"كولوسي","1Thess":"تسالونيكي الأولى","2Thess":"تسالونيكي الثانية","1Tim":"تيموثاوس الأولى","2Tim":"تيموثاوس الثانية",Titus:"تيطس",Phlm:"فليمون",Heb:"العبرانيين",Jas:"يعقوب","1Pet":"بطرس الأولى","2Pet":"بطرس الثانية","1John":"يوحنا الأولى","2John":"يوحنا الثانية","3John":"يوحنا الثالثة",Jude:"يهوذا",Rev:"رؤيا يوحنا اللاهوتي"};
-async function load(){
-  try{
-    say("status","جاري تحميل نص الكتاب المقدس…");
-    const url="https://raw.githubusercontent.com/midvash/bible-data/main/versions/ar/svd/svd.json";
-    const response=await fetch(url);
-    if(!response.ok)throw Error("تعذر الوصول إلى مصدر نص الكتاب (HTTP "+response.status+")");
-    const source=await response.json();
-    if(!Array.isArray(source.books)||!source.books.length)throw Error("صيغة بيانات النص غير متوقعة");
-    data={translation:"فان دايك العربية (1865)",books:source.books.map(b=>({id:b.book,name:arabicBookNames[b.book]||b.book,testament:(b.testament==="NT"?"new":"old"),chapters:(b.chapters||[]).map(c=>(c.verses||[]).map(v=>v.text||""))}))};
+
+
+    /* =====================================================
+       25. حفظ رد الخادم أو الأدمن المعيّن للمجموعة
+       ===================================================== */
+
+    async function loadServantInbox() {
+
+      if (!currentUser) return;
+
+      const box = $("servantInbox");
+
+      box.innerHTML =
+        '<p class="muted">جاري تحميل أسئلة مجموعاتك...</p>';
+
+      const {
+        data: questions,
+        error
+      } = await supabase
+        .from("servant_questions")
+        .select(
+          "id,member_id,question,answer,created_at"
+        )
+        .eq("servant_id", currentUser.id)
+        .order("created_at", {
+          ascending: false
+        });
+
+      if (error) {
+
+        box.textContent =
+          "تعذر تحميل الأسئلة: " + error.message;
+
+        return;
+      }
+
+      if (!questions?.length) {
+
+        box.innerHTML =
+          '<p class="empty">لا توجد أسئلة موجهة إليك حاليًا.</p>';
+
+        return;
+      }
+
+      box.replaceChildren();
+
+      questions.forEach(q => {
+
+        const card =
+          document.createElement("div");
+
+        card.className = "question-card";
+
+        const date =
+          document.createElement("p");
+
+        date.className = "question-meta";
+
+        date.textContent =
+          new Date(q.created_at).toLocaleString("ar-EG");
+
+        const question =
+          document.createElement("p");
+
+        question.textContent = q.question;
+
+        const controls =
+          createReplyControls(q, async (value, status, button) => {
+
+            const { error: updateError } =
+              await supabase
+                .from("servant_questions")
+                .update({
+                  answer: value,
+                  answered_at: new Date().toISOString()
+                })
+                .eq("id", q.id)
+                .eq("servant_id", currentUser.id);
+
+            if (updateError) {
+
+              status.textContent =
+                "تعذر إرسال الرد: " + updateError.message;
+
+              button.disabled = false;
+
+              return;
+            }
+
+            status.textContent =
+              "تم إرسال الرد بنجاح.";
+
+            await loadServantInbox();
+
+          });
+
+        card.append(
+          date,
+          question,
+          controls.label,
+          controls.area,
+          controls.button,
+          controls.status
+        );
+
+        box.appendChild(card);
+
+      });
+    }
+
+
+    /* =====================================================
+       26. صندوق الإدارة العامة
+       الأسئلة التي أرسلها العضو باختيار الإدارة
+       ===================================================== */
+
+    async function loadAdminInbox() {
+
+      if (!currentUser) return;
+
+      const box = $("adminInbox");
+
+      box.innerHTML =
+        '<p class="muted">جاري تحميل أسئلة الإدارة...</p>';
+
+      const {
+        data: questions,
+        error
+      } = await supabase
+        .from("servant_questions")
+        .select(
+          "id,member_id,question,answer,created_at"
+        )
+        .is("servant_id", null)
+        .order("created_at", {
+          ascending: false
+        });
+
+      if (error) {
+
+        box.textContent =
+          "تعذر تحميل أسئلة الإدارة: " + error.message;
+
+        return;
+      }
+
+      if (!questions?.length) {
+
+        box.innerHTML =
+          '<p class="empty">لا توجد أسئلة مرسلة للإدارة حاليًا.</p>';
+
+        return;
+      }
+
+      box.replaceChildren();
+
+      questions.forEach(q => {
+
+        const card =
+          document.createElement("div");
+
+        card.className = "question-card";
+
+        const date =
+          document.createElement("p");
+
+        date.className = "question-meta";
+
+        date.textContent =
+          new Date(q.created_at).toLocaleString("ar-EG");
+
+        const question =
+          document.createElement("p");
+
+        question.textContent = q.question;
+
+        const controls =
+          createReplyControls(q, async (value, status, button) => {
+
+            const { error: updateError } =
+              await supabase
+                .from("servant_questions")
+                .update({
+                  answer: value,
+                  answered_at: new Date().toISOString()
+                })
+                .eq("id", q.id)
+                .is("servant_id", null);
+
+            if (updateError) {
+
+              status.textContent =
+                "تعذر إرسال الرد: " + updateError.message;
+
+              button.disabled = false;
+
+              return;
+            }
+
+            status.textContent =
+              "تم إرسال رد الإدارة بنجاح.";
+
+            await loadAdminInbox();
+
+          });
+
+        card.append(
+          date,
+          question,
+          controls.label,
+          controls.area,
+          controls.button,
+          controls.status
+        );
+
+        box.appendChild(card);
+
+      });
+    }
+
+
+    /* =====================================================
+       27. قائمة الأسفار الافتراضية
+       تظهر حتى يتم تحميل البيانات
+       ===================================================== */
+
+    const fallback = {
+
+      old: [
+        "التكوين", "الخروج", "اللاويين", "العدد",
+        "التثنية", "يشوع", "القضاة", "راعوث",
+        "صموئيل الأول", "صموئيل الثاني",
+        "الملوك الأول", "الملوك الثاني",
+        "أخبار الأيام الأول", "أخبار الأيام الثاني",
+        "عزرا", "نحميا", "أستير", "أيوب",
+        "المزامير", "الأمثال", "الجامعة",
+        "نشيد الأنشاد", "إشعياء", "إرميا",
+        "مراثي إرميا", "حزقيال", "دانيال",
+        "هوشع", "يوئيل", "عاموس", "عوبديا",
+        "يونان", "ميخا", "ناحوم", "حبقوق",
+        "صفنيا", "حجي", "زكريا", "ملاخي"
+      ],
+
+      new: [
+        "إنجيل متى", "إنجيل مرقس",
+        "إنجيل لوقا", "إنجيل يوحنا",
+        "أعمال الرسل", "رومية",
+        "كورنثوس الأولى", "كورنثوس الثانية",
+        "غلاطية", "أفسس", "فيلبي", "كولوسي",
+        "تسالونيكي الأولى", "تسالونيكي الثانية",
+        "تيموثاوس الأولى", "تيموثاوس الثانية",
+        "تيطس", "فليمون", "العبرانيين",
+        "يعقوب", "بطرس الأولى", "بطرس الثانية",
+        "يوحنا الأولى", "يوحنا الثانية",
+        "يوحنا الثالثة", "يهوذا",
+        "رؤيا يوحنا اللاهوتي"
+      ]
+    };
+
+
+    /* =====================================================
+       28. تحميل قائمة الأسفار
+       ===================================================== */
+
+    function fillBooks() {
+
+      const testament = $("testament").value;
+
+      const books = data
+        ? data.books.filter(
+            item => item.testament === testament
+          )
+        : fallback[testament].map((name, index) => ({
+            id: testament + index,
+            name,
+            chapters: []
+          }));
+
+      $("book").replaceChildren();
+
+      books.forEach(item => {
+
+        const option = document.createElement("option");
+
+        option.value = item.id;
+        option.textContent = item.name;
+
+        $("book").appendChild(option);
+
+      });
+
+      fillChapters();
+    }
+
+
+    /* =====================================================
+       29. تحميل قائمة الإصحاحات للسفر الحالي
+       ===================================================== */
+
+    function fillChapters() {
+
+      const currentBook = book();
+
+      $("chapter").replaceChildren();
+
+      const count = currentBook?.chapters?.length || 1;
+
+      for (let index = 1; index <= count; index++) {
+
+        const option = document.createElement("option");
+
+        option.value = index;
+        option.textContent = index;
+
+        $("chapter").appendChild(option);
+
+      }
+
+      $("chapter").disabled = !data;
+
+      render();
+    }
+
+
+    /* =====================================================
+       30. تحديث مظهر الآيات المحددة
+       ===================================================== */
+
+    function updateSelectionUI() {
+
+      document
+        .querySelectorAll(".verse[data-reference]")
+        .forEach(element => {
+
+          element.classList.toggle(
+            "selected",
+            selectedVerses.some(
+              verse =>
+                verse.reference === element.dataset.reference
+            )
+          );
+
+        });
+
+      $("favorite").disabled =
+        selectedVerses.length !== 1;
+
+      $("ask").disabled =
+        selectedVerses.length === 0;
+
+      if (!selectedVerses.length) {
+
+        say(
+          "selectionStatus",
+          "لم يتم تحديد آيات."
+        );
+
+      } else {
+
+        say(
+          "selectionStatus",
+          "تم تحديد " +
+          selectedVerses.length +
+          " آية: " +
+          selectedVerses
+            .map(verse => verse.reference)
+            .join("، ")
+        );
+
+      }
+    }
+
+
+    /* =====================================================
+       31. اختيار أو إلغاء اختيار آية
+       ===================================================== */
+
+    function toggleVerseSelection(verse) {
+
+      const index = selectedVerses.findIndex(
+        item => item.reference === verse.reference
+      );
+
+      if (index >= 0) {
+
+        selectedVerses.splice(index, 1);
+
+      } else {
+
+        selectedVerses.push(verse);
+
+      }
+
+      updateSelectionUI();
+    }
+
+
+    /* =====================================================
+       32. عرض الإصحاح
+       ===================================================== */
+
+    function render() {
+
+      selectedVerses = [];
+
+      $("favorite").disabled = true;
+      $("ask").disabled = true;
+
+      say("selectionStatus", "");
+
+      const currentBook = book();
+
+      const currentChapter =
+        currentBook?.chapters?.[
+          Number($("chapter").value) - 1
+        ];
+
+      $("verses").replaceChildren();
+
+      if (!data || !currentChapter) {
+
+        $("chapterTitle").textContent = "نص الإصحاح";
+
+        $("verses").innerHTML =
+          '<div class="empty">نص الإصحاح غير متاح حاليًا.</div>';
+
+        return;
+      }
+
+      $("chapterTitle").textContent =
+        currentBook.name +
+        " — الإصحاح " +
+        $("chapter").value;
+
+      currentChapter.forEach((text, index) => {
+
+        const reference =
+          currentBook.name +
+          " " +
+          $("chapter").value +
+          ":" +
+          (index + 1);
+
+        const element =
+          document.createElement("div");
+
+        element.className = "verse";
+        element.dataset.reference = reference;
+
+        const number =
+          document.createElement("span");
+
+        number.className = "num";
+        number.textContent = index + 1;
+
+        element.append(
+          number,
+          document.createTextNode(text)
+        );
+
+        element.onclick = () => {
+
+          toggleVerseSelection({
+            text,
+            index,
+            reference
+          });
+
+        };
+
+        $("verses").appendChild(element);
+
+      });
+
+      $("verses").style.fontSize =
+        $("fontSize").value + "px";
+    }
+
+
+    /* =====================================================
+       33. البحث داخل الكتاب المقدس
+       ===================================================== */
+
+    function search() {
+
+      const query =
+        $("search").value.trim();
+
+      if (!query) {
+
+        say("status", "اكتب كلمة للبحث.");
+
+        return;
+      }
+
+      if (!data) {
+
+        say(
+          "status",
+          "البحث يتطلب تحميل نص الكتاب المقدس."
+        );
+
+        return;
+      }
+
+      selectedVerses = [];
+
+      const results = [];
+
+      data.books.forEach(currentBook => {
+
+        currentBook.chapters.forEach(
+          (chapter, chapterIndex) => {
+
+            chapter.forEach((text, verseIndex) => {
+
+              if (text.includes(query)) {
+
+                results.push({
+                  reference:
+                    currentBook.name +
+                    " " +
+                    (chapterIndex + 1) +
+                    ":" +
+                    (verseIndex + 1),
+
+                  text,
+
+                  index: verseIndex
+                });
+
+              }
+
+            });
+
+          }
+        );
+
+      });
+
+      $("verses").replaceChildren();
+
+      $("chapterTitle").textContent =
+        "نتائج البحث: " + results.length;
+
+      results.forEach(verse => {
+
+        const element =
+          document.createElement("div");
+
+        element.className = "verse";
+        element.dataset.reference = verse.reference;
+
+        element.textContent =
+          verse.reference + " — " + verse.text;
+
+        element.onclick = () => {
+          toggleVerseSelection(verse);
+        };
+
+        $("verses").appendChild(element);
+
+      });
+
+      updateSelectionUI();
+
+      say(
+        "status",
+        "عدد النتائج: " +
+        results.length +
+        ". يمكنك تحديد أكثر من آية."
+      );
+    }
+
+
+    /* =====================================================
+       34. عرض الآيات المفضلة
+       ===================================================== */
+
+    function renderFavs() {
+
+      const saved = favs();
+
+      $("favList").replaceChildren();
+
+      $("favEmpty").classList.toggle(
+        "hidden",
+        saved.length > 0
+      );
+
+      saved.forEach((verse, index) => {
+
+        const row =
+          document.createElement("p");
+
+        row.textContent =
+          verse.reference + " — " + verse.text + " ";
+
+        const deleteButton =
+          document.createElement("button");
+
+        deleteButton.type = "button";
+        deleteButton.className = "secondary";
+        deleteButton.textContent = "حذف";
+
+        deleteButton.onclick = () => {
+
+          const updated = favs();
+
+          updated.splice(index, 1);
+
+          saveFavs(updated);
+
+          renderFavs();
+
+        };
+
+        row.appendChild(deleteButton);
+
+        $("favList").appendChild(row);
+
+      });
+    }
+
+
+    /* =====================================================
+       35. ربط أحداث الأزرار
+       ===================================================== */
+
+    $("testament").addEventListener(
+      "change",
+      fillBooks
+    );
+
+    $("book").addEventListener(
+      "change",
+      fillChapters
+    );
+
+    $("chapter").addEventListener(
+      "change",
+      render
+    );
+
+    $("searchBtn").addEventListener(
+      "click",
+      search
+    );
+
+    $("clearBtn").addEventListener("click", () => {
+
+      $("search").value = "";
+
+      say("status", "");
+
+      render();
+
+    });
+
+    $("fontSize").addEventListener("change", () => {
+
+      $("verses").style.fontSize =
+        $("fontSize").value + "px";
+
+    });
+
+
+    /* =====================================================
+       36. حفظ الآية المفضلة
+       يسمح بالحفظ عند تحديد آية واحدة فقط
+       ===================================================== */
+
+    $("favorite").addEventListener("click", () => {
+
+      if (selectedVerses.length !== 1) return;
+
+      const verse = selectedVerses[0];
+
+      const saved = favs();
+
+      const exists = saved.some(
+        item =>
+          item.reference === verse.reference &&
+          item.text === verse.text
+      );
+
+      if (!exists) {
+        saved.push(verse);
+      }
+
+      saveFavs(saved);
+
+      renderFavs();
+
+      say(
+        "selectionStatus",
+        "تم حفظ الآية في المفضلة."
+      );
+
+    });
+
+
+    /* =====================================================
+       37. فتح وإلغاء نموذج السؤال
+       ===================================================== */
+
+    $("showFav").addEventListener("click", () => {
+
+      $("favCard").classList.toggle("hidden");
+
+      renderFavs();
+
+    });
+
+    $("ask").addEventListener("click", () => {
+
+      if (!selectedVerses.length) return;
+
+      $("questionCard").classList.remove("hidden");
+
+      $("reference").textContent =
+        selectedVerses
+          .map(verse =>
+            verse.reference + " — " + verse.text
+          )
+          .join("\n");
+
+      updateQuestionTarget();
+
+      $("question").focus();
+
+    });
+
+    $("questionTarget").addEventListener(
+      "change",
+      updateQuestionTarget
+    );
+
+    $("cancel").addEventListener("click", () => {
+
+      $("questionCard").classList.add("hidden");
+
+    });
+
+    $("send").addEventListener(
+      "click",
+      sendQuestion
+    );
+
+
+    /* =====================================================
+       38. التنقل بين الإصحاحات
+       ===================================================== */
+
+    function moveChapter(direction) {
+
+      if (!data) {
+
+        say(
+          "status",
+          "التنقل يتطلب تحميل نص الكتاب."
+        );
+
+        return;
+      }
+
+      const next =
+        Number($("chapter").value) + direction;
+
+      if (
+        next < 1 ||
+        next > $("chapter").options.length
+      ) {
+
+        say(
+          "status",
+          "لا يوجد إصحاح آخر في هذا الاتجاه."
+        );
+
+        return;
+      }
+
+      $("chapter").value = next;
+
+      render();
+    }
+
+    $("prev").addEventListener(
+      "click",
+      () => moveChapter(-1)
+    );
+
+    $("next").addEventListener(
+      "click",
+      () => moveChapter(1)
+    );
+
+
+    /* =====================================================
+       39. تحميل نص الكتاب المقدس
+       ===================================================== */
+
+    async function loadBibleText() {
+
+      try {
+
+        say(
+          "status",
+          "جاري تحميل نص الكتاب المقدس..."
+        );
+
+        const url =
+          "https://raw.githubusercontent.com/midvash/bible-data/main/versions/ar/svd/svd.json";
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+
+          throw new Error(
+            "HTTP " + response.status
+          );
+
+        }
+
+        const source = await response.json();
+
+        if (
+          !Array.isArray(source.books) ||
+          !source.books.length
+        ) {
+
+          throw new Error(
+            "صيغة بيانات الكتاب غير متوقعة."
+          );
+
+        }
+
+        data = {
+          translation: "فان دايك العربية (1865)",
+
+          books: source.books.map(item => ({
+
+            id: item.book,
+
+            name:
+              arabicBookNames[item.book] ||
+              item.book,
+
+            testament:
+              item.testament === "NT"
+                ? "new"
+                : "old",
+
+            chapters:
+              (item.chapters || []).map(chapter =>
+                (chapter.verses || []).map(
+                  verse => verse.text || ""
+                )
+              )
+
+          }))
+        };
+
+        fillBooks();
+
+        say(
+          "status",
+          "تم تحميل نص فان دايك بنجاح."
+        );
+
+      } catch (error) {
+
+        data = null;
+
+        fillBooks();
+
+        $("verses").innerHTML =
+          '<div class="empty">تعذر تحميل النص. تأكد من اتصال الإنترنت ثم حدّث الصفحة.</div>';
+
+        say(
+          "status",
+          "فشل تحميل نص الكتاب: " +
+          (error.message || error)
+        );
+
+      }
+    }
+
+
+    /* =====================================================
+       40. تشغيل الصفحة
+       ===================================================== */
+
     fillBooks();
-    say("status","تم تحميل نص فان دايك بنجاح. اختر السفر والإصحاح لعرض الآيات.");
-  }catch(e){
-    data=null;fillBooks();
-    say("status","لم نتمكن من تحميل الآيات. تأكد من اتصال الإنترنت ثم حدّث الصفحة. التفاصيل: "+e.message);
-    $("verses").innerHTML='<div class="empty">تعذر تحميل نص الكتاب الآن. جرّب تحديث الصفحة أو فتحها بعد التأكد من اتصال الإنترنت.</div>';
-  }
-}
-fillBooks();load();renderFavs();initQuestions();
-</script></body></html>
+
+    renderFavs();
+
+    // تحميل النص والأسئلة بالتوازي
+    await Promise.allSettled([
+      loadBibleText(),
+      initQuestions()
+    ]);
+
+  </script>
+
+</body>
+</html>
