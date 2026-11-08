@@ -1,0 +1,559 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101522">
+  <title>صندوق الأسئلة | شبابنا</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #101522;
+      color: #f4f5f8;
+      line-height: 1.8;
+    }
+
+    header {
+      background: #191f30;
+      border-bottom: 1px solid #30394d;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 25px auto;
+      padding: 16px;
+    }
+
+    .welcome, .panel, .question-card {
+      background: #1b2334;
+      border: 1px solid #30394d;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .welcome {
+      background: linear-gradient(135deg, #263b68, #394d83);
+    }
+
+    h1, h2, h3 { margin-top: 0; }
+    h2 { color: #b7c9ff; }
+
+    .muted {
+      color: #aab4c9;
+      font-size: 14px;
+    }
+
+    .actions, .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+
+    button, a.button {
+      display: inline-block;
+      border: 0;
+      border-radius: 9px;
+      padding: 10px 16px;
+      background: #4263a5;
+      color: white;
+      font: inherit;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    button.secondary, a.secondary {
+      background: #303b53;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .filter-button.active {
+      background: #d5a83d;
+      color: #171717;
+    }
+
+    .question-card {
+      background: #151d2c;
+      padding: 17px;
+    }
+
+    .question-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 3px 11px;
+      font-size: 12px;
+      background: #344d83;
+      color: white;
+    }
+
+    .tag.pending { background: #806327; }
+    .tag.answered { background: #236c50; }
+
+    .question-text {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: #202b40;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 5px;
+      font-weight: bold;
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 125px;
+      resize: vertical;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #46536b;
+      background: #101827;
+      color: white;
+      font: inherit;
+    }
+
+    .message {
+      min-height: 24px;
+      margin-top: 8px;
+      color: #b7c9ff;
+      overflow-wrap: anywhere;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 35px 12px;
+      color: #aab4c9;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 600px) {
+      header { padding: 14px; }
+      .welcome, .panel, .question-card { padding: 14px; }
+      main { padding: 10px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <strong>📩 صندوق الأسئلة</strong>
+    <div class="muted">أسئلة المخدومين والرد عليها</div>
+  </div>
+
+  <div class="actions">
+    <a id="backLink" class="button secondary" href="index.html">العودة</a>
+    <button id="refreshBtn" type="button">تحديث الأسئلة</button>
+    <button id="logoutBtn" type="button" class="secondary">خروج</button>
+  </div>
+</header>
+
+<main>
+
+  <section class="welcome">
+    <h1>أهلاً بيك يا <span id="staffName">...</span> 👋</h1>
+    <p id="roleText">جاري التحقق من الحساب...</p>
+    <p class="muted">
+      افتح السؤال، اقرأ الآيات والاستفسار، واكتب ردك ثم اضغط إرسال الرد.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>الأسئلة الواردة</h2>
+
+    <div class="filters">
+      <button class="filter-button active" data-filter="all" type="button">
+        كل الأسئلة
+      </button>
+      <button class="filter-button secondary" data-filter="pending" type="button">
+        لم يتم الرد
+      </button>
+      <button class="filter-button secondary" data-filter="answered" type="button">
+        تم الرد
+      </button>
+    </div>
+
+    <p id="countText" class="muted"></p>
+
+    <div id="questionsList">
+      <div class="empty">جاري تحميل الأسئلة...</div>
+    </div>
+
+    <p id="pageMessage" class="message" role="status"></p>
+  </section>
+
+</main>
+
+<script type="module">
+  import { supabase } from "./supabase.js";
+
+  // العناصر المستخدمة في الصفحة
+  const $ = id => document.getElementById(id);
+
+  // بيانات الحساب الحالي
+  let currentUser = null;
+  let currentProfile = null;
+
+  // جميع الأسئلة المحملة من قاعدة البيانات
+  let allQuestions = [];
+
+  // الفلتر الحالي: الكل / لم يتم الرد / تم الرد
+  let currentFilter = "all";
+
+  // حماية النصوص عند عرضها داخل عناصر الصفحة
+  // نستخدم textContent بدل إدخال نص المستخدم كـ HTML.
+  function makeText(tag, className, value) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    element.textContent = value ?? "";
+    return element;
+  }
+
+  function setMessage(message) {
+    $("pageMessage").textContent = message || "";
+  }
+
+  // التحقق من تسجيل الدخول وتحميل بيانات المستخدم
+  async function checkUser() {
+    const { data: authData, error: authError } =
+      await supabase.auth.getUser();
+
+    if (authError) throw authError;
+
+    currentUser = authData.user;
+
+    if (!currentUser) {
+      location.href = "account.html";
+      return false;
+    }
+
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("id, full_name, role, approval_status")
+      .eq("id", currentUser.id)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (!profile || profile.approval_status !== "approved") {
+      alert("الحساب غير معتمد أو لا توجد بيانات للحساب.");
+      location.href = "account.html";
+      return false;
+    }
+
+    if (!["servant", "admin"].includes(profile.role)) {
+      alert("هذه الصفحة مخصصة للخدام والأدمن فقط.");
+      location.href = "dashboard.html";
+      return false;
+    }
+
+    currentProfile = profile;
+
+    $("staffName").textContent = profile.full_name || "خادم";
+
+    $("roleText").textContent =
+      profile.role === "admin"
+        ? "أنت تستخدم صندوق الأسئلة بصلاحيات الأدمن."
+        : "أنت تستخدم صندوق الأسئلة بصلاحيات الخادم.";
+
+    $("backLink").href =
+      profile.role === "admin" ? "admin.html" : "servant.html";
+
+    return true;
+  }
+
+  // جلب الأسئلة الموجهة للحساب الحالي
+  async function loadQuestions() {
+    $("questionsList").replaceChildren(
+      makeText("p", "empty", "جاري تحميل الأسئلة...")
+    );
+
+    setMessage("");
+
+    // كل خادم يرى الأسئلة التي servant_id فيها يساوي حسابه.
+    const assignedQuery = supabase
+      .from("servant_questions")
+      .select("id, member_id, group_id, servant_id, question, answer, created_at")
+      .eq("servant_id", currentUser.id)
+      .order("created_at", { ascending: false });
+
+    let assignedResult = await assignedQuery;
+
+    if (assignedResult.error) {
+      throw assignedResult.error;
+    }
+
+    allQuestions = assignedResult.data || [];
+
+    // الأدمن يرى أيضًا الأسئلة المرسلة للإدارة العامة
+    // والتي servant_id فيها يساوي NULL.
+    if (currentProfile.role === "admin") {
+      const { data: generalQuestions, error } = await supabase
+        .from("servant_questions")
+        .select("id, member_id, group_id, servant_id, question, answer, created_at")
+        .is("servant_id", null)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      allQuestions = allQuestions.concat(generalQuestions || []);
+    }
+
+    // ترتيب كل الأسئلة من الأحدث إلى الأقدم
+    allQuestions.sort((a, b) =>
+      new Date(b.created_at).getTime() -
+      new Date(a.created_at).getTime()
+    );
+
+    renderQuestions();
+  }
+
+  // عرض حالة السؤال
+  function questionStatus(question) {
+    return question.answer
+      ? { text: "تم الرد", className: "answered" }
+      : { text: "بانتظار الرد", className: "pending" };
+  }
+
+  // إنشاء صندوق سؤال واحد
+  function createQuestionCard(question) {
+    const card = document.createElement("article");
+    card.className = "question-card";
+
+    const top = document.createElement("div");
+    top.className = "question-top";
+
+    const date = makeText(
+      "span",
+      "muted",
+      question.created_at
+        ? new Date(question.created_at).toLocaleString("ar-EG")
+        : "تاريخ غير متاح"
+    );
+
+    const status = questionStatus(question);
+    const statusTag = makeText(
+      "span",
+      "tag " + status.className,
+      status.text
+    );
+
+    top.append(date, statusTag);
+
+    // نوع السؤال: إلى حساب الخادم أم للإدارة العامة
+    const destination = makeText(
+      "p",
+      "muted",
+      question.servant_id
+        ? "الجهة: سؤال موجّه إلى حسابك"
+        : "الجهة: سؤال مرسل للإدارة العامة"
+    );
+
+    const questionTitle = makeText("h3", "", "السؤال والآيات");
+
+    const questionText = makeText(
+      "div",
+      "question-text",
+      question.question
+    );
+
+    card.append(top, destination, questionTitle, questionText);
+
+    // صندوق كتابة الرد أو تعديله
+    const label = makeText(
+      "label",
+      "",
+      question.answer ? "تعديل الرد الحالي" : "اكتب ردك على المخدوم"
+    );
+
+    const replyArea = document.createElement("textarea");
+    replyArea.maxLength = 10000;
+    replyArea.value = question.answer || "";
+    replyArea.placeholder = "اكتب ردًا واضحًا ومفيدًا...";
+
+    const saveButton = makeText(
+      "button",
+      "",
+      question.answer ? "حفظ تعديل الرد" : "إرسال الرد"
+    );
+    saveButton.type = "button";
+
+    const replyMessage = makeText("p", "message", "");
+    replyMessage.setAttribute("role", "status");
+
+    saveButton.addEventListener("click", async () => {
+      const answer = replyArea.value.trim();
+
+      if (!answer) {
+        replyMessage.textContent = "اكتب الرد أولًا.";
+        return;
+      }
+
+      saveButton.disabled = true;
+      replyMessage.textContent = "جاري حفظ الرد...";
+
+      try {
+        let updateQuery = supabase
+          .from("servant_questions")
+          .update({ answer })
+          .eq("id", question.id);
+
+        // الخادم أو الأدمن المعيّن يرد على السؤال الموجه لحسابه.
+        // أما سؤال الإدارة العامة فيحدده servant_id = NULL.
+        if (question.servant_id) {
+          updateQuery = updateQuery.eq("servant_id", currentUser.id);
+        } else {
+          updateQuery = updateQuery.is("servant_id", null);
+        }
+
+        const { data, error } = await updateQuery
+          .select("id")
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (!data) {
+          throw new Error(
+            "لم يتم حفظ الرد. تأكد من صلاحيات الحساب وسياسات قاعدة البيانات."
+          );
+        }
+
+        replyMessage.textContent = "✅ تم حفظ الرد بنجاح.";
+        await loadQuestions();
+
+      } catch (error) {
+        replyMessage.textContent =
+          "تعذر حفظ الرد: " + (error.message || error);
+        saveButton.disabled = false;
+      }
+    });
+
+    card.append(label, replyArea, saveButton, replyMessage);
+
+    return card;
+  }
+
+  // عرض الأسئلة حسب الفلتر المختار
+  function renderQuestions() {
+    const box = $("questionsList");
+    box.replaceChildren();
+
+    let filtered = allQuestions;
+
+    if (currentFilter === "pending") {
+      filtered = allQuestions.filter(q => !q.answer);
+    } else if (currentFilter === "answered") {
+      filtered = allQuestions.filter(q => !!q.answer);
+    }
+
+    const pendingCount = allQuestions.filter(q => !q.answer).length;
+    const answeredCount = allQuestions.filter(q => !!q.answer).length;
+
+    $("countText").textContent =
+      `إجمالي الأسئلة: ${allQuestions.length} — ` +
+      `بانتظار الرد: ${pendingCount} — تم الرد: ${answeredCount}`;
+
+    if (!filtered.length) {
+      box.appendChild(
+        makeText("p", "empty", "لا توجد أسئلة في هذا القسم حاليًا.")
+      );
+      return;
+    }
+
+    filtered.forEach(question => {
+      box.appendChild(createQuestionCard(question));
+    });
+  }
+
+  // تبديل الفلاتر
+  document.querySelectorAll("[data-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+      currentFilter = button.dataset.filter;
+
+      document.querySelectorAll("[data-filter]").forEach(item => {
+        item.classList.remove("active");
+        item.classList.add("secondary");
+      });
+
+      button.classList.add("active");
+      button.classList.remove("secondary");
+
+      renderQuestions();
+    });
+  });
+
+  // تحديث يدوي للأسئلة
+  $("refreshBtn").addEventListener("click", async () => {
+    $("refreshBtn").disabled = true;
+
+    try {
+      await loadQuestions();
+      setMessage("تم تحديث صندوق الأسئلة.");
+    } catch (error) {
+      setMessage("حدث خطأ أثناء التحديث: " + error.message);
+    } finally {
+      $("refreshBtn").disabled = false;
+    }
+  });
+
+  // تسجيل الخروج
+  $("logoutBtn").addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    location.href = "account.html";
+  });
+
+  // تشغيل الصفحة
+  async function startPage() {
+    try {
+      const allowed = await checkUser();
+      if (!allowed) return;
+
+      await loadQuestions();
+
+    } catch (error) {
+      $("questionsList").replaceChildren(
+        makeText("p", "empty", "حدث خطأ أثناء تحميل الصفحة.")
+      );
+
+      setMessage(error.message || String(error));
+    }
+  }
+
+  startPage();
+</script>
+
+</body>
+</html>
