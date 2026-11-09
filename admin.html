@@ -1,66 +1,241 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>لوحة الإدارة | شبابنا</title>
 <style>
-*{box-sizing:border-box}:root{--bg:#080b16;--card:rgba(23,30,49,.88);--border:rgba(150,170,255,.16);--text:#f4f6ff;--muted:#aab4cc;--accent:#8795ff}
-body{margin:0;min-height:100vh;font-family:Arial,Tahoma,sans-serif;color:var(--text);background:radial-gradient(ellipse at 10% 0%,#202b55 0%,transparent 40%),radial-gradient(ellipse at 90% 20%,#17294a 0%,transparent 35%),var(--bg)}
-header{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:16px max(20px,calc((100% - 1100px)/2));background:#080b16eF;border-bottom:1px solid var(--border);backdrop-filter:blur(18px)}
-button,a{border:0;border-radius:12px;padding:11px 17px;color:white;text-decoration:none;cursor:pointer;font-weight:bold;font-family:inherit;background:#344d83}
+*{box-sizing:border-box}
+:root{
+--bg:#080b16;
+--card:rgba(23,30,49,.88);
+--border:rgba(150,170,255,.16);
+--text:#f4f6ff;
+--muted:#aab4cc;
+--accent:#8795ff
+}
+body{
+margin:0;min-height:100vh;
+font-family:Arial,Tahoma,sans-serif;
+color:var(--text);
+background:
+radial-gradient(ellipse at 10% 0%,#202b55 0%,transparent 40%),
+radial-gradient(ellipse at 90% 20%,#17294a 0%,transparent 35%),
+var(--bg)
+}
+header{
+position:sticky;top:0;z-index:10;
+display:flex;justify-content:space-between;
+align-items:center;gap:12px;flex-wrap:wrap;
+padding:16px max(20px,calc((100% - 1100px)/2));
+background:#080b16eF;
+border-bottom:1px solid var(--border);
+backdrop-filter:blur(18px)
+}
+button,a{
+border:0;border-radius:12px;padding:11px 17px;
+color:white;text-decoration:none;cursor:pointer;
+font-weight:bold;font-family:inherit;background:#344d83
+}
 main{width:min(1100px,calc(100% - 30px));margin:30px auto}
-.welcome{padding:28px;border:1px solid var(--border);border-radius:24px;background:linear-gradient(125deg,rgba(49,67,130,.8),rgba(28,39,72,.75));margin-bottom:25px}
-.welcome h1{margin:0 0 12px;font-size:clamp(25px,5vw,35px)}.welcome p,.card p{color:var(--muted);line-height:1.8}
+.welcome{
+padding:28px;border:1px solid var(--border);
+border-radius:24px;
+background:linear-gradient(125deg,rgba(49,67,130,.8),rgba(28,39,72,.75));
+margin-bottom:25px
+}
+.welcome h1{margin:0 0 12px;font-size:clamp(25px,5vw,35px)}
+.welcome p,.card p{color:var(--muted);line-height:1.8}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:17px}
-.card{min-width:0;padding:22px;border:1px solid var(--border);border-radius:19px;background:var(--card);transition:.25s;backdrop-filter:blur(12px)}
-.card:hover{transform:translateY(-7px) scale(1.025);border-color:var(--accent);background:rgba(43,54,88,.95);box-shadow:0 18px 38px #0005}
-.card h3{margin:0 0 10px;color:#b7c4ff}.card p{font-size:14px;margin:0 0 15px}.card a{display:inline-block;background:#8795ff24;border:1px solid #8795ff50;color:#dce1ff}
-.emoji{display:block;font-size:30px;margin-bottom:13px}.section-title{margin:28px 0 16px}
-#status{margin-top:22px;padding:13px;border:1px solid var(--border);border-radius:12px;color:var(--muted);line-height:1.7}
-@media(max-width:550px){header{padding:14px}main{margin-top:18px}.welcome{padding:20px}.grid{grid-template-columns:1fr}}
+.card{
+min-width:0;padding:22px;border:1px solid var(--border);
+border-radius:19px;background:var(--card);
+transition:.25s;backdrop-filter:blur(12px)
+}
+.card:hover{
+transform:translateY(-7px) scale(1.025);
+border-color:var(--accent);
+background:rgba(43,54,88,.95);
+box-shadow:0 18px 38px #0005
+}
+.card h3{margin:0 0 10px;color:#b7c4ff}
+.card p{font-size:14px;margin:0 0 15px}
+.card a{
+display:inline-block;background:#8795ff24;
+border:1px solid #8795ff50;color:#dce1ff
+}
+.emoji{display:block;font-size:30px;margin-bottom:13px}
+.section-title{margin:28px 0 16px}
+#status{
+margin-top:22px;padding:13px;
+border:1px solid var(--border);
+border-radius:12px;color:var(--muted);line-height:1.7
+}
+@media(max-width:550px){
+header{padding:14px}
+main{margin-top:18px}
+.welcome{padding:20px}
+.grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<header><h2>⚙️ شبابنا | لوحة الإدارة</h2><button id="logoutBtn">تسجيل الخروج</button></header>
+
+<header>
+<h2>⚙️ شبابنا | لوحة الإدارة</h2>
+<button id="logoutBtn">تسجيل الخروج</button>
+</header>
+
 <main>
+
 <section class="welcome">
 <h1>أهلاً يا <span id="adminName">...</span> 👋</h1>
 <p>من هنا تقدر تدير الأعضاء والخدام والرحلات والاختبارات ومحتوى الخدمة.</p>
 </section>
+
 <h2 class="section-title">إدارة الأعضاء والخدمة</h2>
+
 <section class="grid">
-<article class="card"><span class="emoji">👥</span><h3>قبول الأعضاء وتحديد المجموعات</h3><p>مراجعة طلبات التسجيل وتحديد المجموعة والدور لكل عضو.</p><a href="admin-members.html">فتح إدارة الأعضاء</a></article>
-<article class="card"><span class="emoji">📋</span><h3>الحضور والغياب</h3><p>متابعة حضور وغياب جميع المجموعات.</p><a href="attendance.html">فتح الحضور</a></article>
-<article class="card"><span class="emoji">⭐</span><h3>إدارة النقاط</h3><p>إضافة أو خصم النقاط ومراجعة السجل.</p><a href="points.html">فتح النقاط</a></article>
-<article class="card"><span class="emoji">🛡️</span><h3>إدارة الخدام</h3><p>متابعة صلاحيات الخدام ومجموعاتهم.</p><a href="admin-members.html">فتح الإدارة</a></article>
+
+<article class="card">
+<span class="emoji">👥</span>
+<h3>قبول الأعضاء وتحديد المجموعات</h3>
+<p>مراجعة طلبات التسجيل وتحديد المجموعة والدور لكل عضو.</p>
+<a href="admin-members.html">فتح إدارة الأعضاء</a>
+</article>
+
+<article class="card">
+<span class="emoji">📋</span>
+<h3>الحضور والغياب</h3>
+<p>متابعة حضور وغياب جميع المجموعات.</p>
+<a href="attendance.html">فتح الحضور</a>
+</article>
+
+<article class="card">
+<span class="emoji">⭐</span>
+<h3>إدارة النقاط</h3>
+<p>إضافة أو خصم النقاط ومراجعة السجل.</p>
+<a href="points.html">فتح النقاط</a>
+</article>
+
+<article class="card">
+<span class="emoji">🛡️</span>
+<h3>إدارة الخدام</h3>
+<p>متابعة صلاحيات الخدام ومجموعاتهم.</p>
+<a href="admin-members.html">فتح الإدارة</a>
+</article>
+
 </section>
+
 <h2 class="section-title">المحتوى والأنشطة</h2>
+
 <section class="grid">
-<article class="card"><span class="emoji">🚌</span><h3>رحلات وخروجات</h3><p>إنشاء الرحلات وإضافة صورها ورابط InstaPay.</p><a href="events.html">فتح الرحلات والخروجات</a></article>
-<article class="card"><span class="emoji">📝</span><h3>إنشاء الامتحانات</h3><p>إنشاء أسئلة اختيار من متعدد وأسئلة مقالية.</p><a href="quiz-manage.html">إدارة الامتحانات</a></article>
-<article class="card"><span class="emoji">✍️</span><h3>مراجعة الأسئلة المقالية</h3><p>مراجعة إجابات المخدومين واعتماد درجاتهم.</p><a href="essay-review.html">مراجعة المقالي</a></article>
-<article class="card"><span class="emoji">📊</span><h3>مراجعة الامتحانات</h3><p>متابعة المحاولات وتصحيح الاختيار من متعدد.</p><a href="exam-review.html">فتح المراجعة</a></article>
-<article class="card"><span class="emoji">📚</span><h3>الدروس</h3><p>إدارة المحتوى التعليمي.</p><a href="lessons.html">فتح الدروس</a></article>
-<article class="card"><span class="emoji">📩</span><h3>صندوق الأسئلة</h3><p>متابعة أسئلة المخدومين والرد عليها.</p><a href="questions.html">فتح صندوق الأسئلة</a></article>
-<article class="card"><span class="emoji">📖</span><h3>الأجبية</h3><p>قراءة صلوات الأجبية داخل الموقع.</p><a href="agpeya.html">فتح الأجبية</a></article>
+
+<article class="card">
+<span class="emoji">🎯</span>
+<h3>إدارة الأهداف</h3>
+<p>إنشاء أهداف للمجموعات ومتابعة إتمامها وربطها بامتحانات اختيارية.</p>
+<a href="goals-manage.html">فتح إدارة الأهداف</a>
+</article>
+
+<article class="card">
+<span class="emoji">🚌</span>
+<h3>رحلات وخروجات</h3>
+<p>إنشاء الرحلات وإضافة صورها ورابط InstaPay.</p>
+<a href="events.html">فتح الرحلات والخروجات</a>
+</article>
+
+<article class="card">
+<span class="emoji">📝</span>
+<h3>إنشاء الامتحانات</h3>
+<p>إنشاء أسئلة اختيار من متعدد وأسئلة مقالية.</p>
+<a href="quiz-manage.html">إدارة الامتحانات</a>
+</article>
+
+<article class="card">
+<span class="emoji">✍️</span>
+<h3>مراجعة الأسئلة المقالية</h3>
+<p>مراجعة إجابات المخدومين واعتماد درجاتهم.</p>
+<a href="essay-review.html">مراجعة المقالي</a>
+</article>
+
+<article class="card">
+<span class="emoji">📊</span>
+<h3>مراجعة الامتحانات</h3>
+<p>متابعة المحاولات وتصحيح الاختيار من متعدد.</p>
+<a href="exam-review.html">فتح المراجعة</a>
+</article>
+
+<article class="card">
+<span class="emoji">📚</span>
+<h3>الدروس</h3>
+<p>إدارة المحتوى التعليمي.</p>
+<a href="lessons.html">فتح الدروس</a>
+</article>
+
+<article class="card">
+<span class="emoji">📩</span>
+<h3>صندوق الأسئلة</h3>
+<p>متابعة أسئلة المخدومين والرد عليها.</p>
+<a href="questions.html">فتح صندوق الأسئلة</a>
+</article>
+
+<article class="card">
+<span class="emoji">📖</span>
+<h3>الأجبية</h3>
+<p>قراءة صلوات الأجبية داخل الموقع.</p>
+<a href="agpeya.html">فتح الأجبية</a>
+</article>
+
 </section>
+
 <p id="status">جاري التحقق من صلاحيات الإدارة...</p>
+
 </main>
+
 <script type="module">
 import{supabase}from"./supabase.js";
+
 const status=document.getElementById("status");
+
 async function init(){
+
  const{data:{user},error:ae}=await supabase.auth.getUser();
- if(ae||!user){location.replace("account.html");return;}
- const{data:p,error}=await supabase.from("profiles").select("full_name,role,approval_status").eq("id",user.id).maybeSingle();
- if(error||!p){status.textContent="تعذر تحميل الحساب: "+(error?.message||"");return;}
- if(p.approval_status!=="approved"||p.role!=="admin"){status.textContent="ليس لديك صلاحية الأدمن.";location.replace("dashboard.html");return;}
+
+ if(ae||!user){
+  location.replace("account.html");
+  return;
+ }
+
+ const{data:p,error}=await supabase
+  .from("profiles")
+  .select("full_name,role,approval_status")
+  .eq("id",user.id)
+  .maybeSingle();
+
+ if(error||!p){
+  status.textContent="تعذر تحميل الحساب: "+(error?.message||"");
+  return;
+ }
+
+ if(p.approval_status!=="approved"||p.role!=="admin"){
+  status.textContent="ليس لديك صلاحية الأدمن.";
+  location.replace("dashboard.html");
+  return;
+ }
+
  document.getElementById("adminName").textContent=p.full_name||"Admin";
  status.textContent="تم التحقق من صلاحيات الإدارة.";
 }
-document.getElementById("logoutBtn").addEventListener("click",async()=>{await supabase.auth.signOut();location.replace("account.html");});
+
+document.getElementById("logoutBtn").addEventListener("click",async()=>{
+ await supabase.auth.signOut();
+ location.replace("account.html");
+});
+
 await init();
 </script>
+
 <script src="./install.js"></script>
 </body>
 </html>
