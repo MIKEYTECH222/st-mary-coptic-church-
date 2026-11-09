@@ -2,308 +2,155 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>الأجبية | شبابنا</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الأجبية | شبابنا</title>
+<link rel="stylesheet" href="style.css">
 
-  <style>
-    body {
-      background: #080b16;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 950px;
-      margin: auto;
-    }
-
-    .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 25px;
-    }
-
-    .back, .back-btn {
-      color: white;
-      text-decoration: none;
-      background: #ffffff12;
-      border: 1px solid #ffffff20;
-      padding: 10px 16px;
-      border-radius: 12px;
-      cursor: pointer;
-    }
-
-    .intro {
-      margin-bottom: 25px;
-    }
-
-    .intro h1 {
-      font-size: 30px;
-      margin-bottom: 8px;
-    }
-
-    .intro p {
-      color: #aab3c8;
-      line-height: 1.8;
-    }
-
-    .hours {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
-    }
-
-    .hour-card, .reader {
-      background: #11182a;
-      border: 1px solid #ffffff15;
-      border-radius: 18px;
-      padding: 20px;
-    }
-
-    .hour-card {
-      cursor: pointer;
-      transition: .25s;
-    }
-
-    .hour-card:hover {
-      transform: translateY(-5px);
-      border-color: #7895ff80;
-      background: #17213a;
-    }
-
-    .hour-card h3 {
-      margin: 0 0 10px;
-      font-size: 19px;
-    }
-
-    .hour-card p {
-      color: #aab3c8;
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .hour-card small {
-      color: #9bb1ff;
-    }
-
-    .reader {
-      display: none;
-      margin-top: 20px;
-    }
-
-    .reader h2 {
-      margin-top: 0;
-    }
-
-    .section-list {
-      display: grid;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .section-item {
-      background: #ffffff08;
-      border: 1px solid #ffffff15;
-      border-radius: 14px;
-      padding: 16px;
-    }
-
-    .section-item h3 {
-      margin-top: 0;
-      color: #b6c6ff;
-    }
-
-    .section-content {
-      white-space: pre-wrap;
-      line-height: 2.1;
-      color: #e3e8f5;
-      font-size: 17px;
-    }
-
-    .muted {
-      color: #9ba7bd;
-      line-height: 1.8;
-    }
-
-    .status {
-      text-align: center;
-      padding: 25px;
-      color: #aab3c8;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-  </style>
+<style>
+body {
+  background:#080b16;
+  color:white;
+  font-family:Arial,sans-serif;
+  padding:20px;
+  margin:0;
+}
+.container {max-width:1000px;margin:auto}
+.top {
+  display:flex;justify-content:space-between;
+  align-items:center;gap:12px;flex-wrap:wrap;
+  margin-bottom:30px
+}
+a {color:inherit;text-decoration:none}
+.btn {
+  display:inline-block;padding:11px 17px;
+  border-radius:12px;background:#ffffff12;
+  border:1px solid #ffffff20;color:white;
+}
+.intro {margin-bottom:25px}
+.intro p,.description {color:#aab3c8;line-height:1.9}
+.hours {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px
+}
+.hour-card {
+  background:#11182a;border:1px solid #ffffff15;
+  padding:22px;border-radius:18px;
+  transition:.25s;display:flex;flex-direction:column;
+  gap:12px
+}
+.hour-card:hover {
+  transform:translateY(-5px);
+  background:#17213a;border-color:#7895ff80
+}
+.hour-card h3 {margin:0;font-size:19px}
+.hour-card p {margin:0;color:#aab3c8;line-height:1.8;font-size:14px}
+.hour-card .btn {text-align:center;margin-top:auto}
+.status {text-align:center;padding:30px;color:#aab3c8}
+.note {
+  background:#17213a;border:1px solid #ffffff15;
+  padding:16px;border-radius:14px;
+  margin:20px 0;color:#cbd5e1;line-height:1.8
+}
+</style>
 </head>
 
 <body>
-  <main class="container">
+<main class="container">
 
-    <div class="top">
-      <a class="back" href="dashboard.html">← الرئيسية</a>
-      <span>📖 شبابنا | الأجبية</span>
-    </div>
+  <div class="top">
+    <a class="btn" href="dashboard.html">← الرئيسية</a>
+    <span>📖 شبابنا | الأجبية</span>
+  </div>
 
-    <section class="intro">
-      <h1>الأجبية المقدسة</h1>
-      <p>صلوات السواعي اليومية. اختر الصلاة لعرض أجزائها وقراءتها.</p>
-    </section>
+  <section class="intro">
+    <h1>الأجبية المقدسة</h1>
+    <p>صلوات السواعي اليومية في الكنيسة القبطية الأرثوذكسية.</p>
+  </section>
 
-    <div id="status" class="status">جاري تحميل الصلوات...</div>
+  <div class="note">
+    اختر الصلاة لفتح نصها وترتيبها من موقع الأنبا تكلا.
+  </div>
 
-    <section id="hours" class="hours"></section>
+  <div id="status" class="status">جاري تحميل الصلوات...</div>
+  <section id="hours" class="hours"></section>
 
-    <section id="reader" class="reader">
-      <button class="back-btn" id="backToHours">← كل الصلوات</button>
-      <h2 id="readerTitle"></h2>
-      <p id="readerDescription" class="muted"></p>
-      <div id="sections" class="section-list"></div>
-    </section>
+</main>
 
-  </main>
+<script type="module">
+import { supabase } from "./supabase.js";
 
-  <script type="module">
-    import { supabase } from "./supabase.js";
+const hoursBox = document.getElementById("hours");
+const statusBox = document.getElementById("status");
 
-    const statusBox = document.getElementById("status");
-    const hoursBox = document.getElementById("hours");
-    const reader = document.getElementById("reader");
-    const sectionsBox = document.getElementById("sections");
+async function init() {
+  const {data:{user},error:authError} =
+    await supabase.auth.getUser();
 
-    let hours = [];
+  if (authError || !user) {
+    location.href = "index.html";
+    return;
+  }
 
-    async function checkUser() {
-      const { data: { user }, error } = await supabase.auth.getUser();
+  const {data:profile,error:profileError} = await supabase
+    .from("profiles")
+    .select("role,approval_status")
+    .eq("id",user.id)
+    .single();
 
-      if (error || !user) {
-        location.href = "index.html";
-        return false;
-      }
+  if (profileError || !profile ||
+      (profile.role !== "admin" &&
+       profile.approval_status !== "approved")) {
+    statusBox.textContent = "ليس لديك صلاحية الدخول.";
+    return;
+  }
 
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("role, approval_status")
-        .eq("id", user.id)
-        .single();
+  const {data,error} = await supabase
+    .from("agpeya_hours")
+    .select("id,title,description,sort_order,source_url")
+    .order("sort_order");
 
-      if (profileError || !profile ||
-          (profile.approval_status !== "approved" &&
-           profile.role !== "admin")) {
-        statusBox.textContent = "ليس لديك صلاحية لعرض الأجبية.";
-        return false;
-      }
+  if (error) {
+    statusBox.textContent = "حدث خطأ: " + error.message;
+    return;
+  }
 
-      return true;
+  if (!data || data.length === 0) {
+    statusBox.textContent = "لا توجد صلوات.";
+    return;
+  }
+
+  statusBox.remove();
+
+  data.forEach(hour => {
+    const card = document.createElement("article");
+    card.className = "hour-card";
+
+    const title = document.createElement("h3");
+    title.textContent = "📖 " + hour.title;
+
+    const description = document.createElement("p");
+    description.textContent = hour.description || "";
+
+    const link = document.createElement("a");
+    link.className = "btn";
+    link.textContent = "قراءة الصلاة ←";
+    link.href = hour.source_url || "#";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+
+    if (!hour.source_url) {
+      link.textContent = "المصدر غير متاح";
+      link.removeAttribute("href");
     }
 
-    async function loadHours() {
-      const { data, error } = await supabase
-        .from("agpeya_hours")
-        .select("*")
-        .order("sort_order");
+    card.append(title,description,link);
+    hoursBox.appendChild(card);
+  });
+}
 
-      if (error) {
-        statusBox.textContent = "حدث خطأ أثناء تحميل الصلوات: " + error.message;
-        return;
-      }
-
-      hours = data || [];
-      statusBox.classList.add("hidden");
-      hoursBox.innerHTML = "";
-
-      if (!hours.length) {
-        statusBox.classList.remove("hidden");
-        statusBox.textContent = "لا توجد صلوات مضافة حتى الآن.";
-        return;
-      }
-
-      hours.forEach(hour => {
-        const card = document.createElement("article");
-        card.className = "hour-card";
-
-        const title = document.createElement("h3");
-        title.textContent = "📖 " + hour.title;
-
-        const description = document.createElement("p");
-        description.textContent = hour.description || "";
-
-        const link = document.createElement("small");
-        link.textContent = "عرض الصلاة ←";
-
-        card.append(title, description, link);
-        card.addEventListener("click", () => openHour(hour));
-        hoursBox.appendChild(card);
-      });
-    }
-
-    async function openHour(hour) {
-      hoursBox.classList.add("hidden");
-      reader.style.display = "block";
-
-      document.getElementById("readerTitle").textContent = hour.title;
-      document.getElementById("readerDescription").textContent =
-        hour.description || "";
-
-      sectionsBox.innerHTML = '<div class="status">جاري تحميل أجزاء الصلاة...</div>';
-
-      const { data, error } = await supabase
-        .from("agpeya_sections")
-        .select("*")
-        .eq("hour_id", hour.id)
-        .order("sort_order");
-
-      if (error) {
-        sectionsBox.textContent = "حدث خطأ: " + error.message;
-        return;
-      }
-
-      sectionsBox.innerHTML = "";
-
-      if (!data || data.length === 0) {
-        sectionsBox.innerHTML =
-          '<div class="status">لم نضف نصوص هذه الصلاة بعد. سنضيفها في المرحلة القادمة.</div>';
-        return;
-      }
-
-      data.forEach(section => {
-        const item = document.createElement("article");
-        item.className = "section-item";
-
-        const title = document.createElement("h3");
-        title.textContent = section.title;
-
-        const content = document.createElement("div");
-        content.className = "section-content";
-        content.textContent = section.content;
-
-        const duration = document.createElement("small");
-        duration.className = "muted";
-        duration.textContent =
-          "الوقت التقديري للقراءة: " + section.estimated_minutes + " دقيقة";
-
-        item.append(title, content, duration);
-        sectionsBox.appendChild(item);
-      });
-    }
-
-    document.getElementById("backToHours").addEventListener("click", () => {
-      reader.style.display = "none";
-      hoursBox.classList.remove("hidden");
-    });
-
-    const allowed = await checkUser();
-
-    if (allowed) {
-      await loadHours();
-    }
-  </script>
+init();
+</script>
 </body>
 </html>
