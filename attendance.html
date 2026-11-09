@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الحضور والغياب | شبابنا</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}
+header{padding:16px max(18px,calc((100% - 1000px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#11182a;border-bottom:1px solid #30394d}
+main{max-width:1000px;margin:30px auto;padding:15px}.panel,.person{background:#171f31;border:1px solid #30394d;border-radius:15px;padding:20px;margin-bottom:15px}
+p{color:#b9c5dc;line-height:1.8}label{display:block;margin-top:12px}
+input,select{width:100%;padding:12px;border-radius:9px;border:1px solid #46536d;background:#101827;color:white;font-size:15px;margin-top:7px}
+button,a{padding:11px 16px;border:0;border-radius:9px;background:#405b9b;color:white;text-decoration:none;cursor:pointer;font-weight:bold}
+button:disabled{opacity:.5}.primary{background:#23865b}
+.person{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.person strong{display:block;margin-bottom:6px}.person select{width:auto;min-width:145px}
+#message{min-height:25px;color:#ffd36a}
+</style>
+</head>
+<body>
+<header><h2>📋 الحضور والغياب</h2><nav><a href="servant.html">لوحة الخادم</a> <button id="logout">خروج</button></nav></header>
+<main>
+<section class="panel">
+<h1>تسجيل لقاء جديد</h1>
+<label>المجموعة</label><select id="group"><option value="">اختار المجموعة</option></select>
+<label>عنوان اللقاء</label><input id="title" maxlength="120" placeholder="مثال: اجتماع يوم الجمعة">
+<label>تاريخ اللقاء</label><input id="date" type="date">
+<button class="primary" id="create">إنشاء اللقاء</button>
+<p id="message">جاري التحقق من الحساب...</p>
+</section>
+<section class="panel">
+<h2>سجل الحضور</h2>
+<label>اختار اللقاء</label><select id="session"><option value="">اختار المجموعة أولًا</option></select>
+<div id="attendanceList"></div>
+</section>
+</main>
+<script type="module">
+import{supabase}from"./supabase.js";
+const $=id=>document.getElementById(id);
+let user,profile,groups=[],members=[],sessions=[];
+const today=new Date();$("date").value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,"0"),String(today.getDate()).padStart(2,"0")].join("-");
+function say(t){$("message").textContent=t}
+async function init(){
+ const{data:{user:u}}=await supabase.auth.getUser();
+ if(!u){location.replace("account.html");return}user=u;
+ const{data:p,error}=await supabase.from("profiles").select("id,role,approval_status").eq("id",u.id).maybeSingle();
+ if(error||!p||p.approval_status!=="approved"||!["servant","admin"].includes(p.role)){location.replace("account.html");return}profile=p;
+ const{data:as,error:ae}=await supabase.from("servant_group_assignments").select("group_id").eq("servant_id",u.id);
+ if(ae){say(ae.message);return}
+ const ids=[...new Set((as||[]).map(x=>x.group_id))];
+ let q=supabase.from("ministry_groups").select("id,name").order("name");
+ if(p.role!=="admin")q=q.in("id",ids);
+ const{data:g,error:ge}=await q;
+ if(ge){say(ge.message);return}groups=g||[];
+ groups.forEach(g=>$("group").add(new Option(g.name,g.id)));
+ say("تم التحقق من الحساب.");
+}
+async function loadSessions(){
+ const gid=$("group").value;
+ $("session").replaceChildren(new Option("اختار اللقاء",""));
+ $("attendanceList").replaceChildren();
+ if(!gid)return;
+ const{data,error}=await supabase.from("attendance_sessions").select("id,title,session_date,group_id,is_open").eq("group_id",gid).order("session_date",{ascending:false}).limit(50);
+ if(error){say("تعذر تحميل اللقاءات: "+error.message);return}
+ sessions=data||[];
+ sessions.forEach(s=>$("session").add(new Option((s.title||"لقاء")+" • "+(s.session_date||""),s.id)));
+ say("تم تحميل اللقاءات.");
+}
+async function createSession(){
+ const groupId=$("group").value,title=$("title").value.trim(),date=$("date").value;
+ if(!groupId||!title||!date){say("اختار المجموعة واكتب عنوان اللقاء والتاريخ.");return}
+ $("create").disabled=true;say("جاري إنشاء اللقاء...");
+ const{data,error}=await supabase.from("attendance_sessions").insert({
+  group_id:groupId,title,session_date:date,created_by:user.id,is_open:true
+ }).select("id").single();
+ $("create").disabled=false;
+ if(error){say("تعذر إنشاء اللقاء: "+error.message);return}
+ $("title").value="";await loadSessions();$("session").value=data.id;await loadAttendance();say("تم إنشاء اللقاء.");
+}
+async function loadAttendance(){
+ const sessionId=$("session").value,gid=$("group").value;
+ const box=$("attendanceList");box.replaceChildren();
+ if(!sessionId||!gid)return;
+ const{data:m,error:me}=await supabase.from("profiles").select("id,full_name").eq("role","member").eq("approval_status","approved").eq("group_id",gid).order("full_name");
+ if(me){say("تعذر تحميل الأعضاء: "+me.message);return}
+ members=m||[];
+ const{data:r,error:re}=await supabase.from("attendance_records").select("member_id,status").eq("session_id",sessionId);
+ if(re){say("تعذر تحميل الحضور: "+re.message);return}
+ const records=new Map((r||[]).map(x=>[x.member_id,x.status]));
+ if(!members.length){box.textContent="لا يوجد مخدومون في المجموعة.";return}
+ members.forEach(member=>{
+  const row=document.createElement("div");row.className="person";
+  const info=document.createElement("div");
+  const name=document.createElement("strong");name.textContent=member.full_name||"بدون اسم";
+  const current=document.createElement("small");current.textContent="الحالة الحالية: "+(records.get(member.id)||"لم يتم التسجيل");
+  info.append(name,current);
+  const select=document.createElement("select");
+  [["present","حاضر"],["absent","غائب"],["late","متأخر"],["excused","معتذر"]].forEach(([v,l])=>select.add(new Option(l,v)));
+  select.value=records.get(member.id)||"absent";
+  const save=document.createElement("button");save.textContent="حفظ";
+  save.addEventListener("click",async()=>{
+   save.disabled=true;
+   const{error}=await supabase.from("attendance_records").upsert({
+    session_id:sessionId,member_id:member.id,status:select.value,
+    marked_by:user.id,check_in_method:"manual"
+   },{onConflict:"session_id,member_id"});
+   save.disabled=false;
+   if(error){say("تعذر حفظ حضور "+(member.full_name||"المخدوم")+": "+error.message);return}
+   current.textContent="الحالة الحالية: "+({present:"حاضر",absent:"غائب",late:"متأخر",excused:"معتذر"}[select.value]);
+   say("تم حفظ حضور "+(member.full_name||"المخدوم")+".");
+  });
+  row.append(info,select,save);box.append(row);
+ });
+ say("تم تحميل قائمة الحضور.");
+}
+$("group").addEventListener("change",loadSessions);
+$("session").addEventListener("change",loadAttendance);
+$("create").addEventListener("click",createSession);
+$("logout").addEventListener("click",async()=>{await supabase.auth.signOut();location.replace("account.html")});
+init();
+</script>
+</body>
+</html>
