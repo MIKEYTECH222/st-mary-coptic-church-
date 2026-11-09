@@ -1,202 +1,44 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101521">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مراجعة الامتحانات | شبابنا</title>
+<link rel="stylesheet" href="./style.css">
+<style>
+.review-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.review-tools{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:12px;align-items:end}
+.review-attempt{margin-top:18px;padding:20px;border:1px solid var(--border);border-radius:18px;background:var(--surface)}
+.review-q{padding:18px;margin-top:14px;border:1px solid var(--border);border-radius:15px;background:var(--surface-2)}
+.review-options{display:grid;gap:7px;margin-block:12px}
+.review-option{padding:10px 12px;border:1px solid var(--border);border-radius:10px}
+.review-option.chosen{border-color:var(--primary);background:rgba(135,149,255,.12)}
+.review-option.correct{border-color:var(--success)}
+.presence{margin-top:14px;padding:12px 14px;border-radius:12px;background:rgba(255,190,90,.09);border:1px solid rgba(255,190,90,.3);line-height:1.8}
+.presence.active{border-color:rgba(85,214,160,.35);background:rgba(85,214,160,.08)}
+.review-save{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-top:14px}
+.review-save label{flex:1;min-width:180px}.review-meta{color:var(--muted);font-size:13px}
 
-  <title>مراجعة الامتحانات | شبابنا</title>
-
-  <link rel="stylesheet" href="./style.css">
-
-  <style>
-    .review-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .review-tools {
-      display: grid;
-      grid-template-columns: minmax(220px, 1fr) auto;
-      gap: 12px;
-      align-items: end;
-    }
-
-    .review-attempt {
-      margin-top: 18px;
-      padding: 20px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: var(--surface);
-    }
-
-    .review-q {
-      padding: 18px;
-      margin-top: 14px;
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      background: var(--surface-2);
-    }
-
-    .review-options {
-      display: grid;
-      gap: 7px;
-      margin-block: 12px;
-    }
-
-    .review-option {
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-    }
-
-    .review-option.chosen {
-      border-color: var(--primary);
-      background: rgba(135, 149, 255, .12);
-    }
-
-    .review-option.correct {
-      border-color: var(--success);
-    }
-
-    .presence {
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: rgba(255,190,90,.09);
-      border: 1px solid rgba(255,190,90,.3);
-      line-height: 1.8;
-    }
-
-    .presence.active {
-      border-color: rgba(85,214,160,.35);
-      background: rgba(85,214,160,.08);
-    }
-
-    .review-save {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: end;
-      margin-top: 14px;
-    }
-
-    .review-save label {
-      flex: 1;
-      min-width: 180px;
-    }
-
-    .review-meta {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    @media(max-width:650px) {
-      .review-tools {
-        grid-template-columns: 1fr;
-      }
-
-      .review-attempt,
-      .review-q {
-        padding: 14px;
-      }
-    }
-  </style>
+.review-attempt{margin-top:18px;padding:20px;border:1px solid var(--border);border-radius:18px;background:var(--surface)}
+.review-q{padding:18px;margin-top:14px;border:1px solid var(--border);border-radius:15px;background:var(--surface-2)}
+.review-options{display:grid;gap:7px;margin-block:12px}
+.review-option{padding:10px 12px;border:1px solid var(--border);border-radius:10px}
+.review-option.chosen{border-color:var(--primary);background:rgba(135,149,255,.12)}
+.review-option.correct{border-color:var(--success)}
+.presence{margin-top:14px;padding:12px 14px;border-radius:12px;background:rgba(255,190,90,.09);border:1px solid rgba(255,190,90,.3);line-height:1.8}
+.presence.active{border-color:rgba(85,214,160,.35);background:rgba(85,214,160,.08)}
+.review-save{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-top:14px}
+.review-save label{flex:1;min-width:180px}.review-meta{color:var(--muted);font-size:13px}
+@media(max-width:650px){.review-tools{grid-template-columns:1fr}.review-attempt,.review-q{padding:14px}}
+</style>
 </head>
-
-<body>
-
-<div class="wrap">
-
-  <nav class="glass">
-
-    <a class="brand" href="./index.html#dashboard">
-      شبابنا
-    </a>
-
-    <div class="nav-actions">
-
-      <a class="button" href="./index.html#dashboard">
-        العودة للموقع
-      </a>
-
-      <button id="logoutBtn" type="button">
-        تسجيل الخروج
-      </button>
-
-    </div>
-
-  </nav>
-
-  <main>
-
-    <section class="panel glass">
-
-      <div class="review-head">
-
-        <div>
-          <h1>مراجعة الامتحانات</h1>
-
-          <p class="muted">
-            راجع إجابات الطلاب، وأعد تصحيح الأسئلة،
-            وتابع أوقات خروج وعودة كل طالب.
-          </p>
-        </div>
-
-        <span id="roleBadge" class="demo-label">
-          التحقق من الصلاحية...
-        </span>
-
-      </div>
-
-      <div class="review-tools">
-
-        <div>
-
-          <label for="quizSelect">
-            اختر الامتحان
-          </label>
-
-          <select id="quizSelect">
-            <option value="">جاري تحميل الامتحانات...</option>
-          </select>
-
-        </div>
-
-        <button
-          id="loadReviewBtn"
-          class="primary"
-          type="button"
-        >
-          عرض المحاولات
-        </button>
-
-      </div>
-
-      <p
-        id="pageMessage"
-        class="status"
-        role="status"
-      >
-        جاري التحقق من الحساب...
-      </p>
-
-      <div id="attemptsList" class="list"></div>
-
-    </section>
-
-  </main>
-
-</div>
-
-<footer>
-  خدمة الشباب • مراجعة الامتحانات
-</footer>
-
+<body><div class="wrap">
+<nav class="glass"><a class="brand" href="./index.html#dashboard">شبابنا</a><div class="nav-actions"><a class="button" href="./index.html#dashboard">العودة للموقع</a><a class="button" href="./essay-review.html">مراجعة المقالي</a><button id="logoutBtn" type="button">تسجيل الخروج</button></div></nav>
+<main><section class="panel glass">
+<div class="review-head"><div><h1>مراجعة الامتحانات</h1><p class="muted">راجع إجابات الطلاب وتابع أوقات الخروج والعودة.</p></div><span id="roleBadge" class="demo-label">التحقق من الصلاحية...</span></div>
+<div class="review-tools"><div><label for="quizSelect">اختر الامتحان</label><select id="quizSelect"><option value="">جاري تحميل الامتحانات...</option></select></div><button id="loadReviewBtn" class="primary" type="button">عرض المحاولات</button></div>
+<p id="pageMessage" class="status" role="status">جاري التحقق من الحساب...</p><div id="attemptsList" class="list"></div>
+</section></main></div>
+<footer>خدمة الشباب • مراجعة الامتحانات</footer>
 <script type="module" src="./exam-review.js"></script>
-
-</body>
-</html>
+<script src="./install.js"></script>
+</body></html>
