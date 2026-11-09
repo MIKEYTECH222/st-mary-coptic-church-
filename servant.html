@@ -8,6 +8,7 @@
 
 <style>
 *{box-sizing:border-box}
+
 :root{
   --bg:#080b16;
   --card:rgba(23,30,49,.85);
@@ -16,6 +17,7 @@
   --muted:#aab4cc;
   --accent:#8795ff;
 }
+
 body{
   margin:0;
   min-height:100vh;
@@ -26,59 +28,127 @@ body{
     radial-gradient(ellipse at 90% 20%,#17294a 0%,transparent 35%),
     var(--bg);
 }
+
 header{
-  position:sticky;top:0;z-index:5;
-  display:flex;justify-content:space-between;
-  align-items:center;gap:12px;flex-wrap:wrap;
+  position:sticky;
+  top:0;
+  z-index:5;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
   padding:16px max(20px,calc((100% - 1100px)/2));
   background:rgba(8,11,22,.88);
   border-bottom:1px solid var(--border);
   backdrop-filter:blur(18px);
 }
-header h2{margin:0;font-size:20px}
-button,a{
-  border:0;border-radius:12px;
-  padding:11px 17px;
-  color:white;text-decoration:none;
-  cursor:pointer;font-weight:bold;
+
+header h2{
+  margin:0;
+  font-size:20px;
 }
+
+button,a{
+  border:0;
+  border-radius:12px;
+  padding:11px 17px;
+  color:white;
+  text-decoration:none;
+  cursor:pointer;
+  font-weight:bold;
+}
+
 button{background:#d94d61}
-main{width:min(1100px,calc(100% - 30px));margin:35px auto}
+
+main{
+  width:min(1100px,calc(100% - 30px));
+  margin:35px auto;
+}
+
 .welcome{
-  padding:28px;border:1px solid var(--border);
+  padding:28px;
+  border:1px solid var(--border);
   border-radius:24px;
   background:linear-gradient(125deg,rgba(49,67,130,.8),rgba(28,39,72,.75));
   margin-bottom:30px;
 }
-.welcome h1{margin:0 0 12px;font-size:clamp(25px,5vw,35px)}
-.welcome p{color:#d0d8f0;line-height:1.8}
-.section-title{margin:25px 0 18px;font-size:23px}
+
+.welcome h1{
+  margin:0 0 12px;
+  font-size:clamp(25px,5vw,35px);
+}
+
+.welcome p{
+  color:#d0d8f0;
+  line-height:1.8;
+}
+
+.section-title{
+  margin:30px 0 18px;
+  font-size:23px;
+}
+
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:17px;
 }
+
 .item{
-  display:block;min-height:165px;padding:23px;
+  display:block;
+  min-height:165px;
+  padding:23px;
   border:1px solid var(--border);
-  border-radius:19px;background:var(--card);
-  color:var(--text);text-decoration:none;
-  transition:.22s;backdrop-filter:blur(12px);
+  border-radius:19px;
+  background:var(--card);
+  color:var(--text);
+  text-decoration:none;
+  transition:.22s;
+  backdrop-filter:blur(12px);
 }
+
 .item:hover{
   transform:translateY(-5px);
   border-color:var(--accent);
   background:rgba(43,54,88,.9);
 }
-.emoji{display:block;font-size:30px;margin-bottom:15px}
-.item h3{margin:0 0 9px;color:#b7c4ff;font-size:18px}
-.item p{margin:0;color:var(--muted);line-height:1.7;font-size:14px}
-#status{
-  margin-top:25px;padding:13px 16px;
-  border:1px solid var(--border);border-radius:12px;
-  color:var(--muted);line-height:1.7;
+
+.emoji{
+  display:block;
+  font-size:30px;
+  margin-bottom:15px;
 }
-footer{text-align:center;color:#7f8aa5;padding:35px 15px;font-size:13px}
+
+.item h3{
+  margin:0 0 9px;
+  color:#b7c4ff;
+  font-size:18px;
+}
+
+.item p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.7;
+  font-size:14px;
+}
+
+#status{
+  margin-top:25px;
+  padding:13px 16px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:var(--muted);
+  line-height:1.7;
+}
+
+footer{
+  text-align:center;
+  color:#7f8aa5;
+  padding:35px 15px;
+  font-size:13px;
+}
+
 @media(max-width:550px){
   main{margin-top:20px}
   .welcome{padding:22px}
@@ -99,13 +169,14 @@ footer{text-align:center;color:#7f8aa5;padding:35px 15px;font-size:13px}
 
 <section class="welcome">
   <h1>أهلاً يا خادم <span id="servantName">...</span> 👋</h1>
-  <p>من هنا تقدر تتابع مجموعتك وتدير أنشطتها.</p>
+  <p>من هنا تقدر تتابع مجموعاتك وتدير أنشطتها.</p>
   <p>المجموعات المسندة إليك: <strong id="groupName">جاري التحميل...</strong></p>
 </section>
 
 <h2 class="section-title">إدارة المخدومين</h2>
 
 <section class="grid">
+
   <a class="item" href="members.html">
     <span class="emoji">👥</span>
     <h3>أعضاء المجموعة</h3>
@@ -115,19 +186,27 @@ footer{text-align:center;color:#7f8aa5;padding:35px 15px;font-size:13px}
   <a class="item" href="attendance.html">
     <span class="emoji">📋</span>
     <h3>الحضور والغياب</h3>
-    <p>تسجيل حضور المخدومين ومتابعة الغياب.</p>
+    <p>تسجيل حضور المخدومين ومتابعة الغياب ومكافأة الحضور.</p>
   </a>
 
   <a class="item" href="points.html">
     <span class="emoji">⭐</span>
     <h3>إدارة النقاط</h3>
-    <p>إضافة نقاط للمخدومين ومتابعة رصيدهم.</p>
+    <p>إضافة نقاط للمخدومين أو خصمها ومتابعة رصيدهم.</p>
   </a>
+
+  <a class="item" href="notifications.html">
+    <span class="emoji">🔔</span>
+    <h3>الإشعارات</h3>
+    <p>متابعة تنبيهات غياب المخدومين والإشعارات الجديدة.</p>
+  </a>
+
 </section>
 
 <h2 class="section-title">المحتوى والخدمة</h2>
 
 <section class="grid">
+
   <a class="item" href="questions.html">
     <span class="emoji">💬</span>
     <h3>صندوق الأسئلة</h3>
@@ -157,6 +236,7 @@ footer{text-align:center;color:#7f8aa5;padding:35px 15px;font-size:13px}
     <h3>الكتاب المقدس</h3>
     <p>متابعة المحتوى والأسئلة المتعلقة بالكتاب المقدس.</p>
   </a>
+
 </section>
 
 <p id="status">جاري التحقق من صلاحيات الحساب...</p>
@@ -172,6 +252,7 @@ const $ = id => document.getElementById(id);
 const status = $("status");
 
 async function loadDashboard(){
+
   const {data:{user},error:authError} = await supabase.auth.getUser();
 
   if(authError || !user){
@@ -214,14 +295,18 @@ async function loadDashboard(){
     $("groupName").textContent =
       assignments?.length
         ? `عدد المجموعات: ${assignments.length}`
-        : "لم يتم تعيين مجموعة";
+        : profile.role === "admin"
+          ? "جميع المجموعات"
+          : "لم يتم تعيين مجموعة";
   }
 
   status.textContent = "تم التحقق من الحساب بنجاح.";
 }
 
 $("logoutBtn").addEventListener("click",async()=>{
+
   $("logoutBtn").disabled = true;
+
   const {error} = await supabase.auth.signOut();
 
   if(error){
