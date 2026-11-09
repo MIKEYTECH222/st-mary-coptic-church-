@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>إنشاء الامتحانات | شبابنا</title>
+<link rel="stylesheet" href="./style.css">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}.wrap{max-width:1000px;margin:auto;padding:16px}
+.panel,.qcard{background:#141d31;border:1px solid #ffffff18;border-radius:17px;padding:19px;margin-bottom:15px}
+nav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+a,button{border:1px solid #ffffff20;border-radius:11px;padding:10px 15px;background:#2b4276;color:white;text-decoration:none;cursor:pointer;font:inherit}
+input,textarea,select{width:100%;padding:11px;border-radius:10px;border:1px solid #46536d;background:#0c1424;color:white;margin:6px 0 12px;font:inherit}
+label{display:block;color:#cbd5e1;font-size:14px}textarea{min-height:85px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.muted{color:#aebbd3;line-height:1.8}
+#message{min-height:25px;color:#ffd36a}.qcard h3{color:#c4ceff;margin-top:0}
+.qitem{background:#1b2944;border-radius:12px;padding:12px;margin-top:10px}
+.primary{background:#385da5}.remove{background:#7c3345}
+@media(max-width:650px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body><main class="wrap">
+<nav><strong>📝 إنشاء الامتحانات</strong><a href="servant.html">لوحة الخادم</a></nav>
+<section class="panel">
+<h1>إنشاء امتحان جديد</h1>
+<p class="muted">تقدر تضيف أسئلة اختيار من متعدد أو أسئلة مقالية. في السؤال المقالي اكتب الإجابة النموذجية، والموقع يقارنها بإجابة الطالب كتقدير مبدئي، لكن الدرجة لا تعتمد إلا بعد مراجعة الخادم أو الأدمن.</p>
+<form id="quizForm">
+<div class="grid">
+<label>اسم الامتحان<input id="quizTitle" required maxlength="140"></label>
+<label>المجموعة<select id="groupId" required></select></label>
+<label>وصف الامتحان<input id="quizDescription"></label>
+<label>نقاط الامتحان الكلية<input id="pointsReward" type="number" min="0" max="1000" value="20"></label>
+</div>
+<label><input id="publish" type="checkbox" style="width:auto"> نشر الامتحان بعد الحفظ</label>
+<hr style="border-color:#ffffff18;margin:18px 0">
+<h2>إضافة سؤال</h2>
+<label>نوع السؤال<select id="questionType"><option value="mcq">اختيار من متعدد</option><option value="essay">مقالي</option></select></label>
+<label>نص السؤال<textarea id="questionText" required></textarea></label>
+<div id="mcqFields">
+<label>الاختيارات (كل اختيار في سطر مستقل)<textarea id="optionsText" placeholder="الاختيار الأول&#10;الاختيار الثاني&#10;الاختيار الثالث&#10;الاختيار الرابع"></textarea></label>
+<label>رقم الإجابة الصحيحة<select id="correctOption"><option value="0">الاختيار الأول</option><option value="1">الاختيار الثاني</option><option value="2">الاختيار الثالث</option><option value="3">الاختيار الرابع</option></select></label>
+</div>
+<div id="essayFields" style="display:none">
+<label>الإجابة النموذجية<textarea id="expectedAnswer" placeholder="اكتب الإجابة المطلوبة التي سيقارن الموقع بها إجابة الطالب"></textarea></label>
+</div>
+<label>درجة السؤال<input id="maxPoints" type="number" min="1" max="100" value="1"></label>
+<button type="button" id="addQuestion" class="primary">إضافة السؤال للقائمة</button>
+</form>
+</section>
+<section class="panel">
+<h2>أسئلة الامتحان</h2><div id="questionList"><p class="muted">لم تضف أسئلة بعد.</p></div>
+<button id="saveQuiz" class="primary" type="button">حفظ الامتحان</button>
+<p id="message" role="status"></p>
+</section>
+</main>
+<script type="module">
+import{supabase}from"./supabase.js";
+const $=id=>document.getElementById(id);
+let user,profile,groups=[],questions=[];
+function say(t){$("message").textContent=t;}
+async function init(){
+ const{data:{user:u},error:ae}=await supabase.auth.getUser();if(ae||!u){location.replace("account.html");return;}user=u;
+ const{data:p,error}=await supabase.from("profiles").select("role,approval_status").eq("id",u.id).maybeSingle();
+ if(error||!p||p.approval_status!=="approved"||!["admin","servant"].includes(p.role)){say("الصفحة للخدام والأدمن المعتمدين فقط.");return;}profile=p;
+ const{data:as,error:ase}=await supabase.from("servant_group_assignments").select("group_id").eq("servant_id",u.id);
+ if(ase){say(ase.message);return;}
+ const ids=(as||[]).map(x=>x.group_id);
+ let q=supabase.from("ministry_groups").select("id,name").order("name");
+ if(p.role!=="admin"){if(!ids.length){say("لم يتم تعيين مجموعات لحسابك.");return;}q=q.in("id",ids);}
+ const{data:g,error:ge}=await q;if(ge){say(ge.message);return;}groups=g||[];
+ $("groupId").replaceChildren();
+ if(p.role==="admin")$("groupId").add(new Option("كل المجموعات",""));
+ groups.forEach(x=>$("groupId").add(new Option(x.name,x.id)));
+ if(p.role==="servant"&&groups.length===1)$("groupId").value=groups[0].id;
+}
+function renderQuestions(){
+ const box=$("questionList");box.replaceChildren();
+ if(!questions.length){box.textContent="لم تضف أسئلة بعد.";return;}
+ questions.forEach((q,i)=>{
+  const item=document.createElement("div");item.className="qitem";
+  const title=document.createElement("strong");title.textContent=`${i+1}. ${q.question_text}`;
+  const type=document.createElement("p");type.className="muted";type.textContent=(q.type==="essay"?"سؤال مقالي":"اختيار من متعدد")+" • "+q.max_points+" درجة";
+  const remove=document.createElement("button");remove.className="remove";remove.textContent="حذف";remove.addEventListener("click",()=>{questions.splice(i,1);renderQuestions();});
+  item.append(title,type,remove);box.append(item);
+ });
+}
+$("questionType").addEventListener("change",()=>{
+ const essay=$("questionType").value==="essay";
+ $("mcqFields").style.display=essay?"none":"block";$("essayFields").style.display=essay?"block":"none";
+});
+$("addQuestion").addEventListener("click",()=>{
+ const type=$("questionType").value,text=$("questionText").value.trim(),points=Number($("maxPoints").value);
+ if(!text){say("اكتب نص السؤال.");return;}
+ if(!Number.isInteger(points)||points<1||points>100){say("درجة السؤال من 1 إلى 100.");return;}
+ const q={type,question_text:text,max_points:points,options:[],correct_option:0,expected_answer:""};
+ if(type==="mcq"){
+  q.options=$("optionsText").value.split("\n").map(x=>x.trim()).filter(Boolean);
+  q.correct_option=Number($("correctOption").value);
+  if(q.options.length<2||q.correct_option>=q.options.length){say("اكتب اختيارين على الأقل وحدد إجابة صحيحة موجودة.");return;}
+ }else{
+  q.expected_answer=$("expectedAnswer").value.trim();
+  if(!q.expected_answer){say("اكتب الإجابة النموذجية للسؤال المقالي.");return;}
+ }
+ questions.push(q);$("questionText").value="";$("optionsText").value="";$("expectedAnswer").value="";
+ renderQuestions();say("تمت إضافة السؤال.");
+});
+$("saveQuiz").addEventListener("click",async()=>{
+ if(!profile)return;
+ if(!$("quizTitle").value.trim()){say("اكتب اسم الامتحان.");return;}
+ if(!questions.length){say("أضف سؤالًا واحدًا على الأقل.");return;}
+ if(profile.role==="servant"&&!$("groupId").value){say("اختار المجموعة.");return;}
+ const btn=$("saveQuiz");btn.disabled=true;say("جاري حفظ الامتحان...");
+ const{data,error}=await supabase.rpc("create_quiz_with_questions",{
+  p_title:$("quizTitle").value.trim(),
+  p_description:$("quizDescription").value.trim(),
+  p_group_id:$("groupId").value||null,
+  p_points_reward:Number($("pointsReward").value)||0,
+  p_is_published:$("publish").checked,
+  p_questions:questions
+ });
+ btn.disabled=false;
+ if(error){say("فشل الحفظ: "+error.message);return;}
+ say("تم إنشاء الامتحان بنجاح. رقم الامتحان: "+data);
+ $("quizForm").reset();questions=[];renderQuestions();
+});
+await init();
+</script>
+<script src="./install.js"></script>
+</body></html>

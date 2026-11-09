@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مراجعة الأسئلة المقالية | شبابنا</title>
+<link rel="stylesheet" href="./style.css">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}.wrap{max-width:1000px;margin:auto;padding:16px}
+nav,.panel,.attempt,.essay{background:#141d31;border:1px solid #ffffff18;border-radius:17px;padding:18px;margin-bottom:15px}
+nav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+a,button{border:1px solid #ffffff20;border-radius:11px;padding:10px 15px;background:#2b4276;color:white;text-decoration:none;cursor:pointer;font:inherit}
+button:disabled{opacity:.5}
+select,input{width:100%;padding:11px;border-radius:10px;border:1px solid #46536d;background:#0c1424;color:white;margin:7px 0 12px;font:inherit}
+label{display:block;color:#cbd5e1}
+.muted{color:#aebbd3;line-height:1.8}.answer{white-space:pre-wrap;background:#0b1323;border-radius:12px;padding:13px;line-height:1.9}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#message{min-height:24px;color:#ffd36a}
+.essay h3{color:#c4ceff}
+.primary{background:#385da5}
+@media(max-width:650px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body><main class="wrap">
+<nav><strong>✍️ مراجعة الأسئلة المقالية</strong><a href="servant.html">لوحة الخادم</a></nav>
+<section class="panel">
+<h1>مراجعة إجابات الطلاب</h1>
+<p class="muted">الموقع يعرض مقارنة نصية واقتراح درجة فقط. الخادم أو الأدمن يحدد الدرجة النهائية ويعتمدها يدويًا.</p>
+<label>اختار الامتحان<select id="quizSelect"><option value="">جاري التحميل...</option></select></label>
+<button id="loadBtn" class="primary">تحميل الإجابات</button>
+<p id="message" role="status"></p>
+</section>
+<section id="attempts"></section>
+</main>
+<script type="module" src="./essay-review.js"></script>
+<script src="./install.js"></script>
+</body></html>

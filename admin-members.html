@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>إدارة الأعضاء | شبابنا</title>
+<link rel="stylesheet" href="./style.css">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}
+header{padding:16px max(18px,calc((100% - 1100px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#10182a;border-bottom:1px solid #ffffff18}
+main{max-width:1100px;margin:28px auto;padding:0 14px}
+.panel,.member{background:#141d31;border:1px solid #ffffff18;border-radius:17px;padding:18px;margin-bottom:15px}
+h1{margin-top:0}p{color:#aebbd3;line-height:1.8}
+a,button{display:inline-block;border:1px solid #ffffff20;border-radius:11px;padding:10px 15px;background:#293d6b;color:white;text-decoration:none;cursor:pointer;font:inherit}
+button:disabled{opacity:.5}
+input,select{width:100%;padding:11px;border-radius:10px;border:1px solid #46536d;background:#0c1424;color:white;margin-top:7px}
+label{display:block;color:#c7d2e9;font-size:14px}
+.filters,.stats,.controls{display:grid;gap:10px}
+.filters{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(3,1fr);margin:15px 0}
+.stat{background:#1b2944;padding:13px;border-radius:12px;color:#b9c8ff}.stat b{display:block;font-size:23px;margin-top:5px}
+.member{display:grid;grid-template-columns:1fr 2fr;gap:16px;align-items:center}
+.member h3{margin:0;color:#c4ceff}.controls{grid-template-columns:repeat(3,minmax(0,1fr)) auto;align-items:end}
+#message{min-height:25px;color:#ffd36a}
+@media(max-width:700px){.member{grid-template-columns:1fr}.controls,.filters{grid-template-columns:1fr 1fr}.controls button{grid-column:1/-1}.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><strong>👥 شبابنا | إدارة الأعضاء</strong><nav><a href="./admin.html">لوحة الأدمن</a> <button id="logout">خروج</button></nav></header>
+<main>
+<section class="panel">
+<h1>قبول الأعضاء وتحديد مجموعاتهم</h1>
+<p>راجع طلبات التسجيل، واقبل الحساب وحدد المجموعة والدور. التعديلات تحفظ مباشرة.</p>
+<div class="stats">
+<div class="stat">كل الحسابات<b id="allCount">—</b></div>
+<div class="stat">طلبات معلقة<b id="pendingCount">—</b></div>
+<div class="stat">حسابات مقبولة<b id="approvedCount">—</b></div>
+</div>
+<div class="filters">
+<label>الحالة<select id="filter"><option value="pending">طلبات معلقة</option><option value="all">كل الحسابات</option><option value="approved">مقبولة</option><option value="rejected">مرفوضة</option></select></label>
+<label>بحث بالاسم<input id="search" placeholder="اكتب اسم العضو"></label>
+</div>
+<p id="message" role="status">جاري التحميل...</p>
+</section>
+<section id="list"></section>
+</main>
+<script type="module">
+import {supabase} from "./supabase.js";
+const $=id=>document.getElementById(id);
+let profiles=[],groups=[],busy=false;
+const statusNames={pending:"معلق",approved:"مقبول",rejected:"مرفوض"};
+const roleNames={member:"مخدوم",servant:"خادم",admin:"أدمن"};
+function say(t){$("message").textContent=t;}
+function node(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;}
+async function init(){
+ const {data:{user},error:ae}=await supabase.auth.getUser();
+ if(ae||!user){location.replace("account.html");return;}
+ const {data:me,error:pe}=await supabase.from("profiles").select("role,approval_status").eq("id",user.id).maybeSingle();
+ if(pe||!me||me.role!=="admin"||me.approval_status!=="approved"){say("الصفحة للأدمن المعتمد فقط.");return;}
+ const [g,p]=await Promise.all([
+  supabase.from("ministry_groups").select("id,name").order("name"),
+  supabase.from("profiles").select("id,full_name,role,approval_status,points,group_id,created_at").order("created_at",{ascending:false})
+ ]);
+ if(g.error){say("خطأ المجموعات: "+g.error.message);return;}
+ if(p.error){say("خطأ الحسابات: "+p.error.message);return;}
+ groups=g.data||[];profiles=p.data||[];render();
+}
+function render(){
+ $("allCount").textContent=profiles.length;
+ $("pendingCount").textContent=profiles.filter(p=>p.approval_status==="pending").length;
+ $("approvedCount").textContent=profiles.filter(p=>p.approval_status==="approved").length;
+ const filter=$("filter").value,term=$("search").value.trim().toLowerCase();
+ const rows=profiles.filter(p=>(filter==="all"||p.approval_status===filter)&&(!term||(p.full_name||"").toLowerCase().includes(term)));
+ const list=$("list");list.replaceChildren();
+ if(!rows.length){list.append(node("p","", "لا توجد حسابات مطابقة."));return;}
+ rows.forEach(p=>{
+  const card=node("article","member"),info=node("div");
+  info.append(node("h3","",p.full_name||"بدون اسم"));
+  info.append(node("p","",`الحالة: ${statusNames[p.approval_status]||p.approval_status} • الدور: ${roleNames[p.role]||p.role} • النقاط: ${p.points??0}`));
+  card.append(info);
+  const controls=node("div","controls");
+  const role=node("select");role.setAttribute("aria-label","الدور");
+  role.add(new Option("مخدوم","member"));role.add(new Option("خادم","servant"));
+  if(p.role==="admin")role.add(new Option("أدمن","admin"));
+  role.value=p.role||"member";if(p.role==="admin")role.disabled=true;
+  const status=node("select");status.setAttribute("aria-label","حالة الحساب");
+  [["معلق","pending"],["مقبول","approved"],["مرفوض","rejected"]].forEach(x=>status.add(new Option(x[0],x[1])));
+  status.value=p.approval_status||"pending";
+  const group=node("select");group.setAttribute("aria-label","المجموعة");
+  group.add(new Option("بدون مجموعة",""));groups.forEach(g=>group.add(new Option(g.name,g.id)));group.value=p.group_id||"";
+  const save=node("button","","حفظ التعديلات");
+  save.addEventListener("click",async()=>{
+   if(busy)return;
+   if(p.role==="admin"&&role.value!=="admin"){say("لا يمكن تغيير رتبة الأدمن.");return;}
+   busy=true;save.disabled=true;say("جاري الحفظ...");
+   const {error}=await supabase.rpc("admin_update_member",{p_member_id:p.id,p_approval_status:status.value,p_role:role.value,p_group_id:group.value||null});
+   busy=false;save.disabled=false;
+   if(error){say("فشل الحفظ: "+error.message);return;}
+   say("تم حفظ الحساب والمجموعة.");await init();
+  });
+  controls.append(role,status,group,save);card.append(controls);list.append(card);
+ });
+ say("تم تحميل الحسابات.");
+}
+$("filter").addEventListener("change",render);$("search").addEventListener("input",render);
+$("logout").addEventListener("click",async()=>{await supabase.auth.signOut();location.replace("account.html");});
+await init();
+</script>
+<script src="./install.js"></script>
+</body>
+</html>
