@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -6,173 +7,456 @@
 <meta name="theme-color" content="#080b16">
 <title>أهدافي | شبابنا</title>
 <link rel="stylesheet" href="./style.css">
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}
+body{
+  margin:0;
+  background:#080b16;
+  color:#f4f6ff;
+  font-family:Arial,Tahoma,sans-serif
+}
 .wrap{max-width:950px;margin:auto;padding:16px}
-nav,.hero,.goal{background:#141d31;border:1px solid #ffffff18;border-radius:18px;padding:18px;margin-bottom:16px}
-nav{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
-a,button{display:inline-block;border:1px solid #ffffff20;border-radius:11px;padding:10px 15px;background:#344d83;color:white;text-decoration:none;cursor:pointer;font:inherit}
-button:disabled{opacity:.5}
-.hero{background:linear-gradient(130deg,#263b68,#141d31)}
+nav,.hero,.goal{
+  background:#141d31;
+  border:1px solid #ffffff18;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:16px
+}
+nav{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap
+}
+a,button{
+  display:inline-block;
+  border:1px solid #ffffff20;
+  border-radius:11px;
+  padding:11px 15px;
+  background:#344d83;
+  color:white;
+  text-decoration:none;
+  cursor:pointer;
+  font:inherit
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+.hero{
+  background:linear-gradient(130deg,#263b68,#141d31)
+}
 .muted{color:#aebbd3;line-height:1.9}
-.goal h2{margin:0 0 8px;color:#c4ceff}
-.meta{font-size:13px;color:#aebbd3}
-.done{border-color:#258d6a;background:#12372f}
-.doneTag{color:#75e0b2;font-weight:bold}
-.exam{margin-top:12px}
-.message{color:#ffd36a;min-height:24px;line-height:1.8}
+.goal h2{margin:0 0 10px;color:#c4ceff}
+.meta{font-size:13px;color:#aebbd3;line-height:1.9}
+.content{
+  background:#0c1424;
+  border:1px solid #ffffff16;
+  border-radius:14px;
+  padding:18px;
+  margin:15px 0;
+  line-height:2.1;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  color:#edf1ff
+}
+.timer{
+  background:#0c1424;
+  border:1px solid #ffffff18;
+  border-radius:14px;
+  padding:16px;
+  margin:15px 0;
+  text-align:center
+}
+.timer strong{
+  display:block;
+  font-size:30px;
+  color:#aebaff;
+  direction:ltr;
+  margin:8px
+}
+.timer small{color:#aebbd3}
+.primary{background:#536bd1}
+.success{background:#12372f;border-color:#258d6a}
+.warning{background:#49391c;border-color:#8a7135}
+.danger{background:#49252c;border-color:#8d4652}
+.status{
+  min-height:24px;
+  color:#ffd36a;
+  line-height:1.8;
+  margin-top:12px
+}
 .empty{text-align:center;padding:35px;color:#aebbd3}
-@media(max-width:600px){.wrap{padding:10px}}
+.exam{margin-top:12px}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:600px){
+  .wrap{padding:10px}
+  .content{padding:13px}
+  .timer strong{font-size:25px}
+  .actions button{width:100%}
+}
 </style>
 </head>
+
 <body>
 <main class="wrap">
 
 <nav>
-<strong>🎯 شبابنا | أهدافي</strong>
-<a href="dashboard.html">الرئيسية</a>
+  <strong>🎯 شبابنا | أهدافي</strong>
+  <a href="dashboard.html">الرئيسية</a>
 </nav>
 
 <section class="hero">
-<h1>أهداف الخدمة</h1>
-<p class="muted">
-تابع أهداف مجموعتك، واعرف المدة المطلوبة،
-وسجّل إتمام الهدف عندما تنتهي منه.
-</p>
+  <h1>أهداف الخدمة 🎯</h1>
+  <p class="muted">
+    هنا هتلاقي الأهداف المطلوبة منك. اقرأ المحتوى، وابدأ المؤقت،
+    وبعد الانتهاء سجّل إتمام الهدف.
+  </p>
 </section>
 
-<p class="message" id="message" role="status">جاري تحميل أهدافك...</p>
+<p class="status" id="message" role="status">جاري تحميل أهدافك...</p>
+
 <section id="goals"></section>
 
 </main>
 
 <script type="module">
-import{supabase}from'./supabase.js';
+import {supabase} from "./supabase.js";
 
 const $=id=>document.getElementById(id);
 
+let goals=[];
+let timerInterval=null;
+let busy=false;
+
 function esc(s){
-  return String(s??'').replace(/[&<>"']/g,c=>({
-    '&':'&amp;',
-    '<':'&lt;',
-    '>':'&gt;',
-    '"':'&quot;',
-    "'":'&#39;'
+  return String(s??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
   }[c]));
+}
+
+function formatTime(seconds){
+  seconds=Math.max(0,Math.floor(seconds));
+
+  const hours=Math.floor(seconds/3600);
+  const minutes=Math.floor((seconds%3600)/60);
+  const secs=seconds%60;
+
+  return [
+    String(hours).padStart(2,"0"),
+    String(minutes).padStart(2,"0"),
+    String(secs).padStart(2,"0")
+  ].join(":");
+}
+
+function elapsedFrom(startedAt){
+  if(!startedAt)return 0;
+
+  const start=new Date(startedAt).getTime();
+
+  if(!Number.isFinite(start))return 0;
+
+  return Math.max(0,Math.floor((Date.now()-start)/1000));
+}
+
+function statusView(status){
+
+  switch(status){
+
+    case "completed":
+    case "approved":
+      return `
+        <div class="hint success">
+          ✅ تم إتمام الهدف بنجاح واعتماد النقاط.
+        </div>
+      `;
+
+    case "pending_review":
+      return `
+        <div class="hint warning">
+          ⏳ تم إرسال طلبك للخادم، وفي انتظار المراجعة.
+        </div>
+      `;
+
+    case "rejected":
+      return `
+        <div class="hint danger">
+          ❌ تم رفض طلب إتمام الهدف.
+          <br>ملاحظة الخادم: ${esc("راجع الخادم لمعرفة التفاصيل")}
+        </div>
+      `;
+
+    default:
+      return "";
+  }
+}
+
+function render(){
+
+  if(!goals.length){
+    $("goals").innerHTML=`
+      <div class="goal empty">
+        مفيش أهداف متاحة لمجموعتك حاليًا ❤️
+        <br>تابعنا قريبًا.
+      </div>
+    `;
+    return;
+  }
+
+  $("goals").innerHTML=goals.map(g=>{
+
+    const status=g.attempt_status;
+    const started=status==="reading";
+    const finished=[
+      "completed",
+      "approved",
+      "pending_review",
+      "rejected"
+    ].includes(status);
+
+    const required=(Number(g.min_read_minutes)||1)*60;
+
+    return `
+      <article class="goal">
+
+        <h2>${esc(g.title)}</h2>
+
+        <p class="muted">${esc(g.description||"")}</p>
+
+        <p class="meta">
+          📅 من ${esc(g.starts_on)} إلى ${esc(g.ends_on)}
+        </p>
+
+        <p class="meta">
+          ⏱️ أقل مدة للقراءة: ${Number(g.min_read_minutes)||1} دقيقة
+          <br>
+          ⭐ نقاط إتمام الهدف: ${Number(g.points_reward)||0}
+        </p>
+
+        <h3>📖 المحتوى المطلوب</h3>
+
+        <div class="content">${esc(g.content||"لا يوجد محتوى لهذا الهدف.")}</div>
+
+        ${
+          g.linked_quiz_id
+          ? `
+            <p class="meta exam">
+              📝 يوجد امتحان مرتبط بهذا الهدف.
+              <br>
+              <a href="quizzes.html">الذهاب للامتحانات</a>
+            </p>
+          `
+          : ""
+        }
+
+        ${
+          started
+          ? `
+            <div class="timer">
+              <small>الوقت المنقضي في القراءة</small>
+              <strong class="liveTimer"
+                data-started="${esc(g.started_at||"")}"
+                data-required="${required}">
+                00:00:00
+              </strong>
+              <small class="timerHint">جاري حساب وقت القراءة...</small>
+            </div>
+
+            <div class="actions">
+              <button
+                class="primary finishBtn"
+                data-id="${esc(g.id)}">
+                أنهيت القراءة
+              </button>
+            </div>
+
+            <p class="meta">
+              يمكنك إنهاء القراءة قبل الوقت المطلوب،
+              لكن طلبك سيحتاج إلى مراجعة الخادم.
+            </p>
+          `
+          : finished
+            ? statusView(status)
+            : `
+              <div class="actions">
+                <button class="primary startBtn" data-id="${esc(g.id)}">
+                  ▶️ ابدأ القراءة
+                </button>
+              </div>
+            `
+        }
+
+      </article>
+    `;
+  }).join("");
+
+  document.querySelectorAll(".startBtn").forEach(btn=>{
+    btn.addEventListener("click",()=>startGoal(btn.dataset.id,btn));
+  });
+
+  document.querySelectorAll(".finishBtn").forEach(btn=>{
+    btn.addEventListener("click",()=>finishGoal(btn.dataset.id,btn));
+  });
+
+  updateTimers();
+}
+
+function updateTimers(){
+
+  document.querySelectorAll(".liveTimer").forEach(timer=>{
+
+    const started=timer.dataset.started;
+    const required=Number(timer.dataset.required)||60;
+
+    const elapsed=elapsedFrom(started);
+    const remaining=Math.max(0,required-elapsed);
+
+    timer.textContent=formatTime(elapsed);
+
+    const hint=timer.parentElement.querySelector(".timerHint");
+
+    if(hint){
+      hint.textContent=remaining>0
+        ?`متبقي ${formatTime(remaining)} للوصول للمدة المطلوبة`
+        :"وصلت للمدة المطلوبة! يمكنك إنهاء الهدف الآن.";
+    }
+
+  });
 }
 
 async function load(){
 
-  const{data:{user},error:ae}=await supabase.auth.getUser();
+  const {data:{user},error:authError}=await supabase.auth.getUser();
 
-  if(ae||!user){
-    location.replace('account.html');
+  if(authError||!user){
+    location.replace("account.html");
     return;
   }
 
-  const{data:p,error:pe}=await supabase
-    .from('profiles')
-    .select('role,approval_status')
-    .eq('id',user.id)
+  const {data:profile,error:profileError}=await supabase
+    .from("profiles")
+    .select("role,approval_status")
+    .eq("id",user.id)
     .maybeSingle();
 
-  if(pe||!p){
-    $('message').textContent='تعذر تحميل الحساب: '+(pe?.message||'');
+  if(profileError||!profile){
+    $("message").textContent=
+      "تعذر تحميل الحساب: "+(profileError?.message||"");
     return;
   }
 
-  if(p.approval_status!=='approved'){
-    location.replace('account.html');
+  if(profile.approval_status!=="approved"){
+    location.replace("account.html");
     return;
   }
 
-  if(p.role!=='member'){
-    location.replace(p.role==='admin'?'admin.html':'servant.html');
+  if(profile.role!=="member"){
+    location.replace(
+      profile.role==="admin"?"admin.html":"servant.html"
+    );
     return;
   }
 
-  const{data,error}=await supabase.rpc('get_my_ministry_goals');
+  const {data,error}=await supabase.rpc("get_my_goal_tasks");
 
   if(error){
-    $('message').textContent='تعذر تحميل الأهداف: '+error.message;
+    $("message").textContent="تعذر تحميل الأهداف: "+error.message;
     return;
   }
 
-  $('message').textContent='';
+  goals=Array.isArray(data)?data:[];
+  $("message").textContent="";
 
-  if(!data?.length){
-    $('goals').innerHTML=
-      '<div class="goal empty">مفيش أهداف متاحة لمجموعتك حاليًا. تابعنا قريبًا ❤️</div>';
-    return;
-  }
+  render();
 
-  $('goals').innerHTML=data.map(g=>`
-    <article class="goal ${g.completed?'done':''}">
+  if(timerInterval)clearInterval(timerInterval);
 
-      <h2>${esc(g.title)}</h2>
-
-      <p class="muted">${esc(g.description)}</p>
-
-      <p class="meta">
-        📅 من ${g.starts_on} إلى ${g.ends_on}
-        · المجموعة: ${esc(g.group_name)}
-      </p>
-
-      <p class="meta">
-        ⭐ مكافأة الإتمام: ${g.points_reward} نقطة
-      </p>
-
-      ${
-        g.quiz_title
-        ? `<p class="meta exam">
-             📝 امتحان مرتبط: ${esc(g.quiz_title)}
-             — <a href="quizzes.html">الذهاب للامتحانات</a>
-           </p>`
-        : '<p class="meta">لا يوجد امتحان مرتبط بهذا الهدف.</p>'
-      }
-
-      ${
-        g.completed
-        ? `<p class="doneTag">
-             ✓ تم تسجيل إتمام الهدف
-             ${g.completed_at?'في '+new Date(g.completed_at).toLocaleDateString('ar-EG'):''}
-           </p>`
-        : `<button data-goal="${g.id}" class="complete">أنهيت الهدف</button>`
-      }
-
-    </article>
-  `).join('');
-
-  document.querySelectorAll('.complete').forEach(b=>{
-    b.addEventListener('click',()=>complete(b.dataset.goal,b));
-  });
+  timerInterval=setInterval(updateTimers,1000);
 }
 
-async function complete(id,button){
+async function startGoal(id,button){
 
-  if(!confirm('هل أنت متأكد إنك أنهيت الهدف؟ لا يمكن تسجيله مرة ثانية.')){
-    return;
-  }
+  if(busy)return;
 
+  busy=true;
   button.disabled=true;
-  button.textContent='جاري التسجيل...';
+  button.textContent="جاري بدء القراءة...";
 
-  const{data,error}=await supabase.rpc(
-    'complete_ministry_goal',
+  const {data,error}=await supabase.rpc(
+    "start_ministry_goal_read",
     {p_goal_id:id}
   );
 
+  busy=false;
+
   if(error){
     button.disabled=false;
-    button.textContent='أنهيت الهدف';
-    $('message').textContent='لم يتم تسجيل الإتمام: '+error.message;
+    button.textContent="▶️ ابدأ القراءة";
+    $("message").textContent="تعذر بدء الهدف: "+error.message;
     return;
   }
 
-  $('message').textContent=data?.already_completed
-    ?'الهدف مسجل بالفعل.'
-    :`تم تسجيل إتمام الهدف بنجاح. النقاط المضافة: ${data?.points_awarded??0}`;
+  if(data?.status!=="reading"){
+    $("message").textContent=
+      "حالة الهدف الحالية: "+(data?.status||"غير معروفة");
+  }else{
+    $("message").textContent="بدأت القراءة! بالتوفيق ❤️";
+  }
+
+  await load();
+}
+
+async function finishGoal(id,button){
+
+  if(busy)return;
+
+  const goal=goals.find(g=>g.id===id);
+
+  if(!goal)return;
+
+  const required=(Number(goal.min_read_minutes)||1)*60;
+  const elapsed=elapsedFrom(goal.started_at);
+  const early=elapsed<required;
+
+  const confirmation=early
+    ? "أنت هتنهي الهدف قبل المدة المطلوبة، وطلبك هيتبعت للخادم للمراجعة. هل تريد المتابعة؟"
+    : "هل أنت متأكد إنك أنهيت قراءة الهدف؟";
+
+  if(!confirm(confirmation))return;
+
+  busy=true;
+  button.disabled=true;
+  button.textContent="جاري تسجيل الإتمام...";
+
+  const {data,error}=await supabase.rpc(
+    "finish_ministry_goal_read",
+    {p_goal_id:id}
+  );
+
+  busy=false;
+
+  if(error){
+    button.disabled=false;
+    button.textContent="أنهيت القراءة";
+    $("message").textContent=
+      "تعذر تسجيل الإتمام: "+error.message;
+    return;
+  }
+
+  if(data?.status==="completed"){
+    $("message").textContent=
+      `🎉 تم إتمام الهدف! النقاط المضافة: ${data.points??0}`;
+  }else if(data?.status==="pending_review"){
+    $("message").textContent=
+      "تم إرسال طلبك للخادم للمراجعة. ❤️";
+  }else{
+    $("message").textContent=
+      data?.message||"تم تحديث حالة الهدف.";
+  }
 
   await load();
 }
