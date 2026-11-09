@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>إدارة النقاط | شبابنا</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}
+header{padding:16px max(18px,calc((100% - 850px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#11182a;border-bottom:1px solid #30394d}
+main{max-width:850px;margin:30px auto;padding:15px}.panel,.member{background:#171f31;border:1px solid #30394d;border-radius:15px;padding:22px;margin-bottom:16px}
+p{line-height:1.8;color:#b9c5dc}label{display:block;margin-top:14px}
+input,select,textarea{width:100%;padding:13px;border-radius:9px;border:1px solid #46536d;background:#101827;color:white;font-size:15px;margin-top:7px}
+button,a{padding:11px 16px;border:0;border-radius:9px;background:#405b9b;color:white;text-decoration:none;cursor:pointer;font-weight:bold}
+button:disabled{opacity:.5}.primary{background:#23865b}.danger{background:#b84242}
+#message{min-height:26px;color:#ffd36a}.balance{font-size:22px;color:#ffd36a;font-weight:bold}
+</style>
+</head>
+<body>
+<header><h2>⭐ إدارة النقاط</h2><nav><a href="servant.html">لوحة الخادم</a> <button id="logout">خروج</button></nav></header>
+<main>
+<section class="panel">
+<h1>إضافة أو خصم نقاط</h1>
+<p>اختار المخدوم، وحدد عدد النقاط والسبب. الإضافة تكون برقم موجب والخصم برقم سالب.</p>
+<label>المجموعة</label><select id="group"><option value="">اختار المجموعة</option></select>
+<label>المخدوم</label><select id="member"><option value="">اختار المخدوم</option></select>
+<div id="balance" class="balance">النقاط الحالية: --</div>
+<label>عدد النقاط</label><input id="amount" type="number" min="-100" max="100" step="1" placeholder="مثال: 10 أو -5">
+<label>سبب العملية</label><textarea id="reason" rows="3" maxlength="300" placeholder="مثال: حضور الاجتماع أو المشاركة في الخدمة"></textarea>
+<button class="primary" id="save">حفظ النقاط</button>
+<p id="message">جاري التحقق من الحساب...</p>
+</section>
+<section class="panel">
+<h2>آخر عمليات النقاط</h2>
+<div id="history">اختار مخدوم لعرض سجل النقاط.</div>
+</section>
+</main>
+<script type="module">
+import{supabase}from"./supabase.js";
+const $=id=>document.getElementById(id);
+let user,profile,groups=[],members=[];
+function say(t){$("message").textContent=t}
+async function loadHistory(memberId){
+ const box=$("history");box.textContent="جاري تحميل السجل...";
+ const{data,error}=await supabase.from("point_transactions").select("amount,reason,created_at").eq("member_id",memberId).order("created_at",{ascending:false}).limit(20);
+ if(error){box.textContent="تعذر تحميل السجل: "+error.message;return}
+ box.replaceChildren();
+ if(!data?.length){box.textContent="لا توجد عمليات نقاط مسجلة.";return}
+ data.forEach(x=>{
+  const p=document.createElement("p");
+  p.textContent=(x.amount>0?"+":"")+x.amount+" نقطة • "+(x.reason||"بدون سبب")+" • "+new Date(x.created_at).toLocaleString("ar-EG");
+  box.append(p);
+ });
+}
+function updateMember(){
+ const m=members.find(x=>x.id===$("member").value);
+ $("balance").textContent="النقاط الحالية: "+(m?.points??"--");
+ if(m)loadHistory(m.id);else $("history").textContent="اختار مخدوم لعرض سجل النقاط.";
+}
+async function init(){
+ const{data:{user:u}}=await supabase.auth.getUser();
+ if(!u){location.replace("account.html");return}user=u;
+ const{data:p,error}=await supabase.from("profiles").select("id,role,approval_status").eq("id",u.id).maybeSingle();
+ if(error||!p||p.approval_status!=="approved"||!["servant","admin"].includes(p.role)){location.replace("account.html");return}profile=p;
+ const{data:as,error:ae}=await supabase.from("servant_group_assignments").select("group_id").eq("servant_id",u.id);
+ if(ae){say(ae.message);return}
+ const ids=[...new Set((as||[]).map(x=>x.group_id))];
+ let gq=supabase.from("ministry_groups").select("id,name").order("name");
+ if(p.role!=="admin")gq=gq.in("id",ids);
+ const{data:g,error:ge}=await gq;
+ if(ge){say(ge.message);return}groups=g||[];
+ groups.forEach(g=>$("group").add(new Option(g.name,g.id)));
+ let mq=supabase.from("profiles").select("id,full_name,points,group_id").eq("role","member").eq("approval_status","approved").order("full_name");
+ if(p.role!=="admin")mq=mq.in("group_id",ids);
+ const{data:m,error:me}=await mq;
+ if(me){say(me.message);return}members=m||[];
+ say("تم تحميل البيانات.");
+}
+$("group").addEventListener("change",()=>{
+ const id=$("group").value;
+ const filtered=members.filter(m=>!id||m.group_id===id);
+ $("member").replaceChildren(new Option("اختار المخدوم",""));
+ filtered.forEach(m=>$("member").add(new Option(m.full_name||"بدون اسم",m.id)));
+ updateMember();
+});
+$("member").addEventListener("change",updateMember);
+$("save").addEventListener("click",async()=>{
+ const memberId=$("member").value,amount=Number($("amount").value),reason=$("reason").value.trim();
+ if(!memberId){say("اختار المخدوم.");return}
+ if(!Number.isInteger(amount)||amount===0||amount < -100||amount>100){say("النقاط لازم تكون رقمًا صحيحًا من -100 إلى 100، ولا تساوي صفر.");return}
+ if(!reason){say("اكتب سبب العملية.");return}
+ $("save").disabled=true;say("جاري حفظ العملية...");
+ const{error}=await supabase.rpc("award_points",{p_member_id:memberId,p_amount:amount,p_reason:reason});
+ $("save").disabled=false;
+ if(error){say("فشل حفظ النقاط: "+error.message);return}
+ const m=members.find(x=>x.id===memberId);if(m)m.points=(m.points||0)+amount;
+ $("amount").value="";$("reason").value="";
+ updateMember();say("تم تسجيل النقاط بنجاح.");
+});
+$("logout").addEventListener("click",async()=>{await supabase.auth.signOut();location.replace("account.html")});
+init();
+</script>
+</body>
+</html>
