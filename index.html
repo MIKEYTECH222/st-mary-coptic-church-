@@ -1,438 +1,261 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101521">
-
-  <title>شبابنا | خدمة الشباب</title>
-
-  <link rel="icon" type="image/png" href="./Untitled-1.png">
-  <link rel="apple-touch-icon" href="./Untitled-1.png">
-
+  <meta name="theme-color" content="#080b16">
+  <title>شبابنا | تسجيل الدخول</title>
+  <link rel="icon" href="./Untitled-1.png">
   <link rel="stylesheet" href="./style.css">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 25px 16px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 15% 10%, #27365d 0, transparent 35%),
+        radial-gradient(circle at 85% 90%, #25234b 0, transparent 35%),
+        #080b16;
+      color: #f5f6ff;
+      font-family: Arial, sans-serif;
+    }
+
+    .auth-container {
+      width: min(100%, 480px);
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 26px;
+      background: rgba(24,31,49,.78);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 25px 80px rgba(0,0,0,.35);
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand img {
+      width: 85px;
+      height: 85px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+
+    .brand h1 {
+      font-size: 28px;
+      margin: 0 0 8px;
+    }
+
+    .brand p {
+      color: #aab4ca;
+      margin: 0;
+      line-height: 1.7;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 5px;
+      border-radius: 13px;
+      background: #111827;
+      margin-bottom: 22px;
+    }
+
+    .auth-tabs button {
+      padding: 12px;
+      border: 0;
+      border-radius: 10px;
+      color: #b8c1d4;
+      background: transparent;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .auth-tabs button.active {
+      color: white;
+      background: #354777;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 13px;
+    }
+
+    .auth-form h2 {
+      margin: 0 0 5px;
+      font-size: 21px;
+    }
+
+    label {
+      color: #d8deed;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #39445b;
+      border-radius: 11px;
+      outline: none;
+      background: #101827;
+      color: white;
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: #8b9fff;
+      box-shadow: 0 0 0 3px rgba(139,159,255,.12);
+    }
+
+    .submit-btn {
+      padding: 14px;
+      margin-top: 8px;
+      border: 0;
+      border-radius: 11px;
+      background: linear-gradient(135deg,#667eea,#5364c8);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .google-btn {
+      width: 100%;
+      margin-top: 15px;
+      padding: 13px;
+      border: 1px solid #46516a;
+      border-radius: 11px;
+      background: #202a3d;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .status {
+      min-height: 25px;
+      margin: 12px 0 0;
+      color: #c8d3ed;
+      line-height: 1.8;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .hidden { display: none !important; }
+
+    footer {
+      margin-top: 25px;
+      text-align: center;
+      color: #8792aa;
+      font-size: 13px;
+    }
+
+    @media(max-width: 450px) {
+      .auth-container { padding: 22px 17px; }
+      .brand h1 { font-size: 24px; }
+    }
+  </style>
 </head>
 
 <body>
-<div class="wrap">
 
-  <nav class="glass">
-    <a class="brand" href="#home">
-      <img src="./Untitled-1.png" alt="شعار الموقع">
-    </a>
+  <main class="auth-container">
 
-    <div class="nav-actions">
-      <a class="button" href="./bible.html">📖 الكتاب المقدس</a>
-      <button id="langBtn" type="button">EN</button>
-      <button id="logoutBtn" type="button" class="hidden">تسجيل الخروج</button>
+    <header class="brand">
+      <img src="./Untitled-1.png" alt="شعار الخدمة">
+      <h1>شبابنا</h1>
+      <p>إيمان يجمعنا، ومحبة تكبر بينا.</p>
+    </header>
+
+    <div class="auth-tabs">
+      <button id="loginTab" class="active" type="button">تسجيل الدخول</button>
+      <button id="signupTab" type="button">إنشاء حساب</button>
     </div>
-  </nav>
 
-  <main id="publicPage">
+    <form id="loginForm" class="auth-form">
+      <h2>أهلاً بعودتك 👋</h2>
 
-    <section class="hero glass" id="home">
-      <p>✦ مكان واحد يجمعنا</p>
-      <h1>إيمان يجمعنا،<br>ومحبة تكبر بينا.</h1>
-      <p class="muted">مساحة خدمة الشباب لمتابعة الفعاليات والدروس والنقاط.</p>
-      <a class="button primary" href="#account">حسابك الشخصي</a>
-    </section>
+      <label for="loginEmail">البريد الإلكتروني</label>
+      <input
+        id="loginEmail"
+        type="email"
+        autocomplete="email"
+        required
+        placeholder="example@email.com"
+      >
 
-    <section class="panel glass" id="events">
-      <h2>الفعاليات واللقاءات</h2>
-      <div id="eventsList" class="list">
-        <p class="muted">جاري تحميل الفعاليات...</p>
-      </div>
-    </section>
+      <label for="loginPassword">كلمة المرور</label>
+      <input
+        id="loginPassword"
+        type="password"
+        autocomplete="current-password"
+        required
+        placeholder="كلمة المرور"
+      >
 
-    <section class="panel glass" id="lessons">
-      <h2>الدروس والمواد</h2>
-      <div id="lessonsList" class="list">
-        <p class="muted">جاري تحميل الدروس...</p>
-      </div>
-    </section>
+      <button class="submit-btn" type="submit">تسجيل الدخول</button>
+      <p id="loginMessage" class="status" role="status"></p>
+    </form>
 
-    <section class="panel glass" id="account">
-      <h2>حسابك الشخصي</h2>
-      <p class="muted">الحسابات الجديدة تحتاج موافقة مسؤول الخدمة.</p>
+    <form id="signupForm" class="auth-form hidden">
+      <h2>انضم لأسرة الشباب ✨</h2>
 
-      <div id="authForms" class="grid">
+      <label for="signupName">الاسم الكامل</label>
+      <input
+        id="signupName"
+        maxlength="100"
+        autocomplete="name"
+        required
+        placeholder="اكتب اسمك بالكامل"
+      >
 
-        <form id="signupForm" class="form-card">
-          <h3>إنشاء حساب</h3>
+      <label for="signupEmail">البريد الإلكتروني</label>
+      <input
+        id="signupEmail"
+        type="email"
+        autocomplete="email"
+        required
+        placeholder="example@email.com"
+      >
 
-          <label for="signupName">الاسم الكامل</label>
-          <input id="signupName" required maxlength="100" autocomplete="name">
+      <label for="signupPassword">كلمة المرور</label>
+      <input
+        id="signupPassword"
+        type="password"
+        minlength="8"
+        autocomplete="new-password"
+        required
+        placeholder="8 أحرف على الأقل"
+      >
 
-          <label for="signupEmail">البريد الإلكتروني</label>
-          <input id="signupEmail" type="email" required autocomplete="email">
+      <button class="submit-btn" type="submit">إنشاء الحساب</button>
+      <p id="signupMessage" class="status" role="status"></p>
+    </form>
 
-          <label for="signupPassword">كلمة المرور (8 أحرف على الأقل)</label>
-          <input id="signupPassword" type="password" minlength="8" required autocomplete="new-password">
+    <button id="googleLoginBtn" class="google-btn" type="button">
+      تسجيل الدخول باستخدام Google
+    </button>
 
-          <button class="primary" type="submit">إنشاء الحساب</button>
-          <p id="signupMessage" class="status" role="status"></p>
-        </form>
+    <p id="accountMessage" class="status" role="status"></p>
 
-        <form id="loginForm" class="form-card">
-          <h3>تسجيل الدخول</h3>
-
-          <label for="loginEmail">البريد الإلكتروني</label>
-          <input id="loginEmail" type="email" required autocomplete="email">
-
-          <label for="loginPassword">كلمة المرور</label>
-          <input id="loginPassword" type="password" required autocomplete="current-password">
-
-          <button class="primary" type="submit">دخول</button>
-          <p id="loginMessage" class="status" role="status"></p>
-        </form>
-
-      </div>
-
-      <div class="form-card">
-        <button id="googleLoginBtn" class="primary" type="button">
-          تسجيل الدخول باستخدام Google
-        </button>
-        <p id="googleMessage" class="status" role="status"></p>
-      </div>
-
-      <p id="accountMessage" class="status" role="status"></p>
-    </section>
+    <footer>
+      خدمة الشباب • إيمان ومحبة ونمو
+    </footer>
 
   </main>
 
-  <main id="dashboard" class="hidden">
-
-    <section class="panel glass">
-      <h1 style="font-size:36px">أهلاً بيك في خدمة الشباب</h1>
-      <p class="muted">مساحتك الشخصية حسب صلاحيات حسابك.</p>
-
-      <div class="section-links">
-        <a href="#profilePanel">البروفايل</a>
-        <a href="#myEvents">الفعاليات</a>
-        <a href="#myLessons">الدروس</a>
-        <a href="#myQuizzes">الامتحانات</a>
-        <a href="#servantPanel">إدارة الخدمة</a>
-        <a href="#adminPanel">إدارة المجموعات</a>
-      </div>
-    </section>
-
-    <section id="profilePanel" class="panel glass">
-      <h2>البروفايل والنقاط</h2>
-
-      <div class="stats">
-        <div class="stat glass">الاسم<strong id="dashName">—</strong></div>
-        <div class="stat glass">رصيد النقاط<strong id="dashPoints">0</strong></div>
-        <div class="stat glass">حالة الحساب<strong id="dashStatus">—</strong></div>
-      </div>
-
-      <p id="dashRole" class="muted"></p>
-    </section>
-
-    <section id="myEvents" class="panel glass">
-      <h2>الفعاليات</h2>
-      <div id="dashboardEventsList" class="list"></div>
-    </section>
-
-    <section id="myLessons" class="panel glass">
-      <h2>الدروس</h2>
-      <div id="dashboardLessonsList" class="list"></div>
-    </section>
-
-    <section id="myQuizzes" class="panel glass">
-      <h2>الأسئلة والامتحانات</h2>
-      <div id="quizzesList" class="list"></div>
-    </section>
-
-    <section id="servantPanel" class="panel glass hidden">
-      <h2>إدارة نقاط الأعضاء</h2>
-
-      <div class="form-card">
-        <h3>مراجعة الامتحانات ومتابعة الطلاب</h3>
-        <p class="muted">
-          اعرض إجابات كل طالب، وأعد تصحيح الأسئلة،
-          وتابع مدة الخروج والعودة أسفل كل سؤال.
-        </p>
-        <a class="button primary" href="./exam-review.html">
-          فتح صفحة مراجعة الامتحانات
-        </a>
-      </div>
-
-      <p class="muted">
-        اختار عضوًا من المجموعات المسندة إليك، ثم اكتب النقاط وسبب الإضافة أو الخصم.
-      </p>
-
-      <div class="grid">
-
-        <form id="lessonCreateForm" class="form-card">
-          <h3>نشر درس مكتوب</h3>
-
-          <label for="lessonGroup">المجموعة</label>
-          <select id="lessonGroup" required>
-            <option value="">جاري تحميل المجموعات...</option>
-          </select>
-
-          <label for="lessonTitle">عنوان الدرس</label>
-          <input id="lessonTitle" required maxlength="180">
-
-          <label for="lessonDescription">وصف مختصر (اختياري)</label>
-          <textarea id="lessonDescription" maxlength="1000"></textarea>
-
-          <label for="lessonBody">محتوى الدرس</label>
-          <textarea id="lessonBody" required rows="8" maxlength="30000" placeholder="اكتب الدرس هنا..."></textarea>
-
-          <label for="lessonUrl">لينك إضافي (اختياري)</label>
-          <input id="lessonUrl" type="url" placeholder="https://...">
-
-          <button class="primary" type="submit">نشر الدرس</button>
-          <p id="lessonCreateMessage" class="status" role="status"></p>
-        </form>
-
-        <form id="quizCreateForm" class="form-card">
-          <h3>إنشاء اختبار اختيار من متعدد</h3>
-
-          <label for="quizGroup">المجموعة</label>
-          <select id="quizGroup" required>
-            <option value="">جاري تحميل المجموعات...</option>
-          </select>
-
-          <label for="quizType">نوع الاختبار</label>
-          <select id="quizType">
-            <option value="exam">امتحان مستقل</option>
-            <option value="lesson">أسئلة بعد درس</option>
-          </select>
-
-          <label for="quizLesson">الدرس (للأسئلة المرتبطة بدرس)</label>
-          <select id="quizLesson">
-            <option value="">اختار الدرس</option>
-          </select>
-
-          <label for="quizTitle">عنوان الاختبار</label>
-          <input id="quizTitle" required maxlength="180">
-
-          <label for="quizDescription">وصف (اختياري)</label>
-          <textarea id="quizDescription" maxlength="1000"></textarea>
-
-          <label for="quizPointsReward">مكافأة الامتحان (نقاط)</label>
-          <input
-            id="quizPointsReward"
-            type="number"
-            min="0"
-            max="1000"
-            step="1"
-            value="0"
-            required
-          >
-
-          <small class="muted">
-            الطالب يحصل على نسبة من المكافأة حسب درجته النهائية.
-            مثال: 80% من 20 نقطة = 16 نقطة.
-          </small>
-
-          <button class="primary" type="submit">إنشاء الاختبار</button>
-          <p id="quizCreateMessage" class="status" role="status"></p>
-        </form>
-
-      </div>
-
-      <form id="questionCreateForm" class="form-card">
-        <h3>إضافة سؤال لاختبار موجود</h3>
-
-        <label for="questionQuiz">الاختبار</label>
-        <select id="questionQuiz" required>
-          <option value="">جاري تحميل الاختبارات...</option>
-        </select>
-
-        <label for="questionText">السؤال</label>
-        <textarea id="questionText" required maxlength="1000"></textarea>
-
-        <div class="grid">
-          <div>
-            <label for="option0">الاختيار الأول</label>
-            <input id="option0" required maxlength="500">
-          </div>
-
-          <div>
-            <label for="option1">الاختيار الثاني</label>
-            <input id="option1" required maxlength="500">
-          </div>
-
-          <div>
-            <label for="option2">الاختيار الثالث</label>
-            <input id="option2" required maxlength="500">
-          </div>
-
-          <div>
-            <label for="option3">الاختيار الرابع</label>
-            <input id="option3" required maxlength="500">
-          </div>
-        </div>
-
-        <label for="correctOption">الإجابة الصحيحة</label>
-        <select id="correctOption">
-          <option value="0">الاختيار الأول</option>
-          <option value="1">الاختيار الثاني</option>
-          <option value="2">الاختيار الثالث</option>
-          <option value="3">الاختيار الرابع</option>
-        </select>
-
-        <button class="primary" type="submit">إضافة السؤال</button>
-        <p id="questionCreateMessage" class="status" role="status"></p>
-      </form>
-
-      <div class="form-card">
-        <h3>كشف الحضور والغياب</h3>
-
-        <label for="attendanceGroup">المجموعة</label>
-        <select id="attendanceGroup" required>
-          <option value="">اختار المجموعة</option>
-        </select>
-
-        <label for="attendanceTitle">اسم اللقاء</label>
-        <input id="attendanceTitle" value="لقاء الخدمة" required maxlength="180">
-
-        <label for="attendanceDate">التاريخ</label>
-        <input id="attendanceDate" type="date" required>
-
-        <button id="loadAttendanceBtn" class="primary" type="button">
-          تحميل كشف الأسماء
-        </button>
-
-        <p id="attendanceMessage" class="status" role="status"></p>
-
-        <div id="attendanceRoster" class="list"></div>
-
-        <button id="saveAttendanceBtn" class="primary" type="button">
-          حفظ الحضور والغياب
-        </button>
-      </div>
-
-      <div class="form-card">
-        <h3>تنبيهات الغياب</h3>
-        <p class="muted">
-          تظهر هنا تنبيهات الأعضاء الذين سجل عليهم 3 غيابات أو أكثر.
-        </p>
-        <div id="servantNotifications" class="list"></div>
-      </div>
-
-      <form id="pointsForm" class="form-card">
-        <label for="pointsMember">العضو</label>
-        <select id="pointsMember" required>
-          <option value="">جاري تحميل الأعضاء...</option>
-        </select>
-
-        <label for="pointsAmount">عدد النقاط (السالب للخصم)</label>
-        <input id="pointsAmount" type="number" min="-100" max="100" step="1" required>
-
-        <label for="pointsReason">السبب</label>
-        <input id="pointsReason" maxlength="200" required placeholder="مثال: حضور التسبحة">
-
-        <button class="primary" type="submit">تنفيذ العملية</button>
-        <p id="pointsMessage" class="status" role="status"></p>
-      </form>
-
-    </section>
-
-    <section id="adminPanel" class="panel glass hidden">
-
-      <div class="admin-heading">
-        <div>
-          <h2>لوحة تحكم الأدمن</h2>
-          <p class="muted">إدارة ومتابعة خدمة الشباب.</p>
-        </div>
-
-        <span class="demo-label">وضع العرض التجريبي — التغييرات غير محفوظة</span>
-      </div>
-
-      <div class="demo-warning">
-        هذه البيانات تجريبية للعرض فقط. القبول والرفض وتغيير الأدوار والمجموعات لا تعدّل قاعدة البيانات.
-      </div>
-
-      <h3>نظرة عامة</h3>
-
-      <div class="stats">
-        <div class="stat glass">الحسابات<strong id="demoMembersCount">0</strong></div>
-        <div class="stat glass">طلبات معلقة<strong id="demoRequestsCount">0</strong></div>
-        <div class="stat glass">الخدام<strong id="demoServantsCount">0</strong></div>
-        <div class="stat glass">المجموعات<strong id="demoGroupsCount">0</strong></div>
-      </div>
-
-      <div class="grid admin-grid">
-
-        <section class="form-card">
-          <h3>طلبات الانضمام</h3>
-          <p class="muted">طلبات وهمية لتجربة شكل لوحة الموافقات.</p>
-          <div id="demoRequestsList" class="list"></div>
-        </section>
-
-        <section class="form-card">
-          <h3>إدارة المجموعات</h3>
-
-          <form id="demoAddGroupForm">
-            <label for="demoNewGroup">اسم المجموعة الجديدة</label>
-            <input id="demoNewGroup" maxlength="80" placeholder="مثال: ابتدائي">
-            <button class="primary" type="submit">إضافة مجموعة</button>
-            <p id="demoGroupMessage" class="status" role="status"></p>
-          </form>
-
-          <div id="demoGroupsList" class="list"></div>
-        </section>
-
-      </div>
-
-      <section class="form-card">
-        <h3>الحسابات والأدوار</h3>
-        <p class="muted">غيّر الدور لمعاينة شكل إدارة الصلاحيات. التغيير محلي فقط.</p>
-        <div id="demoAccountsList" class="list"></div>
-      </section>
-
-      <hr class="demo-divider">
-
-      <h3>تعيين الخدام للمجموعات الفعلية</h3>
-      <p class="muted">
-        هذا الجزء يستخدم قاعدة البيانات الحالية، ويحتاج صلاحيات Supabase المناسبة.
-      </p>
-
-      <form id="assignForm" class="form-card">
-        <label for="servantSelect">حساب الخادم</label>
-        <select id="servantSelect" required>
-          <option value="">جاري تحميل الخدام...</option>
-        </select>
-
-        <label for="groupSelect">المجموعة</label>
-        <select id="groupSelect" required>
-          <option value="">جاري تحميل المجموعات...</option>
-        </select>
-
-        <button class="primary" type="submit">تعيين الخادم للمجموعة</button>
-        <p id="assignMessage" class="status" role="status"></p>
-      </form>
-
-      <h3>التعيينات الحالية</h3>
-      <div id="assignmentsList" class="list"></div>
-
-    </section>
-
-    <section class="panel glass">
-      <h2>ملاحظة</h2>
-      <p class="muted">
-        الاختبارات وتصحيح الإجابات متاحة من لوحة الخدمة حسب صلاحيات الحساب.
-      </p>
-    </section>
-
-  </main>
-</div>
-
-<footer>خدمة الشباب • إيمان ومحبة ونمو</footer>
-
-<nav class="mobile-bottom-nav">
-  <a href="#home">الرئيسية</a>
-  <a href="#events">الفعاليات</a>
-  <a href="#lessons">الدروس</a>
-  <a href="#account">حسابي</a>
-  <a href="#profilePanel">البروفايل</a>
-</nav>
-
-<script type="module" src="./app.js"></script>
-<script type="module" src="./admin-demo.js"></script>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
