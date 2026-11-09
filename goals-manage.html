@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b16">
+<title>إدارة الأهداف | شبابنا</title>
+<link rel="stylesheet" href="./style.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}
+.wrap{max-width:1050px;margin:auto;padding:16px}
+nav,.panel,.goal{background:#141d31;border:1px solid #ffffff18;border-radius:18px;padding:18px;margin-bottom:16px}
+nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+a,button{display:inline-block;border:1px solid #ffffff20;border-radius:11px;padding:10px 15px;background:#344d83;color:white;text-decoration:none;cursor:pointer;font:inherit}
+button:disabled{opacity:.5}
+input,textarea,select{width:100%;padding:12px;border-radius:10px;border:1px solid #46536d;background:#0c1424;color:white;margin:6px 0 13px;font:inherit}
+label{display:block;color:#cbd5e1;font-size:14px}
+textarea{min-height:90px;resize:vertical}
+.muted{color:#aebbd3;line-height:1.8}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.primary{background:#536bd1}
+.goal h3{margin:0 0 8px;color:#c4ceff}
+.status{color:#ffd36a;line-height:1.8;min-height:24px}
+.small{font-size:13px;color:#aebbd3}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<nav>
+<strong>🎯 شبابنا | إدارة الأهداف</strong>
+<a href="javascript:history.back()">رجوع</a>
+</nav>
+
+<section class="panel">
+<h1>إنشاء هدف جديد</h1>
+<p class="muted">
+مثال: قراءة سفر التكوين خلال شهر.
+أنشئ هدفًا لكل مجموعة مستهدفة. ربط الامتحان اختياري.
+</p>
+
+<form id="goalForm">
+
+<label>اسم الهدف</label>
+<input id="title" required maxlength="160" placeholder="مثال: قراءة سفر التكوين">
+
+<label>تفاصيل الهدف والمطلوب</label>
+<textarea id="description" placeholder="قراءة سفر التكوين كاملًا خلال الشهر..."></textarea>
+
+<div class="grid">
+<div>
+<label>المجموعة المستهدفة</label>
+<select id="group" required>
+<option value="">جاري تحميل المجموعات...</option>
+</select>
+</div>
+
+<div>
+<label>النقاط عند إتمام الهدف</label>
+<input id="points" type="number" min="0" step="1" value="0" required>
+</div>
+
+<div>
+<label>تاريخ البداية</label>
+<input id="starts" type="date" required>
+</div>
+
+<div>
+<label>تاريخ النهاية</label>
+<input id="ends" type="date" required>
+</div>
+</div>
+
+<label>امتحان مرتبط (اختياري)</label>
+<select id="quiz">
+<option value="">بدون امتحان</option>
+</select>
+
+<button class="primary" id="saveBtn" type="submit">إنشاء الهدف</button>
+<p class="status" id="message" role="status"></p>
+
+</form>
+</section>
+
+<section class="panel">
+<h2>الأهداف التي أنشأتها</h2>
+<div id="goalList" class="muted">جاري تحميل الأهداف...</div>
+</section>
+
+</main>
+
+<script type="module">
+import{supabase}from"./supabase.js";
+
+const $=id=>document.getElementById(id);
+let user=null,profile=null;
+
+function msg(t){
+  $('message').textContent=t;
+}
+
+function esc(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  }[c]));
+}
+
+async function init(){
+
+  const{data:{user:u},error:ae}=await supabase.auth.getUser();
+
+  if(ae||!u){
+    location.replace('account.html');
+    return;
+  }
+
+  user=u;
+
+  const{data:p,error:pe}=await supabase
+    .from('profiles')
+    .select('role,approval_status')
+    .eq('id',u.id)
+    .maybeSingle();
+
+  if(pe||!p){
+    msg('تعذر تحميل الحساب: '+(pe?.message||''));
+    return;
+  }
+
+  profile=p;
+
+  if(p.approval_status!=='approved'||!['admin','servant'].includes(p.role)){
+    location.replace('dashboard.html');
+    return;
+  }
+
+  let groupsQuery=supabase
+    .from('ministry_groups')
+    .select('id,name')
+    .order('name');
+
+  if(p.role==='servant'){
+
+    const{data:a,error:ae2}=await supabase
+      .from('servant_group_assignments')
+      .select('group_id')
+      .eq('servant_id',u.id);
+
+    if(ae2){
+      msg(ae2.message);
+      return;
+    }
+
+    const ids=(a||[]).map(x=>x.group_id);
+
+    groupsQuery=groupsQuery.in('id',ids);
+  }
+
+  const{data:groups,error:ge}=await groupsQuery;
+
+  if(ge){
+    msg('تعذر تحميل المجموعات: '+ge.message);
+    return;
+  }
+
+  $('group').innerHTML=
+    '<option value="">اختر المجموعة</option>'+
+    (groups||[]).map(g=>
+      `<option value="${g.id}">${esc(g.name)}</option>`
+    ).join('');
+
+  const{data:quizzes,error:qe}=await supabase
+    .from('quizzes')
+    .select('id,title')
+    .order('created_at',{ascending:false})
+    .limit(100);
+
+  if(!qe&&quizzes?.length){
+
+    $('quiz').innerHTML+=
+      '<option disabled>— الامتحانات المتاحة —</option>'+
+      quizzes.map(q=>
+        `<option value="${q.id}">${esc(q.title||'امتحان')}</option>`
+      ).join('');
+  }
+
+  await loadGoals();
+}
+
+async function loadGoals(){
+
+  const{data,error}=await supabase.rpc('get_goals_for_management');
+
+  if(error){
+    $('goalList').textContent='تعذر تحميل الأهداف: '+error.message;
+    return;
+  }
+
+  if(!data?.length){
+    $('goalList').textContent='لم يتم إنشاء أهداف بعد.';
+    return;
+  }
+
+  $('goalList').innerHTML=data.map(g=>`
+    <article class="goal">
+      <h3>${esc(g.title)}</h3>
+      <p class="muted">${esc(g.description)}</p>
+      <p class="small">
+        المجموعة: ${esc(g.group_name)}
+        · من ${g.starts_on} إلى ${g.ends_on}
+      </p>
+      <p class="small">
+        المكافأة: ${g.points_reward} نقطة
+        · المكتملون: ${g.completion_count}
+        ${g.quiz_title?' · الامتحان: '+esc(g.quiz_title):' · بدون امتحان'}
+      </p>
+    </article>
+  `).join('');
+}
+
+$('goalForm').addEventListener('submit',async e=>{
+
+  e.preventDefault();
+
+  msg('جاري إنشاء الهدف...');
+  $('saveBtn').disabled=true;
+
+  const{data,error}=await supabase.rpc('create_ministry_goal',{
+
+    p_title:$('title').value.trim(),
+
+    p_description:$('description').value.trim(),
+
+    p_group_id:$('group').value,
+
+    p_starts_on:$('starts').value,
+
+    p_ends_on:$('ends').value,
+
+    p_points_reward:Number($('points').value||0),
+
+    p_linked_quiz_id:$('quiz').value||null
+
+  });
+
+  $('saveBtn').disabled=false;
+
+  if(error){
+    msg('لم يتم إنشاء الهدف: '+error.message);
+    return;
+  }
+
+  msg('تم إنشاء الهدف بنجاح.');
+
+  $('goalForm').reset();
+  $('points').value='0';
+  $('quiz').value='';
+
+  await loadGoals();
+
+});
+
+await init();
+</script>
+
+<script src="./install.js"></script>
+</body>
+</html>
