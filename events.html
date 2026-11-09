@@ -1,100 +1,190 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101521">
-  <title>الفعاليات واللقاءات | شبابنا</title>
-  <link rel="stylesheet" href="./style.css">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b16"><title>رحلات وخروجات | شبابنا</title>
+<link rel="stylesheet" href="./style.css">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}
+.wrap{max-width:1100px;margin:auto;padding:16px}
+nav,.hero,.panel,.trip{background:#141d31;border:1px solid #ffffff18;border-radius:18px;padding:18px;margin-bottom:16px}
+nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+a,button{display:inline-block;border:1px solid #ffffff20;border-radius:11px;padding:10px 15px;background:#2b4276;color:white;text-decoration:none;cursor:pointer;font:inherit}
+input,textarea,select{width:100%;padding:11px;border-radius:10px;border:1px solid #46536d;background:#0c1424;color:white;margin:6px 0 12px;font:inherit}
+label{display:block;color:#cbd5e1;font-size:14px}
+textarea{min-height:90px;resize:vertical}
+.hero{background:linear-gradient(130deg,#263b68,#141d31);padding:26px}.muted{color:#aebbd3;line-height:1.8}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.trip{overflow:hidden;padding:0}.trip-body{padding:17px}
+.cover{width:100%;height:230px;object-fit:cover;background:#0b1323;display:block}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:12px}
+.gallery img{width:100%;height:110px;object-fit:cover;border-radius:10px}
+.trip h3{margin:0 0 9px;color:#c4ceff}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#managePanel{display:none}
+#message{min-height:24px;color:#ffd36a;line-height:1.8}
+.pay{background:#147d5b}
+@media(max-width:650px){.form-grid{grid-template-columns:1fr}.cover{height:180px}}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <nav class="glass">
-      <a class="brand" href="./index.html">✦ شبابنا</a>
-      <div class="nav-actions">
-        <a class="button" href="./index.html">الرئيسية</a>
-        <a class="button" href="./lessons.html">الدروس</a>
-        <a class="button" href="./account.html">حسابي</a>
-      </div>
-    </nav>
+<div class="wrap">
+<nav><strong>🚌 شبابنا | رحلات وخروجات</strong><div><a href="./dashboard.html">الرئيسية</a> <a href="./account.html">حسابي</a></div></nav>
+<section class="hero"><h1>رحلات وخروجات</h1><p class="muted">تابع الرحلات القادمة، تفاصيل الاشتراك، وصور ذكريات خروجاتنا.</p></section>
 
-    <main>
-      <section class="hero glass">
-        <p>✦ دايمًا مع بعض</p>
-        <h1>الفعاليات واللقاءات</h1>
-        <p>تابع مواعيد لقاءاتنا وفعاليات خدمة الشباب.</p>
-      </section>
+<section id="managePanel" class="panel">
+<h2>إضافة رحلة أو خروجة</h2>
+<p class="muted">الخادم يضيف رحلة لمجموعة مسندة إليه، والأدمن يقدر يضيف لأي مجموعة.</p>
+<form id="eventForm">
+<div class="form-grid">
+<label>اسم الرحلة<input id="title" required maxlength="120" placeholder="مثال: رحلة دير مارمينا"></label>
+<label>المكان<input id="location" placeholder="مكان الرحلة"></label>
+<label>التاريخ والوقت<input id="startsAt" type="datetime-local" required></label>
+<label>المجموعة<select id="groupId"></select></label>
+</div>
+<label>تفاصيل الرحلة<textarea id="description" placeholder="التجمع، المواعيد، المطلوب..."></textarea></label>
+<label>رابط الدفع عبر InstaPay<input id="paymentUrl" type="url" placeholder="https://..."></label>
+<label>صورة الغلاف<input id="coverFile" type="file" accept="image/*"></label>
+<button id="createBtn" type="submit">نشر الرحلة</button>
+</form>
+<hr style="border-color:#ffffff18;margin:22px 0">
+<h2>رفع صور بعد انتهاء الرحلة</h2>
+<label>اختار الرحلة<select id="galleryEvent"></select></label>
+<label>صور الرحلة<input id="galleryFiles" type="file" accept="image/*" multiple></label>
+<button id="uploadGalleryBtn" type="button">رفع الصور وإضافتها للمعرض</button>
+<p class="muted">الصور هتظهر في بطاقة الرحلة داخل الموقع.</p>
+</section>
 
-      <section class="panel glass">
-        <h2>الفعاليات القادمة</h2>
-        <div id="eventsList" class="list">
-          <p class="muted">جاري تحميل الفعاليات...</p>
-        </div>
-        <p id="eventsMessage" class="status" role="status"></p>
-      </section>
-    </main>
-  </div>
+<section class="panel">
+<h2>الرحلات القادمة</h2><div id="upcoming" class="grid"><p class="muted">جاري التحميل...</p></div>
+</section>
+<section class="panel">
+<h2>ذكريات الرحلات السابقة</h2><div id="past" class="grid"><p class="muted">جاري التحميل...</p></div>
+</section>
+<p id="message" role="status"></p>
+</div>
 
-  <footer>خدمة الشباب • إيمان ومحبة ونمو</footer>
-
-  <script type="module">
-    import { supabase } from "./supabase.js";
-
-    const list = document.getElementById("eventsList");
-    const message = document.getElementById("eventsMessage");
-
-    function addEvent(event) {
-      const card = document.createElement("article");
-      card.className = "item";
-
-      const title = document.createElement("h3");
-      title.textContent = event.title || "لقاء جديد";
-      card.appendChild(title);
-
-      if (event.description) {
-        const description = document.createElement("p");
-        description.textContent = event.description;
-        card.appendChild(description);
-      }
-
-      const details = document.createElement("p");
-      const date = event.starts_at
-        ? new Date(event.starts_at).toLocaleString("ar-EG")
-        : "";
-
-      details.textContent = [event.location, date]
-        .filter(Boolean)
-        .join(" • ");
-
-      card.appendChild(details);
-      list.appendChild(card);
-    }
-
-    async function loadEvents() {
-      const { data, error } = await supabase
-        .from("events")
-        .select("title,description,location,starts_at")
-        .order("starts_at", { ascending: true });
-
-      list.replaceChildren();
-
-      if (error) {
-        message.textContent = "تعذر تحميل الفعاليات. حاول مرة أخرى لاحقًا.";
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        list.textContent = "لا توجد فعاليات حاليًا.";
-        return;
-      }
-
-      data.forEach(addEvent);
-      message.textContent = "";
-    }
-
-    loadEvents();
-  </script>
-  <script src="./install.js"></script>
+<script type="module">
+import {supabase} from "./supabase.js";
+const $=id=>document.getElementById(id);
+let user=null,profile=null,groups=[],events=[];
+const BUCKET="trip-media";
+function say(t){$("message").textContent=t;}
+function safeUrl(value){
+ try{const u=new URL(value);return ["https:","http:"].includes(u.protocol)?u.href:"";}catch{return "";}
+}
+async function uploadImage(file,folder){
+ if(!file || !file.type.startsWith("image/"))throw new Error("اختار ملف صورة صحيح.");
+ if(file.size>10*1024*1024)throw new Error("حجم الصورة لازم يكون أقل من 10 ميجابايت.");
+ const clean=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+ const path=`${user.id}/${folder}/${Date.now()}-${crypto.randomUUID()}-${clean}`;
+ const {error}=await supabase.storage.from(BUCKET).upload(path,file,{upsert:false,contentType:file.type});
+ if(error)throw error;
+ const {data}=supabase.storage.from(BUCKET).getPublicUrl(path);
+ return data.publicUrl;
+}
+async function init(){
+ const {data:{user:u},error:ae}=await supabase.auth.getUser();
+ if(ae||!u){location.replace("account.html");return;}
+ user=u;
+ const {data:p,error:pe}=await supabase.from("profiles").select("role,approval_status,group_id").eq("id",u.id).maybeSingle();
+ if(pe||!p||p.approval_status!=="approved"){say("سجّل الدخول بحساب معتمد لعرض الرحلات.");return;}
+ profile=p;
+ const {data:assignments,error:asErr}=await supabase.from("servant_group_assignments").select("group_id").eq("servant_id",u.id);
+ if(asErr){say("تعذر تحميل المجموعات: "+asErr.message);return;}
+ const ids=(assignments||[]).map(x=>x.group_id);
+ if(p.role==="admin"){
+  const {data:g,error}=await supabase.from("ministry_groups").select("id,name").order("name");
+  if(error){say(error.message);return;}groups=g||[];
+ }else if(p.role==="servant" && ids.length){
+  const {data:g,error}=await supabase.from("ministry_groups").select("id,name").in("id",ids).order("name");
+  if(error){say(error.message);return;}groups=g||[];
+ }
+ if(["admin","servant"].includes(p.role)){
+  $("managePanel").style.display="block";
+  $("groupId").replaceChildren();
+  if(p.role==="admin")$("groupId").add(new Option("كل المجموعات",""));
+  groups.forEach(g=>$("groupId").add(new Option(g.name,g.id)));
+  if(p.role==="servant"&&groups.length===1)$("groupId").value=groups[0].id;
+ }
+ await loadEvents();
+}
+async function loadEvents(){
+ const {data,error}=await supabase.from("events")
+  .select("id,title,description,location,starts_at,group_id,cover_image_url,gallery_urls,payment_url")
+  .order("starts_at",{ascending:true});
+ if(error){say("تعذر تحميل الرحلات: "+error.message);return;}
+ events=data||[];
+ renderEvents();
+ fillGallerySelect();
+}
+function makeTrip(ev){
+ const card=document.createElement("article");card.className="trip";
+ if(ev.cover_image_url){const img=document.createElement("img");img.className="cover";img.src=ev.cover_image_url;img.alt=ev.title||"صورة الرحلة";card.append(img);}
+ const body=document.createElement("div");body.className="trip-body";
+ const h=document.createElement("h3");h.textContent=ev.title||"رحلة";
+ const desc=document.createElement("p");desc.className="muted";desc.textContent=ev.description||"";
+ const meta=document.createElement("p");meta.className="muted";
+ meta.textContent=[ev.location,ev.starts_at?new Date(ev.starts_at).toLocaleString("ar-EG"):""].filter(Boolean).join(" • ");
+ body.append(h,desc,meta);
+ const urls=Array.isArray(ev.gallery_urls)?ev.gallery_urls:[];
+ if(urls.length){const gallery=document.createElement("div");gallery.className="gallery";urls.forEach(url=>{const img=document.createElement("img");img.src=url;img.loading="lazy";img.alt="صورة من الرحلة";gallery.append(img);});body.append(gallery);}
+ const actions=document.createElement("div");actions.className="actions";
+ const pay=safeUrl(ev.payment_url||"");
+ if(pay){const a=document.createElement("a");a.href=pay;a.target="_blank";a.rel="noopener noreferrer";a.className="pay";a.textContent="الدفع عبر InstaPay";actions.append(a);}
+ if(actions.childElementCount)body.append(actions);
+ card.append(body);return card;
+}
+function renderEvents(){
+ const now=Date.now(),up=events.filter(e=>!e.starts_at||new Date(e.starts_at).getTime()>=now),past=events.filter(e=>e.starts_at&&new Date(e.starts_at).getTime()<now);
+ for(const [id,rows] of [["upcoming",up],["past",past]]){
+  const box=$(id);box.replaceChildren();
+  if(!rows.length){const p=document.createElement("p");p.className="muted";p.textContent="لا توجد رحلات هنا حاليًا.";box.append(p);continue;}
+  rows.forEach(e=>box.append(makeTrip(e)));
+ }
+}
+function fillGallerySelect(){
+ const s=$("galleryEvent");s.replaceChildren(new Option("اختار الرحلة",""));
+ events.forEach(e=>s.add(new Option(e.title||("رحلة #"+e.id),String(e.id))));
+}
+$("eventForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ if(!["admin","servant"].includes(profile?.role)){say("مش مسموح لك بإضافة رحلة.");return;}
+ const title=$("title").value.trim();if(!title){say("اكتب اسم الرحلة.");return;}
+ const payment=$("paymentUrl").value.trim();
+ if(payment&&!safeUrl(payment)){say("رابط InstaPay غير صحيح.");return;}
+ const btn=$("createBtn");btn.disabled=true;say("جاري نشر الرحلة...");
+ try{
+  let cover=null;
+  if($("coverFile").files[0])cover=await uploadImage($("coverFile").files[0],"covers");
+  const groupId=$("groupId").value||null;
+  const payload={title,description:$("description").value.trim(),location:$("location").value.trim(),starts_at:new Date($("startsAt").value).toISOString(),group_id:groupId,cover_image_url:cover,payment_url:payment||null,gallery_urls:[]};
+  const {data,error}=await supabase.from("events").insert(payload).select("id").single();
+  if(error)throw error;
+  say("تم نشر الرحلة بنجاح.");
+  $("eventForm").reset();await loadEvents();$("galleryEvent").value=String(data.id);
+ }catch(err){say("فشل نشر الرحلة: "+err.message);}
+ finally{btn.disabled=false;}
+});
+$("uploadGalleryBtn").addEventListener("click",async()=>{
+ const eventId=$("galleryEvent").value,files=[...$("galleryFiles").files];
+ if(!eventId){say("اختار الرحلة أولًا.");return;}
+ if(!files.length){say("اختار صورًا لرفعها.");return;}
+ const btn=$("uploadGalleryBtn");btn.disabled=true;say("جاري رفع الصور...");
+ try{
+  const ev=events.find(x=>String(x.id)===eventId);if(!ev)throw new Error("الرحلة غير موجودة.");
+  const urls=[];
+  for(const file of files)urls.push(await uploadImage(file,`event-${eventId}/gallery`));
+  const existing=Array.isArray(ev.gallery_urls)?ev.gallery_urls:[];
+  const {error}=await supabase.from("events").update({gallery_urls:[...existing,...urls]}).eq("id",eventId);
+  if(error)throw error;
+  $("galleryFiles").value="";say("تم رفع الصور وإضافتها لمعرض الرحلة.");await loadEvents();
+ }catch(err){say("فشل رفع الصور: "+err.message);}
+ finally{btn.disabled=false;}
+});
+await init();
+</script>
+<script src="./install.js"></script>
 </body>
 </html>
