@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>أعضاء المجموعة | شبابنا</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}
+header{padding:16px max(18px,calc((100% - 1050px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#11182a;border-bottom:1px solid #30394d}
+main{max-width:1050px;margin:30px auto;padding:15px}.panel,.member{background:#171f31;border:1px solid #30394d;border-radius:15px;padding:20px;margin-bottom:15px}
+h1{font-size:27px}p{line-height:1.8;color:#b9c5dc}
+input,select{padding:12px;border-radius:9px;border:1px solid #46536d;background:#101827;color:white;font-size:15px;width:100%;margin:8px 0}
+button,a{padding:11px 16px;border:0;border-radius:9px;background:#405b9b;color:white;text-decoration:none;cursor:pointer;font-weight:bold}
+a{display:inline-block}.muted{color:#aab7d1}.member{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.member h3{margin:0 0 8px;color:#aebfff}.stats{display:flex;gap:10px;flex-wrap:wrap}.stats span{background:#252f44;padding:8px 12px;border-radius:9px}
+#message{min-height:25px;color:#ffd36a}
+</style>
+</head>
+<body>
+<header><h2>👥 أعضاء المجموعة</h2><nav><a href="servant.html">لوحة الخادم</a> <button id="logout">خروج</button></nav></header>
+<main>
+<section class="panel">
+<h1>أعضاء مجموعاتي</h1>
+<p>هنا تقدر تشوف المخدومين التابعين للمجموعات المسندة ليك.</p>
+<select id="groupSelect"><option value="">جاري تحميل المجموعات...</option></select>
+<input id="search" placeholder="ابحث باسم المخدوم...">
+<div class="stats"><span>عدد الأعضاء: <b id="count">0</b></span></div>
+<p id="message">جاري تحميل البيانات...</p>
+</section>
+<section id="membersList"></section>
+</main>
+<script type="module">
+import{supabase}from"./supabase.js";
+const $=id=>document.getElementById(id);
+let user,profile,groups=[],members=[];
+function msg(t){$("message").textContent=t}
+function render(){
+ const term=$("search").value.trim().toLowerCase();
+ const gid=$("groupSelect").value;
+ const rows=members.filter(m=>(!gid||m.group_id===gid)&&(!term||(m.full_name||"").toLowerCase().includes(term)));
+ $("count").textContent=rows.length;
+ const box=$("membersList");box.replaceChildren();
+ if(!rows.length){box.textContent="لا يوجد أعضاء مطابقون.";return}
+ rows.forEach(m=>{
+  const card=document.createElement("article");card.className="member";
+  const info=document.createElement("div");
+  const h=document.createElement("h3");h.textContent=m.full_name||"بدون اسم";
+  const p=document.createElement("p");p.textContent="النقاط: "+(m.points??0)+" • المجموعة: "+(groups.find(g=>g.id===m.group_id)?.name||"غير محددة");
+  info.append(h,p);card.append(info);
+  const a=document.createElement("a");a.href="points.html";a.textContent="إدارة النقاط";card.append(a);
+  box.append(card);
+ });
+}
+async function init(){
+ const{data:{user:u}}=await supabase.auth.getUser();
+ if(!u){location.replace("account.html");return}
+ user=u;
+ const{data:p,error}=await supabase.from("profiles").select("id,role,approval_status,full_name").eq("id",u.id).maybeSingle();
+ if(error||!p||p.approval_status!=="approved"||!["servant","admin"].includes(p.role)){location.replace("account.html");return}
+ profile=p;
+ const{data:assignments,error:ae}=await supabase.from("servant_group_assignments").select("group_id").eq("servant_id",u.id);
+ if(ae){msg("تعذر تحميل المجموعات: "+ae.message);return}
+ const ids=[...new Set((assignments||[]).map(x=>x.group_id))];
+ if(p.role==="admin"){
+  const{data:g,error}=await supabase.from("ministry_groups").select("id,name").order("name");
+  if(error){msg(error.message);return}groups=g||[];
+ }else{
+  if(!ids.length){msg("لم يتم تعيين أي مجموعة لحسابك.");return}
+  const{data:g,error}=await supabase.from("ministry_groups").select("id,name").in("id",ids).order("name");
+  if(error){msg(error.message);return}groups=g||[];
+ }
+ $("groupSelect").replaceChildren(new Option("كل المجموعات",""));
+ groups.forEach(g=>$("groupSelect").add(new Option(g.name,g.id)));
+ let q=supabase.from("profiles").select("id,full_name,points,group_id").eq("role","member").eq("approval_status","approved").order("full_name");
+ if(p.role!=="admin")q=q.in("group_id",ids);
+ const{data,error}=await q;
+ if(error){msg("تعذر تحميل الأعضاء: "+error.message);return}
+ members=data||[];render();msg("تم تحميل الأعضاء.");
+}
+$("groupSelect").addEventListener("change",render);
+$("search").addEventListener("input",render);
+$("logout").addEventListener("click",async()=>{await supabase.auth.signOut();location.replace("account.html")});
+init();
+</script>
+</body>
+</html>
