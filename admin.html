@@ -2,246 +2,391 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة الإدارة | أسرة الشباب</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الإدارة | شبابنا</title>
 
-  <style>
-    * { box-sizing: border-box; }
+<style>
+*{box-sizing:border-box}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #101522;
-      color: #f4f5f8;
-    }
+:root{
+  --bg:#080b16;
+  --card:rgba(23,30,49,.85);
+  --border:rgba(150,170,255,.16);
+  --text:#f4f6ff;
+  --muted:#aab4cc;
+  --accent:#8795ff;
+}
 
-    header {
-      background: #191f30;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      border-bottom: 1px solid #30394d;
-    }
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,Tahoma,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(ellipse at 10% 0%,#202b55 0%,transparent 40%),
+    radial-gradient(ellipse at 90% 20%,#17294a 0%,transparent 35%),
+    var(--bg);
+}
 
-    main {
-      max-width: 1100px;
-      margin: 30px auto;
-      padding: 18px;
-    }
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  padding:16px max(20px,calc((100% - 1100px)/2));
+  background:rgba(8,11,22,.88);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(18px);
+}
 
-    .welcome {
-      background: linear-gradient(135deg, #263b68, #394d83);
-      padding: 25px;
-      border-radius: 16px;
-      margin-bottom: 25px;
-    }
+header h2{
+  margin:0;
+  font-size:20px;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-    }
+button,a{
+  border:0;
+  border-radius:12px;
+  padding:11px 17px;
+  color:white;
+  text-decoration:none;
+  cursor:pointer;
+  font-weight:bold;
+  font-family:inherit;
+}
 
-    .card {
-      background: #1b2334;
-      border: 1px solid #30394d;
-      border-radius: 14px;
-      padding: 22px;
-    }
+button{
+  background:#d94d61;
+  transition:.2s;
+}
 
-    .card h3 { color: #9db8ff; }
+button:hover{
+  background:#ef6478;
+  transform:translateY(-2px);
+}
 
-    .number {
-      font-size: 28px;
-      font-weight: bold;
-      color: #ffd36a;
-    }
+main{
+  width:min(1100px,calc(100% - 30px));
+  margin:35px auto;
+}
 
-    .section {
-      background: #1b2334;
-      border: 1px solid #30394d;
-      border-radius: 14px;
-      padding: 22px;
-      margin-top: 22px;
-    }
+.welcome{
+  padding:28px;
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:linear-gradient(125deg,rgba(49,67,130,.8),rgba(28,39,72,.75));
+  margin-bottom:30px;
+  box-shadow:0 15px 40px rgba(0,0,0,.16);
+}
 
-    a, button {
-      display: inline-block;
-      padding: 11px 17px;
-      border: 0;
-      border-radius: 9px;
-      text-decoration: none;
-      cursor: pointer;
-      font-size: 15px;
-    }
+.welcome h1{
+  margin:0 0 12px;
+  font-size:clamp(25px,5vw,35px);
+}
 
-    a {
-      background: #344d83;
-      color: white;
-    }
+.welcome p{
+  color:#d0d8f0;
+  line-height:1.8;
+}
 
-    button {
-      background: #e05252;
-      color: white;
-    }
+.section-title{
+  margin:30px 0 18px;
+  font-size:23px;
+}
 
-    #status {
-      line-height: 1.8;
-      color: #c5cce0;
-    }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:19px;
+  align-items:stretch;
+}
 
-    @media(max-width: 550px) {
-      header { padding: 15px; }
-    }
-  </style>
+.card{
+  min-width:0;
+  padding:22px;
+  border:1px solid var(--border);
+  border-radius:19px;
+  background:var(--card);
+  backdrop-filter:blur(12px);
+  box-shadow:0 8px 25px rgba(0,0,0,.12);
+  transition:
+    transform .25s ease,
+    border-color .25s ease,
+    background .25s ease,
+    box-shadow .25s ease;
+}
+
+.card:hover{
+  transform:translateY(-7px) scale(1.035);
+  border-color:var(--accent);
+  background:rgba(43,54,88,.95);
+  box-shadow:0 18px 38px rgba(0,0,0,.28);
+  z-index:2;
+}
+
+.card h3{
+  margin:0 0 12px;
+  color:#b7c4ff;
+  font-size:18px;
+}
+
+.card p{
+  margin:0 0 15px;
+  color:var(--muted);
+  line-height:1.8;
+  font-size:14px;
+}
+
+.card a{
+  display:inline-block;
+  background:rgba(135,149,255,.18);
+  border:1px solid rgba(135,149,255,.25);
+  color:#dce1ff;
+  transition:.2s;
+}
+
+.card a:hover{
+  background:var(--accent);
+  color:#080b16;
+}
+
+.emoji{
+  display:block;
+  font-size:30px;
+  margin-bottom:15px;
+}
+
+.number{
+  font-size:30px;
+  font-weight:bold;
+  color:#ffd36a;
+  margin:8px 0;
+}
+
+.section{
+  padding:24px;
+  border:1px solid var(--border);
+  border-radius:23px;
+  background:rgba(16,22,39,.58);
+  margin-top:25px;
+}
+
+#status{
+  margin-top:25px;
+  padding:13px 16px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:var(--muted);
+  line-height:1.7;
+}
+
+footer{
+  text-align:center;
+  color:#7f8aa5;
+  padding:35px 15px;
+  font-size:13px;
+}
+
+@media(max-width:550px){
+  header{padding:15px}
+  main{margin-top:20px}
+  .welcome{padding:22px}
+  .grid{grid-template-columns:1fr}
+  .card{min-height:auto}
+  .card:hover{transform:translateY(-3px) scale(1.01)}
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h2>⚙️ لوحة الإدارة</h2>
+  <h2>⚙️ شبابنا | لوحة الإدارة</h2>
   <button id="logoutBtn">تسجيل الخروج</button>
 </header>
 
 <main>
 
-  <section class="welcome">
-    <h1>أهلاً يا <span id="adminName">...</span> 👋</h1>
-    <p>مرحبًا بك في لوحة إدارة أسرة الشباب.</p>
-    <p>من هنا هتقدر تتابع إدارة الموقع.</p>
-  </section>
+<section class="welcome">
+  <h1>أهلاً يا <span id="adminName">...</span> 👋</h1>
+  <p>مرحباً بك في لوحة إدارة خدمة الشباب.</p>
+  <p>من هنا تقدر تتابع وتدير جميع أقسام الموقع.</p>
+</section>
 
-  <h2>نظرة عامة</h2>
+<h2 class="section-title">نظرة عامة</h2>
 
-  <section class="grid">
-    <div class="card">
-      <h3>👥 الأعضاء</h3>
-      <div class="number" id="membersCount">--</div>
-      <p>إجمالي الأعضاء</p>
-    </div>
+<section class="grid">
 
-    <div class="card">
-      <h3>⏳ الحسابات المعلقة</h3>
-      <div class="number" id="pendingCount">--</div>
-      <p>في انتظار الموافقة</p>
-    </div>
+  <div class="card">
+    <span class="emoji">👥</span>
+    <h3>الأعضاء</h3>
+    <div class="number" id="membersCount">--</div>
+    <p>إجمالي الأعضاء</p>
+  </div>
 
-    <div class="card">
-      <h3>🛡️ الخدام</h3>
-      <div class="number" id="servantsCount">--</div>
-      <p>إجمالي الخدام</p>
-    </div>
-  </section>
+  <div class="card">
+    <span class="emoji">⏳</span>
+    <h3>الحسابات المعلقة</h3>
+    <div class="number" id="pendingCount">--</div>
+    <p>في انتظار الموافقة</p>
+  </div>
 
-  <section class="section">
-    <h2>إدارة الموقع</h2>
+  <div class="card">
+    <span class="emoji">🛡️</span>
+    <h3>الخدام</h3>
+    <div class="number" id="servantsCount">--</div>
+    <p>إجمالي الخدام</p>
+  </div>
 
-    <div class="grid">
-      <div class="card">
-        <h3>👤 إدارة الأعضاء</h3>
-        <p>مراجعة حسابات الأعضاء وحالات الموافقة.</p>
-      </div>
+</section>
 
-      <div class="card">
-        <h3>🛡️ إدارة الخدام</h3>
-        <p>تعيين الخدام ومتابعة صلاحياتهم.</p>
-      </div>
+<section class="section">
 
-      <div class="card">
-        <h3>👥 إدارة المجموعات</h3>
-        <p>إنشاء المجموعات وتعيين الخدام والأعضاء.</p>
-      </div>
+<h2 class="section-title">إدارة الموقع</h2>
 
-      <div class="card">
-        <h3>⭐ إدارة النقاط</h3>
-        <p>متابعة نظام نقاط الأعضاء.</p>
-      </div>
+<div class="grid">
 
-      <div class="card">
-        <h3>📅 الفعاليات</h3>
-        <p>إدارة اللقاءات والأنشطة.</p>
-        <a href="events.html">فتح الفعاليات</a>
-      </div>
+  <div class="card">
+    <span class="emoji">👤</span>
+    <h3>إدارة الأعضاء</h3>
+    <p>مراجعة حسابات الأعضاء وحالات الموافقة.</p>
+  </div>
 
-      <div class="card">
-        <h3>📚 الدروس</h3>
-        <p>إدارة المحتوى التعليمي.</p>
-        <a href="lessons.html">فتح الدروس</a>
-      </div>
+  <div class="card">
+    <span class="emoji">🛡️</span>
+    <h3>إدارة الخدام</h3>
+    <p>تعيين الخدام ومتابعة صلاحياتهم.</p>
+  </div>
 
-      <div class="card">
-        <h3>📝 الاختبارات</h3>
-        <p>إدارة الأسئلة والامتحانات.</p>
-        <a href="quizzes.html">فتح الاختبارات</a>
-      </div>
+  <div class="card">
+    <span class="emoji">👥</span>
+    <h3>إدارة المجموعات</h3>
+    <p>إنشاء المجموعات وتعيين الخدام والأعضاء.</p>
+  </div>
 
-      <div class="card">
-        <h3>📩 صندوق الأسئلة</h3>
-        <p>متابعة أسئلة المخدومين، سواء الموجهة إليك أو للإدارة العامة.</p>
-        <a href="questions.html">فتح صندوق الأسئلة</a>
-      </div>
-    </div>
-  </section>
+  <div class="card">
+    <span class="emoji">⭐</span>
+    <h3>إدارة النقاط</h3>
+    <p>متابعة نظام نقاط الأعضاء.</p>
+    <a href="points.html">فتح إدارة النقاط</a>
+  </div>
 
-  <p id="status">جاري التحقق من صلاحيات الإدارة...</p>
+  <div class="card">
+    <span class="emoji">📋</span>
+    <h3>الحضور والغياب</h3>
+    <p>متابعة حضور وغياب جميع المجموعات وتسجيل اللقاءات.</p>
+    <a href="attendance.html">فتح الحضور والغياب</a>
+  </div>
+
+  <div class="card">
+    <span class="emoji">📅</span>
+    <h3>الفعاليات</h3>
+    <p>إدارة اللقاءات والأنشطة.</p>
+    <a href="events.html">فتح الفعاليات</a>
+  </div>
+
+  <div class="card">
+    <span class="emoji">📚</span>
+    <h3>الدروس</h3>
+    <p>إدارة المحتوى التعليمي.</p>
+    <a href="lessons.html">فتح الدروس</a>
+  </div>
+
+  <div class="card">
+    <span class="emoji">📝</span>
+    <h3>الاختبارات</h3>
+    <p>إدارة الأسئلة والامتحانات.</p>
+    <a href="quizzes.html">فتح الاختبارات</a>
+  </div>
+
+  <div class="card">
+    <span class="emoji">📩</span>
+    <h3>صندوق الأسئلة</h3>
+    <p>متابعة أسئلة المخدومين والرد عليها.</p>
+    <a href="questions.html">فتح صندوق الأسئلة</a>
+  </div>
+
+  <div class="card">
+    <span class="emoji">📊</span>
+    <h3>مراجعة الامتحانات</h3>
+    <p>متابعة محاولات المخدومين ونتائجهم.</p>
+    <a href="exam-review.html">فتح مراجعة الامتحانات</a>
+  </div>
+
+</div>
+</section>
+
+<p id="status">جاري التحقق من صلاحيات الإدارة...</p>
 
 </main>
 
+<footer>شبابنا | خدمة الشباب</footer>
+
 <script type="module">
-  import { supabase } from "./supabase.js";
+import { supabase } from "./supabase.js";
 
-  const status = document.getElementById("status");
+const status = document.getElementById("status");
 
-  async function loadAdminDashboard() {
-    const { data: authData, error: authError } =
-      await supabase.auth.getUser();
+async function loadAdminDashboard(){
 
-    if (authError || !authData.user) {
-      location.href = "account.html";
-      return;
-    }
+  const {data:{user},error:authError} =
+    await supabase.auth.getUser();
 
-    const { data: profile, error } = await supabase
-      .from("profiles")
-      .select("full_name, role, approval_status")
-      .eq("id", authData.user.id)
-      .maybeSingle();
-
-    if (error) {
-      status.textContent = "حدث خطأ: " + error.message;
-      return;
-    }
-
-    if (!profile || profile.approval_status !== "approved") {
-      status.textContent = "الحساب غير معتمد.";
-      await supabase.auth.signOut();
-      location.href = "account.html";
-      return;
-    }
-
-    if (profile.role !== "admin") {
-      status.textContent = "ليس لديك صلاحية دخول لوحة الإدارة.";
-      setTimeout(() => location.href = "dashboard.html", 2000);
-      return;
-    }
-
-    document.getElementById("adminName").textContent =
-      profile.full_name || "Admin";
-
-    status.textContent =
-      "تم التحقق من صلاحيات الإدارة بنجاح. الإحصائيات ستظهر بعد ربط جداول الإدارة.";
+  if(authError || !user){
+    location.replace("account.html");
+    return;
   }
 
-  document.getElementById("logoutBtn").addEventListener("click", async () => {
-    await supabase.auth.signOut();
-    location.href = "account.html";
-  });
+  const {data:profile,error} = await supabase
+    .from("profiles")
+    .select("full_name,role,approval_status")
+    .eq("id",user.id)
+    .maybeSingle();
 
-  loadAdminDashboard();
+  if(error){
+    status.textContent = "حدث خطأ: " + error.message;
+    return;
+  }
+
+  if(!profile || profile.approval_status !== "approved"){
+    status.textContent = "الحساب غير معتمد.";
+    await supabase.auth.signOut();
+    location.replace("account.html");
+    return;
+  }
+
+  if(profile.role !== "admin"){
+    status.textContent = "ليس لديك صلاحية دخول لوحة الإدارة.";
+    setTimeout(()=>{
+      location.replace("dashboard.html");
+    },2000);
+    return;
+  }
+
+  document.getElementById("adminName").textContent =
+    profile.full_name || "Admin";
+
+  status.textContent =
+    "تم التحقق من صلاحيات الإدارة بنجاح. الإحصائيات ستظهر بعد ربط جداول الإدارة.";
+}
+
+document.getElementById("logoutBtn").addEventListener("click",async()=>{
+  const {error} = await supabase.auth.signOut();
+
+  if(error){
+    status.textContent = "تعذر تسجيل الخروج: " + error.message;
+    return;
+  }
+
+  location.replace("account.html");
+});
+
+loadAdminDashboard();
 </script>
 
 </body>
