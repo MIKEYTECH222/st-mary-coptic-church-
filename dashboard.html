@@ -1,299 +1,48 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة المخدوم | شبابنا</title>
-  <style>
-    * { box-sizing: border-box; }
-
-    :root {
-      --bg: #080b16;
-      --card: rgba(23, 30, 49, .82);
-      --border: rgba(150, 170, 255, .16);
-      --text: #f4f6ff;
-      --muted: #aab4cc;
-      --accent: #8795ff;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, Tahoma, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(ellipse at 10% 0%, #202b55 0%, transparent 40%),
-        radial-gradient(ellipse at 90% 20%, #17294a 0%, transparent 35%),
-        var(--bg);
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      flex-wrap: wrap;
-      padding: 16px max(20px, calc((100% - 1100px) / 2));
-      background: rgba(8, 11, 22, .82);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(18px);
-    }
-
-    header h2 { margin: 0; font-size: 20px; }
-
-    button {
-      border: 0;
-      border-radius: 12px;
-      padding: 11px 17px;
-      color: white;
-      background: #d94d61;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    main {
-      width: min(1100px, calc(100% - 30px));
-      margin: 35px auto;
-    }
-
-    .welcome {
-      padding: 30px;
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      background: linear-gradient(125deg, rgba(49, 67, 130, .8), rgba(28, 39, 72, .75));
-      box-shadow: 0 18px 50px rgba(0,0,0,.2);
-      margin-bottom: 35px;
-    }
-
-    .welcome h1 {
-      margin: 0 0 12px;
-      font-size: clamp(25px, 5vw, 36px);
-    }
-
-    .welcome p { color: #d0d8f0; line-height: 1.8; }
-
-    .points {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-      padding: 12px 18px;
-      border-radius: 14px;
-      background: rgba(255, 211, 106, .12);
-      color: #ffd36a;
-      font-size: 19px;
-      font-weight: bold;
-    }
-
-    .section-title {
-      margin: 0 0 18px;
-      font-size: 23px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 17px;
-    }
-
-    .item {
-      display: block;
-      min-height: 165px;
-      padding: 23px;
-      border: 1px solid var(--border);
-      border-radius: 19px;
-      background: var(--card);
-      color: var(--text);
-      text-decoration: none;
-      transition: .22s ease;
-      backdrop-filter: blur(12px);
-    }
-
-    .item:hover {
-      transform: translateY(-5px);
-      border-color: var(--accent);
-      background: rgba(43, 54, 88, .9);
-    }
-
-    .item .emoji {
-      display: block;
-      font-size: 30px;
-      margin-bottom: 15px;
-    }
-
-    .item h3 {
-      margin: 0 0 9px;
-      color: #b7c4ff;
-      font-size: 18px;
-    }
-
-    .item p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.7;
-      font-size: 14px;
-    }
-
-    #status {
-      margin-top: 25px;
-      padding: 13px 16px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    footer {
-      text-align: center;
-      color: #7f8aa5;
-      padding: 35px 15px;
-      font-size: 13px;
-    }
-
-    @media(max-width: 550px) {
-      main { margin-top: 20px; }
-      .welcome { padding: 22px; }
-      .grid { grid-template-columns: 1fr; }
-      .item { min-height: auto; }
-    }
-  </style>
-</head>
-
-<body>
-
-<header>
-  <h2>✝️ شبابنا | خدمة الشباب</h2>
-  <button id="logoutBtn">تسجيل الخروج</button>
-</header>
-
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>لوحة المخدوم | شبابنا</title>
+<style>
+*{box-sizing:border-box}:root{--bg:#080b16;--card:rgba(23,30,49,.82);--border:rgba(150,170,255,.16);--text:#f4f6ff;--muted:#aab4cc;--accent:#8795ff}
+body{margin:0;min-height:100vh;font-family:Arial,Tahoma,sans-serif;color:var(--text);background:radial-gradient(ellipse at 10% 0%,#202b55 0%,transparent 40%),radial-gradient(ellipse at 90% 20%,#17294a 0%,transparent 35%),var(--bg)}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:16px max(20px,calc((100% - 1100px)/2));background:#080b16eF;border-bottom:1px solid var(--border);backdrop-filter:blur(18px)}
+button{border:0;border-radius:12px;padding:11px 17px;color:white;background:#d94d61;cursor:pointer;font-weight:bold}
+main{width:min(1100px,calc(100% - 30px));margin:30px auto}.welcome{padding:28px;border:1px solid var(--border);border-radius:24px;background:linear-gradient(125deg,#314382cc,#1c2748bf);margin-bottom:28px}
+.welcome h1{margin:0 0 12px;font-size:clamp(25px,5vw,36px)}.welcome p{color:#d0d8f0;line-height:1.8}
+.points{display:inline-flex;gap:8px;margin-top:8px;padding:12px 18px;border-radius:14px;background:#ffd36a1f;color:#ffd36a;font-size:19px;font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:17px}.item{display:block;min-height:155px;padding:22px;border:1px solid var(--border);border-radius:19px;background:var(--card);color:var(--text);text-decoration:none;transition:.22s;backdrop-filter:blur(12px)}
+.item:hover{transform:translateY(-5px);border-color:var(--accent);background:#2b3658e6}.emoji{display:block;font-size:30px;margin-bottom:13px}.item h3{margin:0 0 9px;color:#b7c4ff}.item p{margin:0;color:var(--muted);line-height:1.7;font-size:14px}
+#status{margin-top:22px;padding:13px;border:1px solid var(--border);border-radius:12px;color:var(--muted);line-height:1.7}
+@media(max-width:550px){header{padding:14px}.welcome{padding:20px}.grid{grid-template-columns:1fr}.item{min-height:auto}}
+</style>
+</head><body>
+<header><h2>✝️ شبابنا | خدمة الشباب</h2><button id="logoutBtn">تسجيل الخروج</button></header>
 <main>
-
-  <section class="welcome">
-    <h1>أهلاً بيك يا <span id="memberName">...</span> 👋</h1>
-    <p>من هنا تقدر تتابع كل حاجة خاصة بيك في خدمة الشباب.</p>
-    <div class="points">
-      ⭐ نقاطك: <span id="memberPoints">...</span>
-    </div>
-  </section>
-
-  <h2 class="section-title">الأقسام الرئيسية</h2>
-
-  <section class="grid">
-
-    <a class="item" href="bible.html">
-      <span class="emoji">✝️</span>
-      <h3>الكتاب المقدس</h3>
-      <p>اقرأ وتابع المحتوى والأسئلة المتعلقة بالكتاب المقدس.</p>
-    </a>
-
-    <a class="item" href="questions.html">
-      <span class="emoji">💬</span>
-      <h3>صندوق الأسئلة</h3>
-      <p>اسأل الخدام وتابع إجاباتهم على أسئلتك.</p>
-    </a>
-
-    <a class="item" href="quizzes.html">
-      <span class="emoji">📝</span>
-      <h3>الامتحانات</h3>
-      <p>حل الاختبارات المتاحة وتابع نتائجك.</p>
-    </a>
-
-    <a class="item" href="events.html">
-      <span class="emoji">📅</span>
-      <h3>الفعاليات واللقاءات</h3>
-      <p>اعرف مواعيد الاجتماعات والأنشطة القادمة.</p>
-    </a>
-
-    <a class="item" href="lessons.html">
-      <span class="emoji">📚</span>
-      <h3>الدروس</h3>
-      <p>شاهد الدروس واقرأ المواد التعليمية.</p>
-    </a>
-
-    <a class="item" href="profile.html">
-      <span class="emoji">👤</span>
-      <h3>ملفي الشخصي</h3>
-      <p>راجع بيانات حسابك ونقاطك ومعلوماتك.</p>
-    </a>
-
-  </section>
-
-  <p id="status">جاري تحميل بيانات حسابك...</p>
-
+<section class="welcome"><h1>أهلاً بيك يا <span id="memberName">...</span> 👋</h1><p>من هنا تقدر تتابع كل حاجة خاصة بيك في خدمة الشباب.</p><div class="points">⭐ نقاطك: <span id="memberPoints">...</span></div></section>
+<h2>الأقسام الرئيسية</h2>
+<section class="grid">
+<a class="item" href="bible.html"><span class="emoji">✝️</span><h3>الكتاب المقدس</h3><p>اقرأ وتابع المحتوى والأسئلة المتعلقة بالكتاب المقدس.</p></a>
+<a class="item" href="agpeya.html"><span class="emoji">📖</span><h3>الأجبية</h3><p>اقرأ صلوات السواعي داخل الموقع.</p></a>
+<a class="item" href="questions.html"><span class="emoji">💬</span><h3>صندوق الأسئلة</h3><p>اسأل الخدام وتابع إجاباتهم.</p></a>
+<a class="item" href="quizzes.html"><span class="emoji">📝</span><h3>الامتحانات</h3><p>حل الاختبارات المتاحة وتابع نتائجك.</p></a>
+<a class="item" href="events.html"><span class="emoji">🚌</span><h3>رحلات وخروجات</h3><p>تابع الرحلات ومواعيدها وصورها ورابط الاشتراك.</p></a>
+<a class="item" href="lessons.html"><span class="emoji">📚</span><h3>الدروس</h3><p>شاهد الدروس واقرأ المواد التعليمية.</p></a>
+<a class="item" href="profile.html"><span class="emoji">👤</span><h3>ملفي الشخصي</h3><p>راجع بيانات حسابك ونقاطك.</p></a>
+</section><p id="status">جاري تحميل بيانات حسابك...</p>
 </main>
-
-<footer>
-  شبابنا | خدمة الشباب
-</footer>
-
 <script type="module">
-  import { supabase } from "./supabase.js";
-
-  const $ = id => document.getElementById(id);
-  const status = $("status");
-
-  async function loadDashboard() {
-    const { data: authData, error: authError } =
-      await supabase.auth.getUser();
-
-    if (authError || !authData.user) {
-      location.replace("account.html");
-      return;
-    }
-
-    const { data: profile, error } = await supabase
-      .from("profiles")
-      .select("full_name, role, approval_status, points")
-      .eq("id", authData.user.id)
-      .maybeSingle();
-
-    if (error) {
-      status.textContent = "حصل خطأ أثناء تحميل بياناتك: " + error.message;
-      return;
-    }
-
-    if (!profile || profile.approval_status !== "approved") {
-      status.textContent = "حسابك غير معتمد.";
-      await supabase.auth.signOut();
-      location.replace("account.html");
-      return;
-    }
-
-    if (profile.role === "admin") {
-      location.replace("admin.html");
-      return;
-    }
-
-    if (profile.role === "servant") {
-      location.replace("servant.html");
-      return;
-    }
-
-    $("memberName").textContent = profile.full_name || "عضو";
-    $("memberPoints").textContent = profile.points ?? 0;
-
-    status.textContent = "أهلاً بيك! تم تحميل بيانات حسابك بنجاح.";
-  }
-
-  $("logoutBtn").addEventListener("click", async () => {
-    $("logoutBtn").disabled = true;
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-      status.textContent = "تعذر تسجيل الخروج: " + error.message;
-      $("logoutBtn").disabled = false;
-      return;
-    }
-
-    location.replace("account.html");
-  });
-
-  loadDashboard();
+import{supabase}from"./supabase.js";
+const $=id=>document.getElementById(id);
+async function load(){
+ const{data:{user},error:ae}=await supabase.auth.getUser();if(ae||!user){location.replace("account.html");return;}
+ const{data:p,error}=await supabase.from("profiles").select("full_name,role,approval_status,points").eq("id",user.id).maybeSingle();
+ if(error){$("status").textContent="خطأ: "+error.message;return;}
+ if(!p||p.approval_status!=="approved"){await supabase.auth.signOut();location.replace("account.html");return;}
+ if(p.role==="admin"){location.replace("admin.html");return;}if(p.role==="servant"){location.replace("servant.html");return;}
+ $("memberName").textContent=p.full_name||"عضو";$("memberPoints").textContent=p.points??0;$("status").textContent="تم تحميل بيانات حسابك.";
+}
+$("logoutBtn").addEventListener("click",async()=>{await supabase.auth.signOut();location.replace("account.html");});
+await load();
 </script>
-<script src="./install.js"></script>
-</body>
-</html>
+<script src="./install.js"></script></body></html>
