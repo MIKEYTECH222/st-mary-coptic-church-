@@ -1,65 +1,246 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>لوحة الخادم | شبابنا</title>
 <style>
-*{box-sizing:border-box}:root{--bg:#080b16;--card:rgba(23,30,49,.85);--border:rgba(150,170,255,.16);--text:#f4f6ff;--muted:#aab4cc;--accent:#8795ff}
-body{margin:0;min-height:100vh;font-family:Arial,Tahoma,sans-serif;color:var(--text);background:radial-gradient(ellipse at 10% 0%,#202b55 0%,transparent 40%),radial-gradient(ellipse at 90% 20%,#17294a 0%,transparent 35%),var(--bg)}
-header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:16px max(20px,calc((100% - 1100px)/2));background:#080b16eF;border-bottom:1px solid var(--border);backdrop-filter:blur(18px)}
-button,a{border:0;border-radius:12px;padding:11px 17px;color:white;text-decoration:none;cursor:pointer;font-weight:bold;font-family:inherit;background:#344d83}
+*{box-sizing:border-box}
+:root{
+--bg:#080b16;
+--card:rgba(23,30,49,.85);
+--border:rgba(150,170,255,.16);
+--text:#f4f6ff;
+--muted:#aab4cc;
+--accent:#8795ff
+}
+body{
+margin:0;min-height:100vh;
+font-family:Arial,Tahoma,sans-serif;
+color:var(--text);
+background:
+radial-gradient(ellipse at 10% 0%,#202b55 0%,transparent 40%),
+radial-gradient(ellipse at 90% 20%,#17294a 0%,transparent 35%),
+var(--bg)
+}
+header{
+position:sticky;top:0;z-index:5;
+display:flex;justify-content:space-between;
+align-items:center;gap:12px;flex-wrap:wrap;
+padding:16px max(20px,calc((100% - 1100px)/2));
+background:#080b16eF;
+border-bottom:1px solid var(--border);
+backdrop-filter:blur(18px)
+}
+button,a{
+border:0;border-radius:12px;padding:11px 17px;
+color:white;text-decoration:none;cursor:pointer;
+font-weight:bold;font-family:inherit;background:#344d83
+}
 main{width:min(1100px,calc(100% - 30px));margin:30px auto}
-.welcome{padding:28px;border:1px solid var(--border);border-radius:24px;background:linear-gradient(125deg,rgba(49,67,130,.8),rgba(28,39,72,.75));margin-bottom:25px}
-.welcome h1{margin:0 0 12px;font-size:clamp(25px,5vw,35px)}.welcome p,.item p{color:var(--muted);line-height:1.8}
+.welcome{
+padding:28px;border:1px solid var(--border);
+border-radius:24px;
+background:linear-gradient(125deg,rgba(49,67,130,.8),rgba(28,39,72,.75));
+margin-bottom:25px
+}
+.welcome h1{margin:0 0 12px;font-size:clamp(25px,5vw,35px)}
+.welcome p,.item p{color:var(--muted);line-height:1.8}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:17px}
-.item{display:block;min-height:155px;padding:22px;border:1px solid var(--border);border-radius:19px;background:var(--card);color:var(--text);transition:.22s;backdrop-filter:blur(12px)}
-.item:hover{transform:translateY(-5px);border-color:var(--accent);background:#2b3658e6}
-.item h3{margin:0 0 9px;color:#b7c4ff;font-size:18px}.item p{margin:0;font-size:14px}.emoji{display:block;font-size:30px;margin-bottom:13px}
-.section-title{margin:28px 0 16px}#status{margin-top:22px;padding:13px;border:1px solid var(--border);border-radius:12px;color:var(--muted);line-height:1.7}
-@media(max-width:550px){header{padding:14px}.welcome{padding:20px}.grid{grid-template-columns:1fr}.item{min-height:auto}}
+.item{
+display:block;min-height:155px;padding:22px;
+border:1px solid var(--border);border-radius:19px;
+background:var(--card);color:var(--text);
+transition:.22s;backdrop-filter:blur(12px)
+}
+.item:hover{
+transform:translateY(-5px);
+border-color:var(--accent);
+background:#2b3658e6
+}
+.item h3{margin:0 0 9px;color:#b7c4ff;font-size:18px}
+.item p{margin:0;font-size:14px}
+.emoji{display:block;font-size:30px;margin-bottom:13px}
+.section-title{margin:28px 0 16px}
+#status{
+margin-top:22px;padding:13px;
+border:1px solid var(--border);
+border-radius:12px;color:var(--muted);line-height:1.7
+}
+@media(max-width:550px){
+header{padding:14px}
+.welcome{padding:20px}
+.grid{grid-template-columns:1fr}
+.item{min-height:auto}
+}
 </style>
 </head>
 <body>
-<header><h2>✝️ شبابنا | لوحة الخادم</h2><button id="logoutBtn">تسجيل الخروج</button></header>
+
+<header>
+<h2>✝️ شبابنا | لوحة الخادم</h2>
+<button id="logoutBtn">تسجيل الخروج</button>
+</header>
+
 <main>
-<section class="welcome"><h1>أهلاً يا خادم <span id="servantName">...</span> 👋</h1><p>مجموعاتك: <strong id="groupName">جاري التحميل...</strong></p></section>
+
+<section class="welcome">
+<h1>أهلاً يا خادم <span id="servantName">...</span> 👋</h1>
+<p>مجموعاتك: <strong id="groupName">جاري التحميل...</strong></p>
+</section>
+
 <h2 class="section-title">إدارة المخدومين</h2>
+
 <section class="grid">
-<a class="item" href="members.html"><span class="emoji">👥</span><h3>أعضاء المجموعة</h3><p>عرض المخدومين التابعين لمجموعاتك.</p></a>
-<a class="item" href="attendance.html"><span class="emoji">📋</span><h3>الحضور والغياب</h3><p>تسجيل الحضور ومتابعة الغياب.</p></a>
-<a class="item" href="points.html"><span class="emoji">⭐</span><h3>إدارة النقاط</h3><p>إضافة نقاط للمخدومين أو خصمها.</p></a>
-<a class="item" href="notifications.html"><span class="emoji">🔔</span><h3>الإشعارات</h3><p>متابعة تنبيهات غياب المخدومين.</p></a>
+
+<a class="item" href="members.html">
+<span class="emoji">👥</span>
+<h3>أعضاء المجموعة</h3>
+<p>عرض المخدومين التابعين لمجموعاتك.</p>
+</a>
+
+<a class="item" href="attendance.html">
+<span class="emoji">📋</span>
+<h3>الحضور والغياب</h3>
+<p>تسجيل الحضور ومتابعة الغياب.</p>
+</a>
+
+<a class="item" href="points.html">
+<span class="emoji">⭐</span>
+<h3>إدارة النقاط</h3>
+<p>إضافة نقاط للمخدومين أو خصمها.</p>
+</a>
+
+<a class="item" href="notifications.html">
+<span class="emoji">🔔</span>
+<h3>الإشعارات</h3>
+<p>متابعة تنبيهات غياب المخدومين.</p>
+</a>
+
 </section>
+
 <h2 class="section-title">المحتوى والأنشطة</h2>
+
 <section class="grid">
-<a class="item" href="quiz-manage.html"><span class="emoji">📝</span><h3>إنشاء الامتحانات</h3><p>إنشاء امتحانات الاختيار والمقالي لمجموعاتك.</p></a>
-<a class="item" href="essay-review.html"><span class="emoji">✍️</span><h3>مراجعة المقالي</h3><p>راجع إجابات الطلاب واعتمد الدرجات.</p></a>
-<a class="item" href="exam-review.html"><span class="emoji">📊</span><h3>مراجعة الامتحانات</h3><p>متابعة المحاولات والنتائج.</p></a>
-<a class="item" href="events.html"><span class="emoji">🚌</span><h3>رحلات وخروجات</h3><p>متابعة الرحلات ورفع صورها.</p></a>
-<a class="item" href="questions.html"><span class="emoji">💬</span><h3>صندوق الأسئلة</h3><p>استقبال أسئلة المخدومين والرد عليها.</p></a>
-<a class="item" href="lessons.html"><span class="emoji">📚</span><h3>الدروس</h3><p>الوصول إلى المواد التعليمية.</p></a>
-<a class="item" href="bible.html"><span class="emoji">✝️</span><h3>الكتاب المقدس</h3><p>قراءة الكتاب ومتابعة الأسئلة.</p></a>
-<a class="item" href="agpeya.html"><span class="emoji">📖</span><h3>الأجبية</h3><p>قراءة صلوات الأجبية داخل الموقع.</p></a>
+
+<a class="item" href="goals-manage.html">
+<span class="emoji">🎯</span>
+<h3>إدارة الأهداف</h3>
+<p>أنشئ أهدافًا لمجموعاتك وتابع إنجازها.</p>
+</a>
+
+<a class="item" href="quiz-manage.html">
+<span class="emoji">📝</span>
+<h3>إنشاء الامتحانات</h3>
+<p>إنشاء امتحانات الاختيار والمقالي لمجموعاتك.</p>
+</a>
+
+<a class="item" href="essay-review.html">
+<span class="emoji">✍️</span>
+<h3>مراجعة المقالي</h3>
+<p>راجع إجابات الطلاب واعتمد الدرجات.</p>
+</a>
+
+<a class="item" href="exam-review.html">
+<span class="emoji">📊</span>
+<h3>مراجعة الامتحانات</h3>
+<p>متابعة المحاولات والنتائج.</p>
+</a>
+
+<a class="item" href="events.html">
+<span class="emoji">🚌</span>
+<h3>رحلات وخروجات</h3>
+<p>متابعة الرحلات ورفع صورها.</p>
+</a>
+
+<a class="item" href="questions.html">
+<span class="emoji">💬</span>
+<h3>صندوق الأسئلة</h3>
+<p>استقبال أسئلة المخدومين والرد عليها.</p>
+</a>
+
+<a class="item" href="lessons.html">
+<span class="emoji">📚</span>
+<h3>الدروس</h3>
+<p>الوصول إلى المواد التعليمية.</p>
+</a>
+
+<a class="item" href="bible.html">
+<span class="emoji">✝️</span>
+<h3>الكتاب المقدس</h3>
+<p>قراءة الكتاب ومتابعة الأسئلة.</p>
+</a>
+
+<a class="item" href="agpeya.html">
+<span class="emoji">📖</span>
+<h3>الأجبية</h3>
+<p>قراءة صلوات الأجبية داخل الموقع.</p>
+</a>
+
 </section>
+
 <p id="status">جاري التحقق من صلاحيات الحساب...</p>
+
 </main>
+
 <script type="module">
 import{supabase}from"./supabase.js";
+
 const $=id=>document.getElementById(id);
+
 async function init(){
+
  const{data:{user},error:ae}=await supabase.auth.getUser();
- if(ae||!user){location.replace("account.html");return;}
- const{data:p,error}=await supabase.from("profiles").select("full_name,role,approval_status").eq("id",user.id).maybeSingle();
- if(error||!p){$("status").textContent="تعذر تحميل الحساب.";return;}
- if(p.approval_status!=="approved"||!["servant","admin"].includes(p.role)){location.replace("dashboard.html");return;}
+
+ if(ae||!user){
+  location.replace("account.html");
+  return;
+ }
+
+ const{data:p,error}=await supabase
+  .from("profiles")
+  .select("full_name,role,approval_status")
+  .eq("id",user.id)
+  .maybeSingle();
+
+ if(error||!p){
+  $("status").textContent="تعذر تحميل الحساب.";
+  return;
+ }
+
+ if(
+  p.approval_status!=="approved"||
+  !["servant","admin"].includes(p.role)
+ ){
+  location.replace("dashboard.html");
+  return;
+ }
+
  $("servantName").textContent=p.full_name||"خادم";
- const{data:as,error:ge}=await supabase.from("servant_group_assignments").select("group_id").eq("servant_id",user.id);
- $("groupName").textContent=ge?"تعذر تحميل المجموعات":p.role==="admin"?"جميع المجموعات":`عدد المجموعات: ${(as||[]).length}`;
+
+ const{data:as,error:ge}=await supabase
+  .from("servant_group_assignments")
+  .select("group_id")
+  .eq("servant_id",user.id);
+
+ $("groupName").textContent=
+  ge
+  ?"تعذر تحميل المجموعات"
+  :p.role==="admin"
+    ?"جميع المجموعات"
+    :`عدد المجموعات: ${(as||[]).length}`;
+
  $("status").textContent="تم التحقق من صلاحيات الحساب.";
 }
-$("logoutBtn").addEventListener("click",async()=>{await supabase.auth.signOut();location.replace("account.html");});
+
+$("logoutBtn").addEventListener("click",async()=>{
+ await supabase.auth.signOut();
+ location.replace("account.html");
+});
+
 await init();
 </script>
+
 <script src="./install.js"></script>
 </body>
 </html>
