@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>إشعارات الخادم | شبابنا</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}
+header{padding:17px max(18px,calc((100% - 900px)/2));background:#11182a;border-bottom:1px solid #30394d;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+main{max-width:900px;margin:30px auto;padding:15px}
+.panel,.notice{background:#171f31;border:1px solid #30394d;border-radius:15px;padding:20px;margin-bottom:15px}
+.notice{border-right:4px solid #e6a83e}
+.notice.read{opacity:.65;border-right-color:#64748b}
+.notice p{line-height:1.8;color:#d5dced}
+small{color:#9ba9c5}
+button,a{padding:10px 15px;border:0;border-radius:9px;background:#405b9b;color:white;text-decoration:none;cursor:pointer;font-weight:bold}
+button:disabled{opacity:.5}
+#message{color:#ffd36a;line-height:1.8}
+.empty{color:#aab4cc;text-align:center;padding:25px}
+</style>
+</head>
+<body>
+<header>
+<h2>🔔 إشعارات الخادم</h2>
+<div>
+<a href="servant.html">لوحة الخادم</a>
+<button id="logout">خروج</button>
+</div>
+</header>
+
+<main>
+<section class="panel">
+<h2>تنبيهات الغياب</h2>
+<p>هتظهر هنا التنبيهات الخاصة بالمخدومين في مجموعاتك.</p>
+<p id="message">جاري تحميل الإشعارات...</p>
+</section>
+<div id="notifications"></div>
+</main>
+
+<script type="module">
+import { supabase } from "./supabase.js";
+
+const $ = id => document.getElementById(id);
+let user;
+
+function say(message){
+  $("message").textContent = message;
+}
+
+async function init(){
+  const {data:{user:u}} = await supabase.auth.getUser();
+
+  if(!u){
+    location.replace("account.html");
+    return;
+  }
+  user = u;
+
+  const {data:profile,error} = await supabase
+    .from("profiles")
+    .select("role,approval_status")
+    .eq("id",user.id)
+    .maybeSingle();
+
+  if(error || !profile || profile.approval_status !== "approved" ||
+     !["servant","admin"].includes(profile.role)){
+    location.replace("account.html");
+    return;
+  }
+
+  await loadNotifications();
+}
+
+async function loadNotifications(){
+  const box = $("notifications");
+  box.replaceChildren();
+  say("جاري تحميل الإشعارات...");
+
+  const {data,error} = await supabase
+    .from("servant_notifications")
+    .select("id,message,notification_type,created_at,read_at")
+    .eq("servant_id",user.id)
+    .order("created_at",{ascending:false})
+    .limit(100);
+
+  if(error){
+    say("تعذر تحميل الإشعارات: "+error.message);
+    return;
+  }
+
+  if(!data?.length){
+    box.innerHTML = '<div class="panel empty">لا توجد إشعارات حاليًا.</div>';
+    say("تم تحميل الإشعارات.");
+    return;
+  }
+
+  const unread = data.filter(n=>!n.read_at).length;
+  say(`لديك ${unread} إشعار غير مقروء من إجمالي ${data.length}.`);
+
+  data.forEach(n=>{
+    const card = document.createElement("section");
+    card.className = "notice"+(n.read_at?" read":"");
+
+    const title = document.createElement("strong");
+    title.textContent = n.read_at ? "إشعار مقروء" : "🔔 تنبيه جديد";
+
+    const message = document.createElement("p");
+    message.textContent = n.message;
+
+    const date = document.createElement("small");
+    date.textContent = new Date(n.created_at).toLocaleString("ar-EG");
+
+    card.append(title,message,date);
+
+    if(!n.read_at){
+      const btn = document.createElement("button");
+      btn.textContent = "تحديد كمقروء";
+      btn.style.marginTop = "14px";
+
+      btn.addEventListener("click",async()=>{
+        btn.disabled = true;
+
+        const {error:updateError} = await supabase
+          .from("servant_notifications")
+          .update({read_at:new Date().toISOString()})
+          .eq("id",n.id)
+          .eq("servant_id",user.id);
+
+        if(updateError){
+          btn.disabled = false;
+          say("تعذر تحديث الإشعار: "+updateError.message);
+          return;
+        }
+
+        await loadNotifications();
+      });
+
+      card.append(btn);
+    }
+
+    box.append(card);
+  });
+}
+
+$("logout").addEventListener("click",async()=>{
+  await supabase.auth.signOut();
+  location.replace("account.html");
+});
+
+init();
+</script>
+</body>
+</html>
