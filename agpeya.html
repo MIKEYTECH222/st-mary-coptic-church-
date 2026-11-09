@@ -2,163 +2,180 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b16">
 <title>الأجبية | شبابنا</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="./style.css">
 <style>
-:root { color-scheme: dark; }
-body { background:#080b16; color:#f5f7ff; margin:0; padding:18px; font-family:Arial,sans-serif; }
-.wrap { max-width:1000px; margin:auto; }
-.top { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:26px; }
-.btn { border:1px solid #ffffff20; background:#ffffff10; color:#fff; border-radius:12px; padding:10px 15px; cursor:pointer; text-decoration:none; display:inline-block; }
-.intro { margin:22px 0; }
-.intro p,.muted { color:#aab3c8; line-height:1.9; }
-.hours { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:15px; }
-.hour-card { background:#11182a; border:1px solid #ffffff15; border-radius:18px; padding:20px; cursor:pointer; transition:.2s; }
-.hour-card:hover { transform:translateY(-4px); border-color:#829aff80; background:#17213a; }
-.hour-card h3 { margin:0 0 10px; }
-.hour-card p { color:#aab3c8; line-height:1.8; margin:0; }
-.reader { display:none; }
-.reader-head { background:#11182a; border:1px solid #ffffff15; border-radius:18px; padding:18px; margin-bottom:16px; }
-.reader-tools { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
-.pages { display:grid; gap:12px; }
-.page { background:#11182a; border:1px solid #ffffff15; border-radius:16px; padding:20px; }
-.page h3 { color:#b9c8ff; margin:0 0 12px; font-size:18px; }
-.page-text { white-space:pre-wrap; line-height:2.15; font-size:19px; color:#edf0fa; }
-.status { text-align:center; color:#aab3c8; padding:25px; }
-.hidden { display:none !important; }
-@media(max-width:600px) { body{padding:12px} .page{padding:15px} .page-text{font-size:18px} }
+*{box-sizing:border-box}
+body{margin:0;background:#080b16;color:#f5f7ff;font-family:Arial,Tahoma,sans-serif;padding:16px}
+.wrap{max-width:1050px;margin:auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.btn{border:1px solid #ffffff22;background:#ffffff10;color:#fff;border-radius:12px;padding:10px 15px;cursor:pointer;text-decoration:none;font:inherit}
+.hero,.reader-head,.prayer-card,.page-card{background:#121b2e;border:1px solid #ffffff18;border-radius:20px}
+.hero{padding:25px;margin-bottom:18px;background:linear-gradient(130deg,#263b68,#121b2e)}
+.hero p,.muted{color:#b6c1d8;line-height:1.9}
+.hours{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.prayer-card{padding:20px;cursor:pointer;transition:.2s}
+.prayer-card:hover{transform:translateY(-4px);border-color:#899cff;background:#1b2944}
+.prayer-card h3{margin:0 0 9px;color:#c4ceff}
+.prayer-card p{margin:0;color:#aebbd3;line-height:1.8}
+.reader{display:none}
+.reader-head{padding:17px;margin-bottom:14px}
+.reader-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.reader-tools label{display:block;color:#b6c1d8;font-size:13px}
+select{width:100%;margin-top:6px;padding:11px;border-radius:11px;border:1px solid #ffffff25;background:#0b1323;color:white}
+.page-card{min-height:52vh;padding:clamp(20px,5vw,48px);display:flex;flex-direction:column;justify-content:center}
+.page-title{text-align:center;color:#c7d2ff;font-size:clamp(20px,3vw,27px);margin:0 0 25px}
+.page-text{white-space:pre-wrap;text-align:center;font-size:21px;line-height:2.2;color:#f3f4fb}
+.nav-pages{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:14px 0}
+.nav-pages button:disabled{opacity:.35;cursor:not-allowed}
+.counter{text-align:center;color:#aebbd3}
+.status{text-align:center;padding:24px;color:#b6c1d8}
+@media(max-width:600px){body{padding:10px}.reader-tools{grid-template-columns:1fr}.page-card{min-height:58vh}.page-text{font-size:19px;line-height:2}}
 </style>
 </head>
 <body>
 <main class="wrap">
   <div class="top">
-    <a class="btn" href="dashboard.html">← الرئيسية</a>
-    <span>📖 شبابنا | الأجبية</span>
+    <a class="btn" href="./dashboard.html">← الرئيسية</a>
+    <strong>📖 شبابنا | الأجبية</strong>
   </div>
 
-  <section class="intro" id="intro">
+  <section class="hero" id="hero">
     <h1>الأجبية المقدسة</h1>
-    <p>اختر الصلاة لقراءتها كاملة داخل الموقع.</p>
+    <p>اختار الصلاة، واقرأ كل جزء في صفحة مستقلة. تقدر تنتقل بين الصفحات أو تروح لأي مزمور مباشرة.</p>
   </section>
 
-  <div id="status" class="status">جاري تحميل الصلوات...</div>
+  <p id="status" class="status">جاري تحميل الصلوات...</p>
   <section id="hours" class="hours"></section>
 
   <section id="reader" class="reader">
     <div class="reader-head">
-      <button class="btn" id="back">← كل الصلوات</button>
+      <button class="btn" id="backBtn">← كل الصلوات</button>
       <h2 id="prayerTitle"></h2>
-      <p id="prayerDescription" class="muted"></p>
+      <p class="muted" id="prayerDescription"></p>
       <div class="reader-tools">
-        <button class="btn" id="smaller">A−</button>
-        <button class="btn" id="larger">A+</button>
+        <label>الانتقال إلى جزء
+          <select id="partSelect"><option value="">اختر الجزء</option></select>
+        </label>
+        <label>الانتقال إلى مزمور
+          <select id="psalmSelect"><option value="">اختر رقم المزمور</option></select>
+        </label>
+      </div>
+      <div class="reader-tools">
+        <button class="btn" id="smaller">تصغير الخط A−</button>
+        <button class="btn" id="larger">تكبير الخط A+</button>
       </div>
     </div>
-    <div id="pages" class="pages"></div>
+    <article class="page-card">
+      <h2 id="sectionTitle" class="page-title"></h2>
+      <div id="sectionContent" class="page-text"></div>
+    </article>
+    <div class="nav-pages">
+      <button class="btn" id="prevBtn">السابق ←</button>
+      <span class="counter" id="counter"></span>
+      <button class="btn" id="nextBtn">التالي →</button>
+    </div>
   </section>
 </main>
 
 <script type="module">
 import { supabase } from "./supabase.js";
-
 const $ = id => document.getElementById(id);
-let currentFontSize = 19;
+let currentHour = null;
+let sections = [];
+let currentIndex = 0;
+let fontSize = 21;
+let currentUserId = null;
 
-async function init() {
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) { location.href = "index.html"; return; }
-
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("role,approval_status")
-    .eq("id", user.id)
-    .single();
-
-  if (profileError || !profile ||
-      (profile.role !== "admin" && profile.approval_status !== "approved")) {
-    $("status").textContent = "ليس لديك صلاحية الدخول.";
-    return;
+async function checkAccess(){
+  const {data:{user},error}=await supabase.auth.getUser();
+  if(error || !user){location.replace("account.html");return false;}
+  currentUserId=user.id;
+  const {data:p,error:pe}=await supabase.from("profiles")
+    .select("role,approval_status").eq("id",user.id).maybeSingle();
+  if(pe || !p || (p.role!=="admin" && p.approval_status!=="approved")){
+    $("status").textContent="الحساب غير معتمد.";
+    return false;
   }
-
-  const { data: hours, error } = await supabase
-    .from("agpeya_hours")
-    .select("id,title,description,sort_order")
-    .order("sort_order");
-
-  if (error) { $("status").textContent = "خطأ في تحميل الصلوات: " + error.message; return; }
-
-  $("status").classList.add("hidden");
-  $("hours").innerHTML = "";
-
-  for (const hour of (hours || [])) {
-    const card = document.createElement("article");
-    card.className = "hour-card";
-    const title = document.createElement("h3");
-    title.textContent = "📖 " + hour.title;
-    const desc = document.createElement("p");
-    desc.textContent = hour.description || "";
-    card.append(title, desc);
-    card.addEventListener("click", () => openPrayer(hour));
-    $("hours").appendChild(card);
-  }
+  return true;
 }
-
-async function openPrayer(hour) {
-  $("hours").classList.add("hidden");
-  $("intro").classList.add("hidden");
-  $("reader").style.display = "block";
-  $("prayerTitle").textContent = hour.title;
-  $("prayerDescription").textContent = hour.description || "";
-  $("pages").innerHTML = '<div class="status">جاري تحميل نص الصلاة...</div>';
-
-  const { data, error } = await supabase
-    .from("agpeya_sections")
-    .select("id,title,content,sort_order")
-    .eq("hour_id", hour.id)
-    .order("sort_order");
-
-  if (error) { $("pages").textContent = "حدث خطأ: " + error.message; return; }
-  $("pages").innerHTML = "";
-
-  if (!data || !data.length) {
-    $("pages").innerHTML = '<div class="status">لم تتم إضافة نص هذه الصلاة بعد.</div>';
-    return;
-  }
-
-  data.forEach((section, index) => {
-    const page = document.createElement("article");
-    page.className = "page";
-    const heading = document.createElement("h3");
-    heading.textContent = section.title || ("جزء " + (index + 1));
-    const body = document.createElement("div");
-    body.className = "page-text";
-    body.textContent = section.content || "";
-    body.style.fontSize = currentFontSize + "px";
-    page.append(heading, body);
-    $("pages").appendChild(page);
+function renderHours(hours){
+  $("hours").replaceChildren();
+  hours.forEach(hour=>{
+    const card=document.createElement("article");
+    card.className="prayer-card";
+    const h=document.createElement("h3");h.textContent="📖 "+hour.title;
+    const p=document.createElement("p");p.textContent=hour.description||"";
+    card.append(h,p);
+    card.addEventListener("click",()=>openHour(hour));
+    $("hours").append(card);
   });
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
 }
-
-$("back").addEventListener("click", () => {
-  $("reader").style.display = "none";
-  $("hours").classList.remove("hidden");
-  $("intro").classList.remove("hidden");
-  window.scrollTo({ top: 0, behavior: "smooth" });
+async function openHour(hour){
+  currentHour=hour;
+  $("hours").style.display="none";
+  $("hero").style.display="none";
+  $("reader").style.display="block";
+  $("prayerTitle").textContent=hour.title;
+  $("prayerDescription").textContent=hour.description||"";
+  $("sectionContent").textContent="جاري تحميل الصلاة...";
+  const {data,error}=await supabase.from("agpeya_sections")
+    .select("id,title,content,sort_order,section_type")
+    .eq("hour_id",hour.id).order("sort_order");
+  if(error){$("sectionContent").textContent="تعذر تحميل الصلاة: "+error.message;return;}
+  sections=data||[];
+  if(!sections.length){$("sectionContent").textContent="نص هذه الصلاة غير موجود في الملف المرفق.";return;}
+  fillSelectors();
+  const saved=Number(localStorage.getItem("agpeya:"+currentUserId+":"+hour.code)||0);
+  showSection(Number.isInteger(saved)&&saved>=0&&saved<sections.length?saved:0);
+}
+function fillSelectors(){
+  $("partSelect").replaceChildren(new Option("اختر الجزء",""));
+  $("psalmSelect").replaceChildren(new Option("اختر المزمور",""));
+  sections.forEach((s,i)=>{
+    $("partSelect").add(new Option(s.title,i));
+    if(s.section_type==="psalm" || s.title.startsWith("المزمور")){
+      $("psalmSelect").add(new Option(s.title,i));
+    }
+  });
+}
+function showSection(index){
+  if(index<0||index>=sections.length)return;
+  currentIndex=index;
+  const s=sections[index];
+  $("sectionTitle").textContent=s.title;
+  $("sectionContent").textContent=s.content;
+  $("sectionContent").style.fontSize=fontSize+"px";
+  $("counter").textContent=`الصفحة ${index+1} من ${sections.length}`;
+  $("partSelect").value=String(index);
+  $("psalmSelect").value=(s.section_type==="psalm"||s.title.startsWith("المزمور"))?String(index):"";
+  $("prevBtn").disabled=index===0;
+  $("nextBtn").disabled=index===sections.length-1;
+  localStorage.setItem("agpeya:"+currentUserId+":"+currentHour.code,String(index));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("partSelect").addEventListener("change",e=>{if(e.target.value!=="")showSection(Number(e.target.value));});
+$("psalmSelect").addEventListener("change",e=>{if(e.target.value!=="")showSection(Number(e.target.value));});
+$("prevBtn").addEventListener("click",()=>showSection(currentIndex-1));
+$("nextBtn").addEventListener("click",()=>showSection(currentIndex+1));
+$("larger").addEventListener("click",()=>{fontSize=Math.min(32,fontSize+2);$("sectionContent").style.fontSize=fontSize+"px";});
+$("smaller").addEventListener("click",()=>{fontSize=Math.max(16,fontSize-2);$("sectionContent").style.fontSize=fontSize+"px";});
+$("backBtn").addEventListener("click",()=>{
+  $("reader").style.display="none";$("hours").style.display="grid";$("hero").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
 });
-
-function changeFont(delta) {
-  currentFontSize = Math.max(15, Math.min(30, currentFontSize + delta));
-  document.querySelectorAll(".page-text").forEach(el => {
-    el.style.fontSize = currentFontSize + "px";
-  });
+async function init(){
+  if(!await checkAccess())return;
+  const {data,error}=await supabase.from("agpeya_hours")
+    .select("id,code,title,description,sort_order")
+    .neq("code","veil").order("sort_order");
+  if(error){$("status").textContent="خطأ: "+error.message;return;}
+  $("status").remove();renderHours(data||[]);
 }
-$("larger").addEventListener("click", () => changeFont(2));
-$("smaller").addEventListener("click", () => changeFont(-2));
-
-init();
+await init();
 </script>
+<script src="./install.js"></script>
 </body>
 </html>
