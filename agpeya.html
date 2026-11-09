@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -6,149 +5,158 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>الأجبية | شبابنا</title>
 <link rel="stylesheet" href="style.css">
-
 <style>
-body {
-  background:#080b16;
-  color:white;
-  font-family:Arial,sans-serif;
-  padding:20px;
-  margin:0;
-}
-.container {max-width:1000px;margin:auto}
-.top {
-  display:flex;justify-content:space-between;
-  align-items:center;gap:12px;flex-wrap:wrap;
-  margin-bottom:30px
-}
-a {color:inherit;text-decoration:none}
-.btn {
-  display:inline-block;padding:11px 17px;
-  border-radius:12px;background:#ffffff12;
-  border:1px solid #ffffff20;color:white;
-}
-.intro {margin-bottom:25px}
-.intro p,.description {color:#aab3c8;line-height:1.9}
-.hours {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:16px
-}
-.hour-card {
-  background:#11182a;border:1px solid #ffffff15;
-  padding:22px;border-radius:18px;
-  transition:.25s;display:flex;flex-direction:column;
-  gap:12px
-}
-.hour-card:hover {
-  transform:translateY(-5px);
-  background:#17213a;border-color:#7895ff80
-}
-.hour-card h3 {margin:0;font-size:19px}
-.hour-card p {margin:0;color:#aab3c8;line-height:1.8;font-size:14px}
-.hour-card .btn {text-align:center;margin-top:auto}
-.status {text-align:center;padding:30px;color:#aab3c8}
-.note {
-  background:#17213a;border:1px solid #ffffff15;
-  padding:16px;border-radius:14px;
-  margin:20px 0;color:#cbd5e1;line-height:1.8
-}
+:root { color-scheme: dark; }
+body { background:#080b16; color:#f5f7ff; margin:0; padding:18px; font-family:Arial,sans-serif; }
+.wrap { max-width:1000px; margin:auto; }
+.top { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:26px; }
+.btn { border:1px solid #ffffff20; background:#ffffff10; color:#fff; border-radius:12px; padding:10px 15px; cursor:pointer; text-decoration:none; display:inline-block; }
+.intro { margin:22px 0; }
+.intro p,.muted { color:#aab3c8; line-height:1.9; }
+.hours { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:15px; }
+.hour-card { background:#11182a; border:1px solid #ffffff15; border-radius:18px; padding:20px; cursor:pointer; transition:.2s; }
+.hour-card:hover { transform:translateY(-4px); border-color:#829aff80; background:#17213a; }
+.hour-card h3 { margin:0 0 10px; }
+.hour-card p { color:#aab3c8; line-height:1.8; margin:0; }
+.reader { display:none; }
+.reader-head { background:#11182a; border:1px solid #ffffff15; border-radius:18px; padding:18px; margin-bottom:16px; }
+.reader-tools { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.pages { display:grid; gap:12px; }
+.page { background:#11182a; border:1px solid #ffffff15; border-radius:16px; padding:20px; }
+.page h3 { color:#b9c8ff; margin:0 0 12px; font-size:18px; }
+.page-text { white-space:pre-wrap; line-height:2.15; font-size:19px; color:#edf0fa; }
+.status { text-align:center; color:#aab3c8; padding:25px; }
+.hidden { display:none !important; }
+@media(max-width:600px) { body{padding:12px} .page{padding:15px} .page-text{font-size:18px} }
 </style>
 </head>
-
 <body>
-<main class="container">
-
+<main class="wrap">
   <div class="top">
     <a class="btn" href="dashboard.html">← الرئيسية</a>
     <span>📖 شبابنا | الأجبية</span>
   </div>
 
-  <section class="intro">
+  <section class="intro" id="intro">
     <h1>الأجبية المقدسة</h1>
-    <p>صلوات السواعي اليومية في الكنيسة القبطية الأرثوذكسية.</p>
+    <p>اختر الصلاة لقراءتها كاملة داخل الموقع.</p>
   </section>
-
-  <div class="note">
-    اختر الصلاة لفتح نصها وترتيبها من موقع الأنبا تكلا.
-  </div>
 
   <div id="status" class="status">جاري تحميل الصلوات...</div>
   <section id="hours" class="hours"></section>
 
+  <section id="reader" class="reader">
+    <div class="reader-head">
+      <button class="btn" id="back">← كل الصلوات</button>
+      <h2 id="prayerTitle"></h2>
+      <p id="prayerDescription" class="muted"></p>
+      <div class="reader-tools">
+        <button class="btn" id="smaller">A−</button>
+        <button class="btn" id="larger">A+</button>
+      </div>
+    </div>
+    <div id="pages" class="pages"></div>
+  </section>
 </main>
 
 <script type="module">
 import { supabase } from "./supabase.js";
 
-const hoursBox = document.getElementById("hours");
-const statusBox = document.getElementById("status");
+const $ = id => document.getElementById(id);
+let currentFontSize = 19;
 
 async function init() {
-  const {data:{user},error:authError} =
-    await supabase.auth.getUser();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) { location.href = "index.html"; return; }
 
-  if (authError || !user) {
-    location.href = "index.html";
-    return;
-  }
-
-  const {data:profile,error:profileError} = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("role,approval_status")
-    .eq("id",user.id)
+    .eq("id", user.id)
     .single();
 
   if (profileError || !profile ||
-      (profile.role !== "admin" &&
-       profile.approval_status !== "approved")) {
-    statusBox.textContent = "ليس لديك صلاحية الدخول.";
+      (profile.role !== "admin" && profile.approval_status !== "approved")) {
+    $("status").textContent = "ليس لديك صلاحية الدخول.";
     return;
   }
 
-  const {data,error} = await supabase
+  const { data: hours, error } = await supabase
     .from("agpeya_hours")
-    .select("id,title,description,sort_order,source_url")
+    .select("id,title,description,sort_order")
     .order("sort_order");
 
-  if (error) {
-    statusBox.textContent = "حدث خطأ: " + error.message;
-    return;
-  }
+  if (error) { $("status").textContent = "خطأ في تحميل الصلوات: " + error.message; return; }
 
-  if (!data || data.length === 0) {
-    statusBox.textContent = "لا توجد صلوات.";
-    return;
-  }
+  $("status").classList.add("hidden");
+  $("hours").innerHTML = "";
 
-  statusBox.remove();
-
-  data.forEach(hour => {
+  for (const hour of (hours || [])) {
     const card = document.createElement("article");
     card.className = "hour-card";
-
     const title = document.createElement("h3");
     title.textContent = "📖 " + hour.title;
+    const desc = document.createElement("p");
+    desc.textContent = hour.description || "";
+    card.append(title, desc);
+    card.addEventListener("click", () => openPrayer(hour));
+    $("hours").appendChild(card);
+  }
+}
 
-    const description = document.createElement("p");
-    description.textContent = hour.description || "";
+async function openPrayer(hour) {
+  $("hours").classList.add("hidden");
+  $("intro").classList.add("hidden");
+  $("reader").style.display = "block";
+  $("prayerTitle").textContent = hour.title;
+  $("prayerDescription").textContent = hour.description || "";
+  $("pages").innerHTML = '<div class="status">جاري تحميل نص الصلاة...</div>';
 
-    const link = document.createElement("a");
-    link.className = "btn";
-    link.textContent = "قراءة الصلاة ←";
-    link.href = hour.source_url || "#";
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
+  const { data, error } = await supabase
+    .from("agpeya_sections")
+    .select("id,title,content,sort_order")
+    .eq("hour_id", hour.id)
+    .order("sort_order");
 
-    if (!hour.source_url) {
-      link.textContent = "المصدر غير متاح";
-      link.removeAttribute("href");
-    }
+  if (error) { $("pages").textContent = "حدث خطأ: " + error.message; return; }
+  $("pages").innerHTML = "";
 
-    card.append(title,description,link);
-    hoursBox.appendChild(card);
+  if (!data || !data.length) {
+    $("pages").innerHTML = '<div class="status">لم تتم إضافة نص هذه الصلاة بعد.</div>';
+    return;
+  }
+
+  data.forEach((section, index) => {
+    const page = document.createElement("article");
+    page.className = "page";
+    const heading = document.createElement("h3");
+    heading.textContent = section.title || ("جزء " + (index + 1));
+    const body = document.createElement("div");
+    body.className = "page-text";
+    body.textContent = section.content || "";
+    body.style.fontSize = currentFontSize + "px";
+    page.append(heading, body);
+    $("pages").appendChild(page);
+  });
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+$("back").addEventListener("click", () => {
+  $("reader").style.display = "none";
+  $("hours").classList.remove("hidden");
+  $("intro").classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+function changeFont(delta) {
+  currentFontSize = Math.max(15, Math.min(30, currentFontSize + delta));
+  document.querySelectorAll(".page-text").forEach(el => {
+    el.style.fontSize = currentFontSize + "px";
   });
 }
+$("larger").addEventListener("click", () => changeFont(2));
+$("smaller").addEventListener("click", () => changeFont(-2));
 
 init();
 </script>
