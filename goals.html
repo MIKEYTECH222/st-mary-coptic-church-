@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b16">
+<title>أهدافي | شبابنا</title>
+<link rel="stylesheet" href="./style.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}
+.wrap{max-width:950px;margin:auto;padding:16px}
+nav,.hero,.goal{background:#141d31;border:1px solid #ffffff18;border-radius:18px;padding:18px;margin-bottom:16px}
+nav{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+a,button{display:inline-block;border:1px solid #ffffff20;border-radius:11px;padding:10px 15px;background:#344d83;color:white;text-decoration:none;cursor:pointer;font:inherit}
+button:disabled{opacity:.5}
+.hero{background:linear-gradient(130deg,#263b68,#141d31)}
+.muted{color:#aebbd3;line-height:1.9}
+.goal h2{margin:0 0 8px;color:#c4ceff}
+.meta{font-size:13px;color:#aebbd3}
+.done{border-color:#258d6a;background:#12372f}
+.doneTag{color:#75e0b2;font-weight:bold}
+.exam{margin-top:12px}
+.message{color:#ffd36a;min-height:24px;line-height:1.8}
+.empty{text-align:center;padding:35px;color:#aebbd3}
+@media(max-width:600px){.wrap{padding:10px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<nav>
+<strong>🎯 شبابنا | أهدافي</strong>
+<a href="dashboard.html">الرئيسية</a>
+</nav>
+
+<section class="hero">
+<h1>أهداف الخدمة</h1>
+<p class="muted">
+تابع أهداف مجموعتك، واعرف المدة المطلوبة،
+وسجّل إتمام الهدف عندما تنتهي منه.
+</p>
+</section>
+
+<p class="message" id="message" role="status">جاري تحميل أهدافك...</p>
+<section id="goals"></section>
+
+</main>
+
+<script type="module">
+import{supabase}from'./supabase.js';
+
+const $=id=>document.getElementById(id);
+
+function esc(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  }[c]));
+}
+
+async function load(){
+
+  const{data:{user},error:ae}=await supabase.auth.getUser();
+
+  if(ae||!user){
+    location.replace('account.html');
+    return;
+  }
+
+  const{data:p,error:pe}=await supabase
+    .from('profiles')
+    .select('role,approval_status')
+    .eq('id',user.id)
+    .maybeSingle();
+
+  if(pe||!p){
+    $('message').textContent='تعذر تحميل الحساب: '+(pe?.message||'');
+    return;
+  }
+
+  if(p.approval_status!=='approved'){
+    location.replace('account.html');
+    return;
+  }
+
+  if(p.role!=='member'){
+    location.replace(p.role==='admin'?'admin.html':'servant.html');
+    return;
+  }
+
+  const{data,error}=await supabase.rpc('get_my_ministry_goals');
+
+  if(error){
+    $('message').textContent='تعذر تحميل الأهداف: '+error.message;
+    return;
+  }
+
+  $('message').textContent='';
+
+  if(!data?.length){
+    $('goals').innerHTML=
+      '<div class="goal empty">مفيش أهداف متاحة لمجموعتك حاليًا. تابعنا قريبًا ❤️</div>';
+    return;
+  }
+
+  $('goals').innerHTML=data.map(g=>`
+    <article class="goal ${g.completed?'done':''}">
+
+      <h2>${esc(g.title)}</h2>
+
+      <p class="muted">${esc(g.description)}</p>
+
+      <p class="meta">
+        📅 من ${g.starts_on} إلى ${g.ends_on}
+        · المجموعة: ${esc(g.group_name)}
+      </p>
+
+      <p class="meta">
+        ⭐ مكافأة الإتمام: ${g.points_reward} نقطة
+      </p>
+
+      ${
+        g.quiz_title
+        ? `<p class="meta exam">
+             📝 امتحان مرتبط: ${esc(g.quiz_title)}
+             — <a href="quizzes.html">الذهاب للامتحانات</a>
+           </p>`
+        : '<p class="meta">لا يوجد امتحان مرتبط بهذا الهدف.</p>'
+      }
+
+      ${
+        g.completed
+        ? `<p class="doneTag">
+             ✓ تم تسجيل إتمام الهدف
+             ${g.completed_at?'في '+new Date(g.completed_at).toLocaleDateString('ar-EG'):''}
+           </p>`
+        : `<button data-goal="${g.id}" class="complete">أنهيت الهدف</button>`
+      }
+
+    </article>
+  `).join('');
+
+  document.querySelectorAll('.complete').forEach(b=>{
+    b.addEventListener('click',()=>complete(b.dataset.goal,b));
+  });
+}
+
+async function complete(id,button){
+
+  if(!confirm('هل أنت متأكد إنك أنهيت الهدف؟ لا يمكن تسجيله مرة ثانية.')){
+    return;
+  }
+
+  button.disabled=true;
+  button.textContent='جاري التسجيل...';
+
+  const{data,error}=await supabase.rpc(
+    'complete_ministry_goal',
+    {p_goal_id:id}
+  );
+
+  if(error){
+    button.disabled=false;
+    button.textContent='أنهيت الهدف';
+    $('message').textContent='لم يتم تسجيل الإتمام: '+error.message;
+    return;
+  }
+
+  $('message').textContent=data?.already_completed
+    ?'الهدف مسجل بالفعل.'
+    :`تم تسجيل إتمام الهدف بنجاح. النقاط المضافة: ${data?.points_awarded??0}`;
+
+  await load();
+}
+
+await load();
+</script>
+
+<script src="./install.js"></script>
+</body>
+</html>
