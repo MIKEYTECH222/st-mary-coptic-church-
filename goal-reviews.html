@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مراجعة طلبات الأهداف | شبابنا</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;padding:20px;
+ font-family:Arial,Tahoma,sans-serif;color:#f4f6ff;
+ background:radial-gradient(ellipse at 10% 0%,#202b55,transparent 40%),#080b16
+}
+main{width:min(950px,100%);margin:25px auto}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+button,a{
+ border:0;border-radius:12px;padding:11px 16px;
+ color:white;text-decoration:none;cursor:pointer;font-weight:bold;font-family:inherit
+}
+.back{background:#344d83}
+.card{
+ margin:16px 0;padding:22px;border:1px solid #ffffff20;
+ border-radius:18px;background:rgba(23,30,49,.88)
+}
+h1{font-size:27px}
+h3{color:#b7c4ff;margin-top:0}
+p{color:#c0c8dc;line-height:1.8}
+.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:15px 0}
+.info div{padding:12px;background:#ffffff0b;border-radius:12px;color:#dce1ff}
+textarea{
+ width:100%;min-height:75px;padding:12px;border-radius:12px;
+ border:1px solid #ffffff25;background:#080b16;color:white;
+ font:inherit;resize:vertical
+}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.approve{background:#16865b}
+.reject{background:#b83d53}
+button:disabled{opacity:.5;cursor:not-allowed}
+#status{padding:14px;background:#ffffff0b;border-radius:12px;color:#c0c8dc;line-height:1.8}
+.empty{text-align:center;padding:35px;color:#aab4cc}
+small{color:#aab4cc}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <h2>📋 مراجعة طلبات الأهداف</h2>
+ <a class="back" href="servant.html" id="backLink">العودة للوحة التحكم</a>
+</header>
+
+<p id="status">جاري تحميل الطلبات...</p>
+<section id="requests"></section>
+</main>
+
+<script type="module">
+import {supabase} from "./supabase.js";
+
+const $ = id => document.getElementById(id);
+let busy = false;
+
+function formatTime(seconds){
+ seconds = Number(seconds || 0);
+ const m = Math.floor(seconds / 60);
+ const s = seconds % 60;
+ return `${m} دقيقة و${s} ثانية`;
+}
+
+function escapeHTML(value){
+ return String(value ?? "").replace(/[&<>"']/g, c => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+async function init(){
+ const {data:{user},error:authError} = await supabase.auth.getUser();
+
+ if(authError || !user){
+  location.replace("account.html");
+  return;
+ }
+
+ const {data:profile,error} = await supabase
+  .from("profiles")
+  .select("role,approval_status")
+  .eq("id",user.id)
+  .maybeSingle();
+
+ if(error || !profile){
+  $("status").textContent = "تعذر تحميل الحساب.";
+  return;
+ }
+
+ if(profile.approval_status !== "approved" ||
+    !["servant","admin"].includes(profile.role)){
+  location.replace("dashboard.html");
+  return;
+ }
+
+ if(profile.role === "admin"){
+  $("backLink").href = "admin.html";
+ }
+
+ await loadRequests();
+}
+
+async function loadRequests(){
+ $("status").textContent = "جاري تحميل الطلبات...";
+ $("requests").innerHTML = "";
+
+ const {data,error} = await supabase.rpc("get_goal_review_requests");
+
+ if(error){
+  $("status").textContent = "حدث خطأ أثناء تحميل الطلبات: " + error.message;
+  return;
+ }
+
+ const rows = Array.isArray(data) ? data : [];
+
+ if(!rows.length){
+  $("status").textContent = "تم تحميل الطلبات.";
+  $("requests").innerHTML =
+   '<div class="card empty">🎉 لا توجد طلبات مراجعة معلقة حاليًا.</div>';
+  return;
+ }
+
+ $("status").textContent = `عدد الطلبات المعلقة: ${rows.length}`;
+
+ rows.forEach(item=>{
+  const card = document.createElement("article");
+  card.className = "card";
+
+  const elapsed = Number(item.elapsed_seconds || 0);
+  const required = Number(item.required_seconds || 0);
+  const requestedAt = item.requested_at
+   ? new Date(item.requested_at).toLocaleString("ar-EG")
+   : "غير متاح";
+
+  card.innerHTML = `
+   <h3>🎯 ${escapeHTML(item.goal_title || "هدف بدون اسم")}</h3>
+   <p>👤 المخدوم: <strong>${escapeHTML(item.member_name || "غير معروف")}</strong></p>
+   <div class="info">
+    <div>⏱️ الوقت الذي قضاه<br><strong>${formatTime(elapsed)}</strong></div>
+    <div>⌛ الوقت المطلوب<br><strong>${formatTime(required)}</strong></div>
+    <div>⭐ نقاط الهدف<br><strong>${escapeHTML(item.points_reward ?? 0)}</strong></div>
+    <div>📅 تاريخ الطلب<br><strong>${escapeHTML(requestedAt)}</strong></div>
+   </div>
+   <small>رقم المجموعة: ${escapeHTML(item.group_id || "—")}</small>
+   <p>ملاحظة المراجعة (اختياري):</p>
+   <textarea class="note" placeholder="اكتب ملاحظة للمخدوم إن أحببت..."></textarea>
+   <div class="actions">
+    <button class="approve">✅ الموافقة ومنح النقاط</button>
+    <button class="reject">❌ رفض الطلب</button>
+   </div>
+  `;
+
+  const approveBtn = card.querySelector(".approve");
+  const rejectBtn = card.querySelector(".reject");
+  const note = card.querySelector(".note");
+
+  async function review(approve){
+   if(busy) return;
+
+   const message = approve
+    ? "هل تريد الموافقة على الطلب وإضافة نقاط الهدف؟"
+    : "هل تريد رفض الطلب؟";
+
+   if(!confirm(message)) return;
+
+   busy = true;
+   approveBtn.disabled = true;
+   rejectBtn.disabled = true;
+
+   const {error:reviewError} = await supabase.rpc(
+    "review_ministry_goal_request",
+    {
+     p_attempt_id: item.attempt_id,
+     p_approve: approve,
+     p_note: note.value.trim()
+    }
+   );
+
+   busy = false;
+
+   if(reviewError){
+    alert("تعذر تنفيذ المراجعة: " + reviewError.message);
+    approveBtn.disabled = false;
+    rejectBtn.disabled = false;
+    return;
+   }
+
+   alert(approve ? "تمت الموافقة وإضافة النقاط." : "تم رفض الطلب.");
+   await loadRequests();
+  }
+
+  approveBtn.addEventListener("click",()=>review(true));
+  rejectBtn.addEventListener("click",()=>review(false));
+
+  $("requests").appendChild(card);
+ });
+}
+
+await init();
+</script>
+<script src="./install.js"></script>
+</body>
+</html>
