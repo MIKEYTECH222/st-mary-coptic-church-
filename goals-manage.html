@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -10,20 +11,22 @@
 *{box-sizing:border-box}
 body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}
 .wrap{max-width:1050px;margin:auto;padding:16px}
-nav,.panel,.goal{background:#141d31;border:1px solid #ffffff18;border-radius:18px;padding:18px;margin-bottom:16px}
+nav,.panel,.goal{background:#141d31;border:1px solid #ffffff18;border-radius:18px;padding:20px;margin-bottom:16px}
 nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-a,button{display:inline-block;border:1px solid #ffffff20;border-radius:11px;padding:10px 15px;background:#344d83;color:white;text-decoration:none;cursor:pointer;font:inherit}
-button:disabled{opacity:.5}
-input,textarea,select{width:100%;padding:12px;border-radius:10px;border:1px solid #46536d;background:#0c1424;color:white;margin:6px 0 13px;font:inherit}
+a,button{display:inline-block;border:1px solid #ffffff20;border-radius:11px;padding:11px 16px;background:#344d83;color:white;text-decoration:none;cursor:pointer;font:inherit}
+button:disabled{opacity:.5;cursor:not-allowed}
+input,textarea,select{width:100%;padding:12px;border-radius:10px;border:1px solid #46536d;background:#0c1424;color:white;margin:7px 0 15px;font:inherit}
 label{display:block;color:#cbd5e1;font-size:14px}
-textarea{min-height:90px;resize:vertical}
-.muted{color:#aebbd3;line-height:1.8}
+textarea{min-height:150px;resize:vertical;line-height:1.9}
+.muted{color:#aebbd3;line-height:1.9}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .primary{background:#536bd1}
+.goal{margin-top:12px}
 .goal h3{margin:0 0 8px;color:#c4ceff}
 .status{color:#ffd36a;line-height:1.8;min-height:24px}
-.small{font-size:13px;color:#aebbd3}
-@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.small{font-size:13px;color:#aebbd3;line-height:1.8}
+.hint{background:#202c49;padding:12px;border-radius:12px;color:#cbd5e1;line-height:1.8;margin:10px 0 16px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.wrap{padding:10px}}
 </style>
 </head>
 <body>
@@ -37,8 +40,7 @@ textarea{min-height:90px;resize:vertical}
 <section class="panel">
 <h1>إنشاء هدف جديد</h1>
 <p class="muted">
-مثال: قراءة سفر التكوين خلال شهر.
-أنشئ هدفًا لكل مجموعة مستهدفة. ربط الامتحان اختياري.
+أنشئ هدفًا للمجموعة، واكتب المحتوى الذي سيقرأه المخدوم داخل الموقع.
 </p>
 
 <form id="goalForm">
@@ -46,10 +48,21 @@ textarea{min-height:90px;resize:vertical}
 <label>اسم الهدف</label>
 <input id="title" required maxlength="160" placeholder="مثال: قراءة سفر التكوين">
 
-<label>تفاصيل الهدف والمطلوب</label>
-<textarea id="description" placeholder="قراءة سفر التكوين كاملًا خلال الشهر..."></textarea>
+<label>وصف مختصر للهدف</label>
+<textarea id="description" style="min-height:75px" placeholder="مثال: قراءة سفر التكوين خلال شهر"></textarea>
+
+<label>المحتوى الذي سيظهر للمخدوم</label>
+<textarea id="content" required placeholder="اكتب هنا النص أو الجزء المطلوب من المخدوم قراءته...
+
+يمكنك كتابة فقرات طويلة وتنسيقها باستخدام الأسطر."></textarea>
+
+<div class="hint">
+📖 المخدوم سيقرأ المحتوى داخل صفحة الهدف، وسيبدأ حساب الوقت عند الضغط على زر بدء القراءة.
+لو أنهى القراءة قبل المدة المحددة، سيُرسل طلب مراجعة للخادم.
+</div>
 
 <div class="grid">
+
 <div>
 <label>المجموعة المستهدفة</label>
 <select id="group" required>
@@ -58,8 +71,13 @@ textarea{min-height:90px;resize:vertical}
 </div>
 
 <div>
+<label>أقل مدة للقراءة (بالدقائق)</label>
+<input id="minutes" type="number" min="1" max="1440" value="5" required>
+</div>
+
+<div>
 <label>النقاط عند إتمام الهدف</label>
-<input id="points" type="number" min="0" step="1" value="0" required>
+<input id="points" type="number" min="0" step="1" value="20" required>
 </div>
 
 <div>
@@ -71,6 +89,7 @@ textarea{min-height:90px;resize:vertical}
 <label>تاريخ النهاية</label>
 <input id="ends" type="date" required>
 </div>
+
 </div>
 
 <label>امتحان مرتبط (اختياري)</label>
@@ -85,109 +104,108 @@ textarea{min-height:90px;resize:vertical}
 </section>
 
 <section class="panel">
-<h2>الأهداف التي أنشأتها</h2>
+<h2>الأهداف التي تم إنشاؤها</h2>
 <div id="goalList" class="muted">جاري تحميل الأهداف...</div>
 </section>
 
 </main>
 
 <script type="module">
-import{supabase}from"./supabase.js";
+import {supabase} from "./supabase.js";
 
 const $=id=>document.getElementById(id);
-let user=null,profile=null;
 
 function msg(t){
-  $('message').textContent=t;
+  $("message").textContent=t;
 }
 
 function esc(s){
-  return String(s??'').replace(/[&<>"']/g,c=>({
-    '&':'&amp;',
-    '<':'&lt;',
-    '>':'&gt;',
-    '"':'&quot;',
-    "'":'&#39;'
+  return String(s??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
   }[c]));
 }
 
 async function init(){
 
-  const{data:{user:u},error:ae}=await supabase.auth.getUser();
+  const {data:{user},error:authError}=await supabase.auth.getUser();
 
-  if(ae||!u){
-    location.replace('account.html');
+  if(authError||!user){
+    location.replace("account.html");
     return;
   }
 
-  user=u;
-
-  const{data:p,error:pe}=await supabase
-    .from('profiles')
-    .select('role,approval_status')
-    .eq('id',u.id)
+  const {data:profile,error:profileError}=await supabase
+    .from("profiles")
+    .select("role,approval_status")
+    .eq("id",user.id)
     .maybeSingle();
 
-  if(pe||!p){
-    msg('تعذر تحميل الحساب: '+(pe?.message||''));
+  if(profileError||!profile){
+    msg("تعذر تحميل الحساب: "+(profileError?.message||""));
     return;
   }
 
-  profile=p;
-
-  if(p.approval_status!=='approved'||!['admin','servant'].includes(p.role)){
-    location.replace('dashboard.html');
+  if(
+    profile.approval_status!=="approved"||
+    !["admin","servant"].includes(profile.role)
+  ){
+    location.replace("dashboard.html");
     return;
   }
 
   let groupsQuery=supabase
-    .from('ministry_groups')
-    .select('id,name')
-    .order('name');
+    .from("ministry_groups")
+    .select("id,name")
+    .order("name");
 
-  if(p.role==='servant'){
+  if(profile.role==="servant"){
 
-    const{data:a,error:ae2}=await supabase
-      .from('servant_group_assignments')
-      .select('group_id')
-      .eq('servant_id',u.id);
+    const {data:assignments,error}=await supabase
+      .from("servant_group_assignments")
+      .select("group_id")
+      .eq("servant_id",user.id);
 
-    if(ae2){
-      msg(ae2.message);
+    if(error){
+      msg("تعذر تحميل مجموعاتك: "+error.message);
       return;
     }
 
-    const ids=(a||[]).map(x=>x.group_id);
+    const ids=(assignments||[]).map(x=>x.group_id);
 
-    groupsQuery=groupsQuery.in('id',ids);
+    if(!ids.length){
+      $("group").innerHTML='<option value="">لا توجد مجموعات مسندة إليك</option>';
+    }else{
+      groupsQuery=groupsQuery.in("id",ids);
+    }
   }
 
-  const{data:groups,error:ge}=await groupsQuery;
+  const {data:groups,error:groupError}=await groupsQuery;
 
-  if(ge){
-    msg('تعذر تحميل المجموعات: '+ge.message);
+  if(groupError){
+    msg("تعذر تحميل المجموعات: "+groupError.message);
     return;
   }
 
-  $('group').innerHTML=
+  $("group").innerHTML=
     '<option value="">اختر المجموعة</option>'+
     (groups||[]).map(g=>
       `<option value="${g.id}">${esc(g.name)}</option>`
-    ).join('');
+    ).join("");
 
-  const{data:quizzes,error:qe}=await supabase
-    .from('quizzes')
-    .select('id,title')
-    .order('created_at',{ascending:false})
+  const {data:quizzes,error:quizError}=await supabase
+    .from("quizzes")
+    .select("id,title")
+    .order("created_at",{ascending:false})
     .limit(100);
 
-  if(!qe&&quizzes?.length){
-
-    $('quiz').innerHTML+=
-      '<option disabled>— الامتحانات المتاحة —</option>'+
-      quizzes.map(q=>
-        `<option value="${q.id}">${esc(q.title||'امتحان')}</option>`
-      ).join('');
+  if(!quizError&&quizzes?.length){
+    $("quiz").innerHTML+=quizzes.map(q=>
+      `<option value="${q.id}">${esc(q.title||"امتحان")}</option>`
+    ).join("");
   }
 
   await loadGoals();
@@ -195,76 +213,115 @@ async function init(){
 
 async function loadGoals(){
 
-  const{data,error}=await supabase.rpc('get_goals_for_management');
+  const {data,error}=await supabase.rpc("get_goals_for_management");
 
   if(error){
-    $('goalList').textContent='تعذر تحميل الأهداف: '+error.message;
+    $("goalList").textContent="تعذر تحميل الأهداف: "+error.message;
     return;
   }
 
   if(!data?.length){
-    $('goalList').textContent='لم يتم إنشاء أهداف بعد.';
+    $("goalList").textContent="لم يتم إنشاء أهداف بعد.";
     return;
   }
 
-  $('goalList').innerHTML=data.map(g=>`
+  $("goalList").innerHTML=data.map(g=>`
     <article class="goal">
       <h3>${esc(g.title)}</h3>
-      <p class="muted">${esc(g.description)}</p>
+      <p class="muted">${esc(g.description||"")}</p>
       <p class="small">
-        المجموعة: ${esc(g.group_name)}
-        · من ${g.starts_on} إلى ${g.ends_on}
+        المجموعة: ${esc(g.group_name||"")}
+        · من ${esc(g.starts_on||"")} إلى ${esc(g.ends_on||"")}
       </p>
       <p class="small">
-        المكافأة: ${g.points_reward} نقطة
-        · المكتملون: ${g.completion_count}
-        ${g.quiz_title?' · الامتحان: '+esc(g.quiz_title):' · بدون امتحان'}
+        ⏱️ مدة القراءة: ${g.min_read_minutes??"غير محددة"} دقيقة
+        · ⭐ النقاط: ${g.points_reward}
+      </p>
+      <p class="small">
+        👥 المكتملون: ${g.completion_count??0}
+        ${g.quiz_title?" · 📝 الامتحان: "+esc(g.quiz_title):" · بدون امتحان"}
       </p>
     </article>
-  `).join('');
+  `).join("");
 }
 
-$('goalForm').addEventListener('submit',async e=>{
+$("goalForm").addEventListener("submit",async e=>{
 
   e.preventDefault();
 
-  msg('جاري إنشاء الهدف...');
-  $('saveBtn').disabled=true;
+  const title=$("title").value.trim();
+  const content=$("content").value.trim();
+  const starts=$("starts").value;
+  const ends=$("ends").value;
+  const minutes=Number($("minutes").value);
+  const points=Number($("points").value);
 
-  const{data,error}=await supabase.rpc('create_ministry_goal',{
-
-    p_title:$('title').value.trim(),
-
-    p_description:$('description').value.trim(),
-
-    p_group_id:$('group').value,
-
-    p_starts_on:$('starts').value,
-
-    p_ends_on:$('ends').value,
-
-    p_points_reward:Number($('points').value||0),
-
-    p_linked_quiz_id:$('quiz').value||null
-
-  });
-
-  $('saveBtn').disabled=false;
-
-  if(error){
-    msg('لم يتم إنشاء الهدف: '+error.message);
+  if(!title||!content){
+    msg("اكتب عنوان الهدف والمحتوى المطلوب.");
     return;
   }
 
-  msg('تم إنشاء الهدف بنجاح.');
+  if(!minutes||minutes<1||minutes>1440){
+    msg("مدة القراءة يجب أن تكون بين دقيقة و24 ساعة.");
+    return;
+  }
 
-  $('goalForm').reset();
-  $('points').value='0';
-  $('quiz').value='';
+  if(points<0||!Number.isInteger(points)){
+    msg("عدد النقاط غير صحيح.");
+    return;
+  }
+
+  if(!starts||!ends||ends<starts){
+    msg("تأكد من تواريخ البداية والنهاية.");
+    return;
+  }
+
+  const btn=$("saveBtn");
+  btn.disabled=true;
+  btn.textContent="جاري إنشاء الهدف...";
+  msg("");
+
+  const {data,error}=await supabase.rpc("create_ministry_goal_v2",{
+
+    p_title:title,
+
+    p_description:$("description").value.trim(),
+
+    p_group_id:$("group").value,
+
+    p_starts_on:starts,
+
+    p_ends_on:ends,
+
+    p_points_reward:points,
+
+    p_linked_quiz_id:$("quiz").value||null,
+
+    p_content:content,
+
+    p_min_read_minutes:minutes
+
+  });
+
+  btn.disabled=false;
+  btn.textContent="إنشاء الهدف";
+
+  if(error){
+    msg("لم يتم إنشاء الهدف: "+error.message);
+    return;
+  }
+
+  msg("✅ تم إنشاء الهدف بنجاح.");
+
+  $("goalForm").reset();
+  $("points").value="20";
+  $("minutes").value="5";
+  $("quiz").value="";
 
   await loadGoals();
+}
 
-});
+);
 
 await init();
 </script>
