@@ -1,100 +1,474 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>الاختبارات | شبابنا</title>
 <link rel="stylesheet" href="./style.css">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}.wrap{max-width:900px;margin:auto;padding:16px}
+*{box-sizing:border-box}
+body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}
+.wrap{max-width:850px;margin:auto;padding:16px}
 nav,.panel,.quiz-card,.question{background:#141d31;border:1px solid #ffffff18;border-radius:17px;padding:18px;margin-bottom:15px}
 nav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-a,button{border:1px solid #ffffff20;border-radius:11px;padding:10px 15px;background:#2b4276;color:white;text-decoration:none;cursor:pointer;font:inherit}
-button:disabled{opacity:.5}textarea{width:100%;min-height:130px;padding:12px;border-radius:11px;background:#0b1323;color:white;border:1px solid #46536d;font:inherit}
-.option{display:block;background:#1b2944;padding:12px;border-radius:11px;margin:8px 0;cursor:pointer}.option input{margin-left:8px}
-.muted{color:#aebbd3;line-height:1.8}#quizArea,#resultArea{display:none}#message{color:#ffd36a;line-height:1.8}
+a,button{border:1px solid #ffffff20;border-radius:11px;padding:11px 17px;background:#2b4276;color:white;text-decoration:none;cursor:pointer;font:inherit}
+button:disabled{opacity:.5;cursor:not-allowed}
+textarea{width:100%;min-height:130px;padding:12px;border-radius:11px;background:#0b1323;color:white;border:1px solid #46536d;font:inherit}
+.option{display:flex;align-items:center;gap:10px;background:#1b2944;padding:13px;border-radius:11px;margin:9px 0;cursor:pointer}
+.option input{width:18px;height:18px}
+.muted{color:#aebbd3;line-height:1.8}
+#quizArea,#resultArea{display:none}
+#message{color:#ffd36a;line-height:1.8}
+.progress-track{height:8px;background:#26334d;border-radius:20px;overflow:hidden;margin:12px 0}
+.progress-fill{height:100%;width:0;background:#719cff;transition:width .2s}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.actions button{flex:1;min-width:120px}
+#questionCounter{font-size:14px;color:#aebbd3}
+#questionText{line-height:1.9}
 </style>
 </head>
-<body><main class="wrap">
-<nav><strong>📝 الاختبارات</strong><a href="dashboard.html">الرئيسية</a></nav>
-<section class="panel"><h1>الاختبارات المتاحة</h1><p class="muted">اختار الامتحان وابدأ الحل. الأسئلة المقالية لا تظهر درجتها إلا بعد مراجعة الخادم.</p><div id="quizList">جاري تحميل الامتحانات...</div><p id="message" role="status"></p></section>
-<section id="quizArea" class="panel"><h2 id="activeTitle"></h2><p id="progress" class="muted"></p><div id="questions"></div><button id="submitQuiz">تسليم الامتحان</button></section>
-<section id="resultArea" class="panel"><h2>تم تسليم الامتحان</h2><p id="resultText" class="muted"></p><button id="backToList">العودة للاختبارات</button></section>
+<body>
+<main class="wrap">
+
+<nav>
+<strong>📝 الاختبارات</strong>
+<a href="dashboard.html">الرئيسية</a>
+</nav>
+
+<section class="panel">
+<h1>الاختبارات المتاحة</h1>
+<p class="muted">اختار الامتحان وابدأ الحل. الأسئلة المقالية لا تظهر درجتها إلا بعد مراجعة الخادم.</p>
+<div id="quizList">جاري تحميل الامتحانات...</div>
+<p id="message" role="status"></p>
+</section>
+
+<section id="quizArea" class="panel">
+<h2 id="activeTitle"></h2>
+
+<div id="questionCounter"></div>
+<div class="progress-track">
+<div id="progressFill" class="progress-fill"></div>
+</div>
+
+<article class="question">
+<h3 id="questionText"></h3>
+<p id="questionPoints" class="muted"></p>
+<div id="answerArea"></div>
+</article>
+
+<div class="actions">
+<button id="previousQuestion">السؤال السابق</button>
+<button id="nextQuestion">السؤال التالي</button>
+</div>
+
+<div class="actions">
+<button id="submitQuiz" style="background:#176b50">تسليم الامتحان</button>
+</div>
+
+<p class="muted">إجاباتك بتتحفظ تلقائيًا على نفس الجهاز.</p>
+</section>
+
+<section id="resultArea" class="panel">
+<h2>تم تسليم الامتحان</h2>
+<p id="resultText" class="muted"></p>
+<button id="backToList">العودة للاختبارات</button>
+</section>
+
 </main>
+
 <script type="module">
-import{supabase}from"./supabase.js";
-const $=id=>document.getElementById(id);
-let quizzes=[],activeQuiz=null,profile=null;
-function say(t){$("message").textContent=t;}
-async function init(){
- const{data:{user},error:ae}=await supabase.auth.getUser();if(ae||!user){location.replace("account.html");return;}
- const{data:p,error:profileError}=await supabase.from("profiles").select("role,approval_status").eq("id",user.id).maybeSingle();
- if(profileError||!p||p.approval_status!=="approved"){say("الحساب غير معتمد.");return;}profile=p;
- const{data,error}=await supabase.rpc("get_member_quizzes");
- if(error){say("تعذر تحميل الاختبارات: "+error.message);return;}
- quizzes=Array.isArray(data)?data:(data||[]);
- renderList();
+import {supabase} from "./supabase.js";
+
+const $ = id => document.getElementById(id);
+
+let quizzes = [];
+let activeQuiz = null;
+let profile = null;
+let currentUser = null;
+let questionOrder = [];
+let answers = {};
+let currentIndex = 0;
+let storageKey = "";
+let presenceQueue = Promise.resolve();
+let quizSubmitted = false;
+let heartbeatTimer = null;
+let presenceStarted = false;
+
+function say(message){
+  $("message").textContent = message || "";
 }
-function renderList(){
- const box=$("quizList");box.replaceChildren();
- if(!quizzes.length){box.textContent="لا توجد اختبارات متاحة حاليًا.";return;}
- quizzes.forEach(q=>{
-  const card=document.createElement("article");card.className="quiz-card";
-  const h=document.createElement("h3");h.textContent=q.title;
-  const d=document.createElement("p");d.className="muted";d.textContent=q.description||"";
-  const b=document.createElement("button");b.textContent="ابدأ الامتحان";
-  b.addEventListener("click",()=>startQuiz(q.id));
-  card.append(h,d,b);box.append(card);
- });
+
+function shuffle(array){
+  const result = [...array];
+  for(let i=result.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [result[i],result[j]]=[result[j],result[i]];
+  }
+  return result;
 }
-async function startQuiz(id){
- say("جاري تحميل الامتحان...");
- const{data,error}=await supabase.rpc("get_member_quiz",{p_quiz_id:id});
- if(error){say(error.message);return;}
- activeQuiz=data;
- $("quizList").style.display="none";$("quizArea").style.display="block";$("resultArea").style.display="none";
- $("activeTitle").textContent=data.title;
- $("progress").textContent=`عدد الأسئلة: ${data.questions.length}`;
- const box=$("questions");box.replaceChildren();
- data.questions.forEach((q,i)=>{
-  const block=document.createElement("article");block.className="question";
-  const h=document.createElement("h3");h.textContent=`${i+1}. ${q.question_text} (${q.max_points} درجة)`;
-  block.append(h);
-  if(q.question_type==="essay"){
-   const t=document.createElement("textarea");t.id="answer-"+q.id;t.placeholder="اكتب إجابتك هنا...";block.append(t);
+
+function saveProgress(){
+  if(!activeQuiz || !storageKey || quizSubmitted) return;
+
+  try{
+    localStorage.setItem(storageKey,JSON.stringify({
+      order:questionOrder,
+      answers,
+      currentIndex,
+      savedAt:Date.now()
+    }));
+  }catch(e){
+    console.warn("تعذر حفظ التقدم محليًا",e);
+  }
+}
+
+function loadProgress(questions){
+  try{
+    const raw=localStorage.getItem(storageKey);
+    if(!raw) return false;
+
+    const saved=JSON.parse(raw);
+    const validIds=questions.map(q=>String(q.id));
+
+    if(
+      !Array.isArray(saved.order) ||
+      saved.order.length!==validIds.length ||
+      !validIds.every(id=>saved.order.includes(id))
+    ) return false;
+
+    questionOrder=saved.order;
+    answers=saved.answers || {};
+    currentIndex=Math.min(
+      Math.max(Number(saved.currentIndex)||0,0),
+      questionOrder.length-1
+    );
+
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+function getOrderedQuestions(){
+  const byId=new Map(activeQuiz.questions.map(q=>[String(q.id),q]));
+  return questionOrder.map(id=>byId.get(String(id))).filter(Boolean);
+}
+
+function pingPresence(eventName){
+  if(!activeQuiz || !presenceStarted && eventName!=="start") return Promise.resolve();
+
+  presenceQueue=presenceQueue.then(async()=>{
+    try{
+      const {error}=await supabase.rpc("quiz_presence_ping",{
+        p_quiz_id:activeQuiz.id,
+        p_event:eventName
+      });
+
+      if(error) console.warn("Presence:",eventName,error.message);
+    }catch(e){
+      console.warn("Presence error:",e);
+    }
+  }).catch(()=>{});
+
+  return presenceQueue;
+}
+
+function startHeartbeat(){
+  clearInterval(heartbeatTimer);
+
+  heartbeatTimer=setInterval(()=>{
+    if(
+      activeQuiz &&
+      !quizSubmitted &&
+      document.visibilityState==="visible"
+    ){
+      pingPresence("heartbeat");
+    }
+  },15000);
+}
+
+function stopHeartbeat(){
+  clearInterval(heartbeatTimer);
+  heartbeatTimer=null;
+}
+
+async function startPresence(){
+  presenceStarted=true;
+  await pingPresence("start");
+  startHeartbeat();
+}
+
+document.addEventListener("visibilitychange",()=>{
+  if(!activeQuiz || quizSubmitted) return;
+
+  if(document.visibilityState==="hidden"){
+    pingPresence("leave");
   }else{
-   (q.options||[]).forEach((opt,j)=>{
-    const label=document.createElement("label");label.className="option";
-    const radio=document.createElement("input");radio.type="radio";radio.name="q-"+q.id;radio.value=j;
-    label.append(radio,document.createTextNode(opt));block.append(label);
-   });
+    pingPresence("return");
   }
-  box.append(block);
- });
- say("");
-}
-$("submitQuiz").addEventListener("click",async()=>{
- if(!activeQuiz)return;
- const answers={};
- for(const q of activeQuiz.questions){
-  if(q.question_type==="essay")answers[q.id]=$( "answer-"+q.id).value.trim();
-  else{
-   const chosen=document.querySelector('input[name="q-'+q.id+'"]:checked');
-   if(!chosen){say("جاوب على كل أسئلة الاختيار من متعدد قبل التسليم.");return;}
-   answers[q.id]=Number(chosen.value);
-  }
- }
- const btn=$("submitQuiz");btn.disabled=true;say("جاري تسليم الامتحان...");
- const{data,error}=await supabase.rpc("submit_quiz_with_essays",{p_quiz_id:activeQuiz.id,p_answers:answers});
- btn.disabled=false;
- if(error){say("تعذر تسليم الامتحان: "+error.message);return;}
- $("quizArea").style.display="none";$("resultArea").style.display="block";
- $("resultText").textContent=data.pending_review
-  ?"وصلت إجابتك بنجاح. الامتحان يحتوي على سؤال مقالي، والدرجة والنقاط لن تُعتمد إلا بعد مراجعة الخادم أو الأدمن."
-  :`نتيجتك ${data.score} من ${data.max_score}. النقاط المضافة: ${data.points_awarded}.`;
- say("");
 });
-$("backToList").addEventListener("click",()=>{location.reload();});
+
+window.addEventListener("pagehide",()=>{
+  if(activeQuiz && !quizSubmitted){
+    pingPresence("leave");
+  }
+});
+
+async function init(){
+  const {data:{user},error:authError}=await supabase.auth.getUser();
+
+  if(authError || !user){
+    location.replace("account.html");
+    return;
+  }
+
+  currentUser=user;
+
+  const {data:p,error:profileError}=await supabase
+    .from("profiles")
+    .select("role,approval_status")
+    .eq("id",user.id)
+    .maybeSingle();
+
+  if(profileError || !p || p.approval_status!=="approved"){
+    say("الحساب غير معتمد.");
+    return;
+  }
+
+  profile=p;
+
+  const {data,error}=await supabase.rpc("get_member_quizzes");
+
+  if(error){
+    say("تعذر تحميل الاختبارات: "+error.message);
+    return;
+  }
+
+  quizzes=Array.isArray(data)?data:(data||[]);
+  renderList();
+}
+
+function renderList(){
+  const box=$("quizList");
+  box.replaceChildren();
+
+  if(!quizzes.length){
+    box.textContent="لا توجد اختبارات متاحة حاليًا.";
+    return;
+  }
+
+  quizzes.forEach(q=>{
+    const card=document.createElement("article");
+    card.className="quiz-card";
+
+    const h=document.createElement("h3");
+    h.textContent=q.title;
+
+    const d=document.createElement("p");
+    d.className="muted";
+    d.textContent=q.description||"";
+
+    const b=document.createElement("button");
+    b.textContent="ابدأ الامتحان";
+    b.addEventListener("click",()=>startQuiz(q.id));
+
+    card.append(h,d,b);
+    box.append(card);
+  });
+}
+
+async function startQuiz(id){
+  say("جاري تحميل الامتحان...");
+
+  const {data,error}=await supabase.rpc("get_member_quiz",{
+    p_quiz_id:id
+  });
+
+  if(error){
+    say("تعذر تحميل الامتحان: "+error.message);
+    return;
+  }
+
+  if(!data || !Array.isArray(data.questions) || !data.questions.length){
+    say("الامتحان لا يحتوي على أسئلة.");
+    return;
+  }
+
+  activeQuiz=data;
+  quizSubmitted=false;
+
+  storageKey=`ministry_quiz_${currentUser.id}_${activeQuiz.id}`;
+
+  const restored=loadProgress(activeQuiz.questions);
+
+  if(!restored){
+    questionOrder=shuffle(activeQuiz.questions.map(q=>String(q.id)));
+    answers={};
+    currentIndex=0;
+    saveProgress();
+  }
+
+  $("quizList").style.display="none";
+  $("quizArea").style.display="block";
+  $("resultArea").style.display="none";
+  $("activeTitle").textContent=activeQuiz.title;
+
+  renderQuestion();
+  await startPresence();
+
+  say(restored?"تم استكمال إجاباتك السابقة.":"");
+}
+
+function renderQuestion(){
+  const questions=getOrderedQuestions();
+  const total=questions.length;
+  const q=questions[currentIndex];
+
+  if(!q) return;
+
+  $("questionCounter").textContent=
+    `السؤال ${currentIndex+1} من ${total}`;
+
+  $("progressFill").style.width=
+    `${((currentIndex+1)/total)*100}%`;
+
+  $("questionText").textContent=q.question_text;
+  $("questionPoints").textContent=`الدرجة: ${q.max_points ?? 0}`;
+
+  const area=$("answerArea");
+  area.replaceChildren();
+
+  if(q.question_type==="essay"){
+    const textarea=document.createElement("textarea");
+    textarea.placeholder="اكتب إجابتك هنا...";
+    textarea.value=answers[q.id] ?? "";
+
+    textarea.addEventListener("input",()=>{
+      answers[q.id]=textarea.value;
+      saveProgress();
+    });
+
+    area.append(textarea);
+  }else{
+    (q.options||[]).forEach((option,index)=>{
+      const label=document.createElement("label");
+      label.className="option";
+
+      const radio=document.createElement("input");
+      radio.type="radio";
+      radio.name="current-answer";
+      radio.value=String(index);
+      radio.checked=String(answers[q.id])===String(index);
+
+      radio.addEventListener("change",()=>{
+        answers[q.id]=index;
+        saveProgress();
+      });
+
+      label.append(radio,document.createTextNode(option));
+      area.append(label);
+    });
+  }
+
+  $("previousQuestion").disabled=currentIndex===0;
+  $("nextQuestion").disabled=currentIndex===total-1;
+
+  saveProgress();
+}
+
+$("nextQuestion").addEventListener("click",()=>{
+  if(!activeQuiz) return;
+
+  if(currentIndex<questionOrder.length-1){
+    currentIndex++;
+    renderQuestion();
+  }
+});
+
+$("previousQuestion").addEventListener("click",()=>{
+  if(!activeQuiz) return;
+
+  if(currentIndex>0){
+    currentIndex--;
+    renderQuestion();
+  }
+});
+
+async function submitQuiz(){
+  if(!activeQuiz || quizSubmitted) return;
+
+  const questions=getOrderedQuestions();
+
+  for(const q of questions){
+    const value=answers[q.id];
+
+    if(q.question_type==="essay"){
+      if(!String(value??"").trim()){
+        say("جاوب على كل الأسئلة قبل التسليم.");
+        currentIndex=questions.indexOf(q);
+        renderQuestion();
+        return;
+      }
+    }else{
+      if(value===undefined || value===null || value===""){
+        say("جاوب على كل الأسئلة قبل التسليم.");
+        currentIndex=questions.indexOf(q);
+        renderQuestion();
+        return;
+      }
+    }
+  }
+
+  const btn=$("submitQuiz");
+  btn.disabled=true;
+  $("nextQuestion").disabled=true;
+  $("previousQuestion").disabled=true;
+  say("جاري تسليم الامتحان...");
+
+  const {data,error}=await supabase.rpc(
+    "submit_quiz_with_essays",
+    {
+      p_quiz_id:activeQuiz.id,
+      p_answers:answers
+    }
+  );
+
+  if(error){
+    btn.disabled=false;
+    renderQuestion();
+    say("تعذر تسليم الامتحان: "+error.message);
+    return;
+  }
+
+  quizSubmitted=true;
+  stopHeartbeat();
+
+  await pingPresence("finish");
+
+  try{
+    localStorage.removeItem(storageKey);
+  }catch(e){}
+
+  $("quizArea").style.display="none";
+  $("resultArea").style.display="block";
+
+  $("resultText").textContent=data.pending_review
+    ? "وصلت إجابتك بنجاح. الامتحان يحتوي على سؤال مقالي، والدرجة والنقاط لن تُعتمد إلا بعد مراجعة الخادم أو الأدمن."
+    : `نتيجتك ${data.score} من ${data.max_score}. النقاط المضافة: ${data.points_awarded}.`;
+
+  say("");
+}
+
+$("submitQuiz").addEventListener("click",submitQuiz);
+
+$("backToList").addEventListener("click",()=>{
+  location.reload();
+});
+
 await init();
 </script>
+
 <script src="./install.js"></script>
-</body></html>
+</body>
+</html>
