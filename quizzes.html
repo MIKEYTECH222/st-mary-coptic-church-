@@ -6,67 +6,214 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>الاختبارات | شبابنا</title>
 <link rel="stylesheet" href="./style.css">
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#080b16;color:#f4f6ff;font-family:Arial,Tahoma,sans-serif}
-.wrap{max-width:850px;margin:auto;padding:16px}
-nav,.panel,.quiz-card,.question{background:#141d31;border:1px solid #ffffff18;border-radius:17px;padding:18px;margin-bottom:15px}
-nav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-a,button{border:1px solid #ffffff20;border-radius:11px;padding:11px 17px;background:#2b4276;color:white;text-decoration:none;cursor:pointer;font:inherit}
-button:disabled{opacity:.5;cursor:not-allowed}
-textarea{width:100%;min-height:130px;padding:12px;border-radius:11px;background:#0b1323;color:white;border:1px solid #46536d;font:inherit}
-.option{display:flex;align-items:center;gap:10px;background:#1b2944;padding:13px;border-radius:11px;margin:9px 0;cursor:pointer}
-.option input{width:18px;height:18px}
+body{
+  margin:0;
+  min-height:100vh;
+  background:#080b16;
+  color:#f4f6ff;
+  font-family:Arial,Tahoma,sans-serif;
+}
+button,a{font:inherit}
+.wrap{max-width:850px;margin:auto;padding:20px}
+nav,.panel,.quiz-card{
+  background:#141d31;
+  border:1px solid #ffffff18;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:16px;
+}
+nav{display:flex;justify-content:space-between;align-items:center}
+a,button{
+  border:1px solid #ffffff20;
+  border-radius:12px;
+  padding:12px 18px;
+  background:#2b4276;
+  color:white;
+  text-decoration:none;
+  cursor:pointer;
+}
+button:disabled{opacity:.4;cursor:not-allowed}
 .muted{color:#aebbd3;line-height:1.8}
+#message{color:#ffd36a;line-height:1.7}
 #quizArea,#resultArea{display:none}
-#message{color:#ffd36a;line-height:1.8}
-.progress-track{height:8px;background:#26334d;border-radius:20px;overflow:hidden;margin:12px 0}
-.progress-fill{height:100%;width:0;background:#719cff;transition:width .2s}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-.actions button{flex:1;min-width:120px}
-#questionCounter{font-size:14px;color:#aebbd3}
-#questionText{line-height:1.9}
+.quiz-card h3{margin-top:0}
+.quiz-card button{margin-top:8px}
+#quizArea{padding:25px}
+.exam-header{margin-bottom:25px}
+.exam-title{font-size:23px;margin:0 0 15px}
+.progress-info{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  color:#aebbd3;
+  font-size:14px;
+}
+.progress-track{
+  height:8px;
+  background:#26334d;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:12px;
+}
+.progress-fill{
+  height:100%;
+  width:0;
+  background:#719cff;
+  transition:width .25s;
+}
+.question-card{
+  background:#101a2d;
+  border:1px solid #ffffff16;
+  border-radius:18px;
+  padding:25px;
+  min-height:260px;
+}
+#questionText{
+  font-size:21px;
+  line-height:2;
+  margin:0 0 12px;
+  user-select:none;
+  -webkit-user-select:none;
+}
+#questionPoints{font-size:13px;margin-bottom:20px}
+.option{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:#1b2944;
+  padding:16px;
+  border:1px solid #ffffff12;
+  border-radius:13px;
+  margin:12px 0;
+  cursor:pointer;
+  line-height:1.7;
+}
+.option:has(input:checked){
+  border-color:#719cff;
+  background:#253c65;
+}
+.option input{
+  width:19px;
+  height:19px;
+  accent-color:#719cff;
+  flex-shrink:0;
+}
+textarea{
+  display:block;
+  width:100%;
+  min-height:190px;
+  padding:17px;
+  border-radius:13px;
+  background:#080f1d;
+  color:white;
+  border:1px solid #46536d;
+  font:inherit;
+  font-size:17px;
+  line-height:1.8;
+  resize:vertical;
+}
+.exam-actions{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:20px;
+}
+.exam-actions button{min-width:130px}
+#nextQuestion{
+  background:#176b50;
+  flex:1;
+}
+#previousQuestion{background:#293750}
+.copy-warning{
+  display:none;
+  background:#542c28;
+  border:1px solid #ff776b66;
+  color:#ffd1cc;
+  border-radius:12px;
+  padding:12px;
+  margin-top:15px;
+  line-height:1.7;
+}
+body.exam-mode .wrap{
+  max-width:900px;
+  padding-top:35px;
+}
+body.exam-mode nav,
+body.exam-mode #listPanel{
+  display:none!important;
+}
+body.exam-mode #quizArea{
+  display:block;
+  background:transparent;
+  border:0;
+  padding:0;
+  margin:0;
+}
+body.exam-mode .question-card{
+  min-height:350px;
+}
+@media(max-width:600px){
+  .wrap{padding:12px}
+  body.exam-mode .wrap{padding:16px 12px}
+  #quizArea{padding:0}
+  .question-card{padding:18px}
+  #questionText{font-size:19px}
+  .exam-title{font-size:20px}
+  .exam-actions button{padding:12px 10px}
+  textarea{min-height:220px}
+}
 </style>
 </head>
+
 <body>
 <main class="wrap">
 
-<nav>
+<nav id="topNav">
 <strong>📝 الاختبارات</strong>
 <a href="dashboard.html">الرئيسية</a>
 </nav>
 
-<section class="panel">
+<section class="panel" id="listPanel">
 <h1>الاختبارات المتاحة</h1>
-<p class="muted">اختار الامتحان وابدأ الحل. الأسئلة المقالية لا تظهر درجتها إلا بعد مراجعة الخادم.</p>
+<p class="muted">اختار الامتحان للبدء.</p>
 <div id="quizList">جاري تحميل الامتحانات...</div>
-<p id="message" role="status"></p>
 </section>
 
-<section id="quizArea" class="panel">
-<h2 id="activeTitle"></h2>
+<p id="message" role="status"></p>
 
-<div id="questionCounter"></div>
+<section id="quizArea">
+
+<header class="exam-header">
+<h1 class="exam-title" id="activeTitle"></h1>
+
+<div class="progress-info">
+<span id="questionCounter"></span>
+<span id="progressPercent"></span>
+</div>
+
 <div class="progress-track">
 <div id="progressFill" class="progress-fill"></div>
 </div>
+</header>
 
-<article class="question">
-<h3 id="questionText"></h3>
+<article class="question-card">
+<h2 id="questionText"></h2>
 <p id="questionPoints" class="muted"></p>
 <div id="answerArea"></div>
+
+<div id="copyWarning" class="copy-warning">
+تم رصد محاولة نسخ نص السؤال أو الإجابة. برجاء كتابة إجابتك بنفسك.
+</div>
 </article>
 
-<div class="actions">
-<button id="previousQuestion">السؤال السابق</button>
-<button id="nextQuestion">السؤال التالي</button>
+<div class="exam-actions">
+<button id="previousQuestion">السابق</button>
+<button id="nextQuestion">التالي</button>
 </div>
 
-<div class="actions">
-<button id="submitQuiz" style="background:#176b50">تسليم الامتحان</button>
-</div>
-
-<p class="muted">إجاباتك بتتحفظ تلقائيًا على نفس الجهاز.</p>
 </section>
 
 <section id="resultArea" class="panel">
@@ -84,27 +231,28 @@ const $ = id => document.getElementById(id);
 
 let quizzes = [];
 let activeQuiz = null;
-let profile = null;
 let currentUser = null;
 let questionOrder = [];
 let answers = {};
 let currentIndex = 0;
 let storageKey = "";
-let presenceQueue = Promise.resolve();
 let quizSubmitted = false;
-let heartbeatTimer = null;
 let presenceStarted = false;
+let presenceQueue = Promise.resolve();
+let heartbeatTimer = null;
 
-function say(message){
-  $("message").textContent = message || "";
+function say(text){
+  $("message").textContent = text || "";
 }
 
 function shuffle(array){
-  const result = [...array];
+  const result=[...array];
+
   for(let i=result.length-1;i>0;i--){
     const j=Math.floor(Math.random()*(i+1));
     [result[i],result[j]]=[result[j],result[i]];
   }
+
   return result;
 }
 
@@ -115,11 +263,10 @@ function saveProgress(){
     localStorage.setItem(storageKey,JSON.stringify({
       order:questionOrder,
       answers,
-      currentIndex,
-      savedAt:Date.now()
+      currentIndex
     }));
   }catch(e){
-    console.warn("تعذر حفظ التقدم محليًا",e);
+    console.warn("Save progress:",e);
   }
 }
 
@@ -129,12 +276,12 @@ function loadProgress(questions){
     if(!raw) return false;
 
     const saved=JSON.parse(raw);
-    const validIds=questions.map(q=>String(q.id));
+    const ids=questions.map(q=>String(q.id));
 
     if(
       !Array.isArray(saved.order) ||
-      saved.order.length!==validIds.length ||
-      !validIds.every(id=>saved.order.includes(id))
+      saved.order.length!==ids.length ||
+      !ids.every(id=>saved.order.includes(id))
     ) return false;
 
     questionOrder=saved.order;
@@ -150,28 +297,55 @@ function loadProgress(questions){
   }
 }
 
-function getOrderedQuestions(){
-  const byId=new Map(activeQuiz.questions.map(q=>[String(q.id),q]));
-  return questionOrder.map(id=>byId.get(String(id))).filter(Boolean);
+function getQuestions(){
+  const map=new Map(
+    activeQuiz.questions.map(q=>[String(q.id),q])
+  );
+
+  return questionOrder
+    .map(id=>map.get(String(id)))
+    .filter(Boolean);
 }
 
+
+// ===================================
+// تسجيل الخروج والعودة
+// ===================================
+
 function pingPresence(eventName){
-  if(!activeQuiz || !presenceStarted && eventName!=="start") return Promise.resolve();
+  if(!activeQuiz) return Promise.resolve();
+
+  if(!presenceStarted && eventName!=="start"){
+    return Promise.resolve();
+  }
 
   presenceQueue=presenceQueue.then(async()=>{
     try{
-      const {error}=await supabase.rpc("quiz_presence_ping",{
-        p_quiz_id:activeQuiz.id,
-        p_event:eventName
-      });
+      const {error}=await supabase.rpc(
+        "quiz_presence_ping",
+        {
+          p_quiz_id:activeQuiz.id,
+          p_event:eventName
+        }
+      );
 
-      if(error) console.warn("Presence:",eventName,error.message);
+      if(error){
+        console.warn("Presence error:",eventName,error.message);
+      }
     }catch(e){
       console.warn("Presence error:",e);
     }
   }).catch(()=>{});
 
   return presenceQueue;
+}
+
+async function startPresence(){
+  presenceStarted=true;
+
+  await pingPresence("start");
+
+  startHeartbeat();
 }
 
 function startHeartbeat(){
@@ -185,18 +359,12 @@ function startHeartbeat(){
     ){
       pingPresence("heartbeat");
     }
-  },15000);
+  },10000);
 }
 
 function stopHeartbeat(){
   clearInterval(heartbeatTimer);
   heartbeatTimer=null;
-}
-
-async function startPresence(){
-  presenceStarted=true;
-  await pingPresence("start");
-  startHeartbeat();
 }
 
 document.addEventListener("visibilitychange",()=>{
@@ -215,8 +383,65 @@ window.addEventListener("pagehide",()=>{
   }
 });
 
+
+// ===================================
+// منع نسخ نص السؤال المقالي
+// ===================================
+
+function showCopyWarning(){
+  $("copyWarning").style.display="block";
+
+  clearTimeout(showCopyWarning.timer);
+
+  showCopyWarning.timer=setTimeout(()=>{
+    $("copyWarning").style.display="none";
+  },5000);
+}
+
+function isEssayQuestion(){
+  if(!activeQuiz) return false;
+
+  const q=getQuestions()[currentIndex];
+
+  return q?.question_type==="essay";
+}
+
+document.addEventListener("copy",event=>{
+  if(!isEssayQuestion()) return;
+
+  event.preventDefault();
+  showCopyWarning();
+});
+
+document.addEventListener("cut",event=>{
+  if(!isEssayQuestion()) return;
+
+  event.preventDefault();
+  showCopyWarning();
+});
+
+document.addEventListener("contextmenu",event=>{
+  if(!isEssayQuestion()) return;
+
+  if(
+    event.target.closest("#questionText") ||
+    event.target.closest("#answerArea")
+  ){
+    event.preventDefault();
+    showCopyWarning();
+  }
+});
+
+
+// ===================================
+// تحميل الصفحة
+// ===================================
+
 async function init(){
-  const {data:{user},error:authError}=await supabase.auth.getUser();
+  const {
+    data:{user},
+    error:authError
+  }=await supabase.auth.getUser();
 
   if(authError || !user){
     location.replace("account.html");
@@ -225,20 +450,24 @@ async function init(){
 
   currentUser=user;
 
-  const {data:p,error:profileError}=await supabase
+  const {data:profile,error:profileError}=await supabase
     .from("profiles")
     .select("role,approval_status")
     .eq("id",user.id)
     .maybeSingle();
 
-  if(profileError || !p || p.approval_status!=="approved"){
+  if(
+    profileError ||
+    !profile ||
+    profile.approval_status!=="approved"
+  ){
     say("الحساب غير معتمد.");
     return;
   }
 
-  profile=p;
-
-  const {data,error}=await supabase.rpc("get_member_quizzes");
+  const {data,error}=await supabase.rpc(
+    "get_member_quizzes"
+  );
 
   if(error){
     say("تعذر تحميل الاختبارات: "+error.message);
@@ -246,8 +475,14 @@ async function init(){
   }
 
   quizzes=Array.isArray(data)?data:(data||[]);
+
   renderList();
 }
+
+
+// ===================================
+// قائمة الامتحانات
+// ===================================
 
 function renderList(){
   const box=$("quizList");
@@ -262,66 +497,98 @@ function renderList(){
     const card=document.createElement("article");
     card.className="quiz-card";
 
-    const h=document.createElement("h3");
-    h.textContent=q.title;
+    const title=document.createElement("h3");
+    title.textContent=q.title;
 
-    const d=document.createElement("p");
-    d.className="muted";
-    d.textContent=q.description||"";
+    const description=document.createElement("p");
+    description.className="muted";
+    description.textContent=q.description||"";
 
-    const b=document.createElement("button");
-    b.textContent="ابدأ الامتحان";
-    b.addEventListener("click",()=>startQuiz(q.id));
+    const button=document.createElement("button");
+    button.textContent="ابدأ الامتحان";
 
-    card.append(h,d,b);
+    button.addEventListener("click",()=>{
+      startQuiz(q.id);
+    });
+
+    card.append(title,description,button);
     box.append(card);
   });
 }
 
+
+// ===================================
+// بدء الامتحان
+// ===================================
+
 async function startQuiz(id){
   say("جاري تحميل الامتحان...");
 
-  const {data,error}=await supabase.rpc("get_member_quiz",{
-    p_quiz_id:id
-  });
+  const {data,error}=await supabase.rpc(
+    "get_member_quiz",
+    {p_quiz_id:id}
+  );
 
   if(error){
     say("تعذر تحميل الامتحان: "+error.message);
     return;
   }
 
-  if(!data || !Array.isArray(data.questions) || !data.questions.length){
+  if(
+    !data ||
+    !Array.isArray(data.questions) ||
+    !data.questions.length
+  ){
     say("الامتحان لا يحتوي على أسئلة.");
     return;
   }
 
   activeQuiz=data;
   quizSubmitted=false;
+  presenceStarted=false;
 
-  storageKey=`ministry_quiz_${currentUser.id}_${activeQuiz.id}`;
+  storageKey=
+    `ministry_quiz_${currentUser.id}_${activeQuiz.id}`;
 
   const restored=loadProgress(activeQuiz.questions);
 
   if(!restored){
-    questionOrder=shuffle(activeQuiz.questions.map(q=>String(q.id)));
+    questionOrder=shuffle(
+      activeQuiz.questions.map(q=>String(q.id))
+    );
+
     answers={};
     currentIndex=0;
     saveProgress();
   }
 
-  $("quizList").style.display="none";
+  $("listPanel").style.display="none";
+  $("topNav").style.display="none";
   $("quizArea").style.display="block";
   $("resultArea").style.display="none";
+
+  document.body.classList.add("exam-mode");
+
   $("activeTitle").textContent=activeQuiz.title;
 
   renderQuestion();
+
   await startPresence();
 
-  say(restored?"تم استكمال إجاباتك السابقة.":"");
+  say(
+    restored
+      ? "تم استكمال إجاباتك السابقة."
+      : ""
+  );
 }
 
+
+// ===================================
+// عرض سؤال واحد فقط
+// ===================================
+
 function renderQuestion(){
-  const questions=getOrderedQuestions();
+  const questions=getQuestions();
   const total=questions.length;
   const q=questions[currentIndex];
 
@@ -330,17 +597,26 @@ function renderQuestion(){
   $("questionCounter").textContent=
     `السؤال ${currentIndex+1} من ${total}`;
 
-  $("progressFill").style.width=
-    `${((currentIndex+1)/total)*100}%`;
+  const percent=Math.round(
+    ((currentIndex+1)/total)*100
+  );
+
+  $("progressPercent").textContent=percent+"%";
+  $("progressFill").style.width=percent+"%";
 
   $("questionText").textContent=q.question_text;
-  $("questionPoints").textContent=`الدرجة: ${q.max_points ?? 0}`;
+
+  $("questionPoints").textContent=
+    `الدرجة: ${q.max_points ?? 0}`;
+
+  $("copyWarning").style.display="none";
 
   const area=$("answerArea");
   area.replaceChildren();
 
   if(q.question_type==="essay"){
     const textarea=document.createElement("textarea");
+
     textarea.placeholder="اكتب إجابتك هنا...";
     textarea.value=answers[q.id] ?? "";
 
@@ -350,6 +626,7 @@ function renderQuestion(){
     });
 
     area.append(textarea);
+
   }else{
     (q.options||[]).forEach((option,index)=>{
       const label=document.createElement("label");
@@ -359,71 +636,101 @@ function renderQuestion(){
       radio.type="radio";
       radio.name="current-answer";
       radio.value=String(index);
-      radio.checked=String(answers[q.id])===String(index);
+
+      radio.checked=
+        String(answers[q.id])===String(index);
 
       radio.addEventListener("change",()=>{
         answers[q.id]=index;
         saveProgress();
       });
 
-      label.append(radio,document.createTextNode(option));
+      const text=document.createElement("span");
+      text.textContent=option;
+
+      label.append(radio,text);
       area.append(label);
     });
   }
 
-  $("previousQuestion").disabled=currentIndex===0;
-  $("nextQuestion").disabled=currentIndex===total-1;
+  $("previousQuestion").style.visibility=
+    currentIndex===0?"hidden":"visible";
+
+  $("nextQuestion").textContent=
+    currentIndex===total-1
+      ? "تسليم الامتحان"
+      : "التالي";
 
   saveProgress();
 }
 
-$("nextQuestion").addEventListener("click",()=>{
+
+// ===================================
+// التالي والسابق
+// ===================================
+
+$("nextQuestion").addEventListener("click",async()=>{
   if(!activeQuiz) return;
 
-  if(currentIndex<questionOrder.length-1){
-    currentIndex++;
-    renderQuestion();
+  if(currentIndex===questionOrder.length-1){
+    await submitQuiz();
+    return;
   }
+
+  currentIndex++;
+  renderQuestion();
+  window.scrollTo({top:0,behavior:"smooth"});
 });
 
 $("previousQuestion").addEventListener("click",()=>{
-  if(!activeQuiz) return;
+  if(!activeQuiz || currentIndex<=0) return;
 
-  if(currentIndex>0){
-    currentIndex--;
-    renderQuestion();
-  }
+  currentIndex--;
+  renderQuestion();
+  window.scrollTo({top:0,behavior:"smooth"});
 });
+
+
+// ===================================
+// تسليم الامتحان
+// ===================================
 
 async function submitQuiz(){
   if(!activeQuiz || quizSubmitted) return;
 
-  const questions=getOrderedQuestions();
+  const questions=getQuestions();
 
-  for(const q of questions){
+  for(let i=0;i<questions.length;i++){
+    const q=questions[i];
     const value=answers[q.id];
 
     if(q.question_type==="essay"){
       if(!String(value??"").trim()){
         say("جاوب على كل الأسئلة قبل التسليم.");
-        currentIndex=questions.indexOf(q);
+        currentIndex=i;
         renderQuestion();
         return;
       }
     }else{
       if(value===undefined || value===null || value===""){
         say("جاوب على كل الأسئلة قبل التسليم.");
-        currentIndex=questions.indexOf(q);
+        currentIndex=i;
         renderQuestion();
         return;
       }
     }
   }
 
-  const btn=$("submitQuiz");
-  btn.disabled=true;
-  $("nextQuestion").disabled=true;
-  $("previousQuestion").disabled=true;
+  if(!confirm("متأكد إنك عايز تسلم الامتحان؟")){
+    return;
+  }
+
+  const nextButton=$("nextQuestion");
+  const previousButton=$("previousQuestion");
+
+  nextButton.disabled=true;
+  previousButton.disabled=true;
+
   say("جاري تسليم الامتحان...");
 
   const {data,error}=await supabase.rpc(
@@ -435,13 +742,15 @@ async function submitQuiz(){
   );
 
   if(error){
-    btn.disabled=false;
-    renderQuestion();
+    nextButton.disabled=false;
+    previousButton.disabled=false;
+
     say("تعذر تسليم الامتحان: "+error.message);
     return;
   }
 
   quizSubmitted=true;
+
   stopHeartbeat();
 
   await pingPresence("finish");
@@ -453,14 +762,14 @@ async function submitQuiz(){
   $("quizArea").style.display="none";
   $("resultArea").style.display="block";
 
+  document.body.classList.remove("exam-mode");
+
   $("resultText").textContent=data.pending_review
     ? "وصلت إجابتك بنجاح. الامتحان يحتوي على سؤال مقالي، والدرجة والنقاط لن تُعتمد إلا بعد مراجعة الخادم أو الأدمن."
     : `نتيجتك ${data.score} من ${data.max_score}. النقاط المضافة: ${data.points_awarded}.`;
 
   say("");
 }
-
-$("submitQuiz").addEventListener("click",submitQuiz);
 
 $("backToList").addEventListener("click",()=>{
   location.reload();
